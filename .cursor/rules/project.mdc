@@ -1,0 +1,36 @@
+---
+description: Regras centrais do produto Prospecta (MVP V1)
+alwaysApply: true
+---
+
+# Project — Prospecta
+
+- Objetivo: CRM de **prospecção B2B founder-led**, validado pelos 3 sócios no processo real.
+- Sociedade (`PARTNER`) ≠ permissão no app (`ADMIN` | `MEMBER`). Ver `docs/founding/roles-and-governance.md`.
+- MVP técnico: **BUILD** — ver `docs/product/product-decision-mvp-technical.md`.
+- Fluxo vertical único até os três operarem ponta a ponta:
+  `login → lead → owner → pipeline → atividade → WhatsApp/e-mail → resultado + próximo passo`.
+- Clique em canal **não** conta como contato; atividade persistida é a verdade.
+- Sem dashboard, IA, automações ou APIs oficiais antes desse fluxo estar operável.
+- Não inventar regras societárias (equity, IP, saída) no código — checklist em `docs/founding/`.
+
+## Fora da V1 (não implementar)
+
+- LinkedIn automation / scraping
+- Discador / VoIP
+- WhatsApp Business API / chatbot
+- Sequências automáticas / AI SDR
+- Enrichment pago como dependência do MVP
+- Multi-tenant SaaS / billing / self-serve
+- Papel `OWNER` no software
+- Dashboard/analytics complexo
+- React Native / app nativo
+- Express separado / monorepo enterprise
+
+## Conduta
+
+- Sem overengineering: sem abstração prematura, sem “framework interno”.
+- Sem dados reais sensíveis de leads em seed, fixtures, docs ou screenshots (use fictícios).
+- Diferencie claramente V1, V1.1 e roadmap ao propor escopo.
+- Em dúvida de produto ou sociedade, pergunte — não invente regra.
+- Classifique PLATFORM / WORKSPACE / PILOT_SPECIFIC (ver `docs/product.md`).

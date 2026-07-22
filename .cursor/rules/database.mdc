@@ -1,0 +1,16 @@
+---
+description: Prisma, migrations, seeds e snapshots de contato
+globs: prisma/**/*,src/server/repositories/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Database
+
+- Prisma + PostgreSQL; client só no server.
+- Models V1: `User` (role `ADMIN`|`MEMBER`), `Lead`, `Activity` (+ enums stage/type/outcome).
+- Não modelar `PARTNER` como role de ACL.
+- Lead: índices únicos parciais/úteis para dedupe de `email` e `phone` normalizados (conforme implementação).
+- Activity guarda canal, outcome, snapshot de template quando houver, autor, timestamps.
+- Migrations pequenas; uma intenção por migration.
+- Seeds fictícios e idempotentes; bootstrap 1 ADMIN + 2 MEMBER sem leads reais.
+- Não apagar dados sem comando explícito do usuário.

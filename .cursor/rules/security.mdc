@@ -1,0 +1,18 @@
+---
+description: Segurança, auth do time e PII de leads
+alwaysApply: true
+---
+
+# Security
+
+- App do time fundador é área restrita: auth server-side; não “securizar” só escondendo UI.
+- Papéis V1 no sistema: `ADMIN` | `MEMBER`. Sociedade (`PARTNER`) não é permissão de software.
+- `ADMIN`: configuração, usuários, importação, visão completa, ações sensíveis.
+- `MEMBER`: leads, contatos, atividades, pipeline — sem ações destrutivas/config técnica.
+- Autorização **server-side** por papel; não confiar no client nem em “somos todos sócios”.
+- Sessão: cookies **HttpOnly**, Secure em produção, SameSite adequado; sem token de sessão em `localStorage`.
+- Segredos só em env (`.env` / Vercel); nunca hardcode. Nunca logar senhas ou tokens.
+- Senhas: hash adequado; nunca texto puro.
+- Leads são PII: nome, telefone, e-mail, empresa — mínimo necessário; cuidado em logs, seeds, docs e erros.
+- `.env` fora do git; usar `.env.example` sem credenciais reais.
+- Export/import CSV: autenticado; import sensível preferencialmente `ADMIN`.

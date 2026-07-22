@@ -1,0 +1,17 @@
+---
+description: Leads, atividades, templates e mutações server-side
+globs: src/server/**/*.{ts,tsx},src/lib/**/*.{ts,tsx},src/app/**/actions.ts,src/app/api/**/*
+alwaysApply: false
+---
+
+# Backend
+
+- Lógica de lead/atividade no server; Zod nas fronteiras.
+- Persistência antes do handoff: atividade/resultado **grava no banco**; `wa.me`/`mailto` não alteram stage sozinhos.
+- Stages: `NEW` | `QUALIFIED` | `CONTACTED` | `MEETING` | `WON` | `LOST` — critérios em `docs/product.md`.
+- Lead obrigatório: `companyName` + (`phone`|`email`) + `ownerId` + `stage`.
+- Dedupe: e-mail ou telefone normalizado → bloquear com referência ao existente; sem merge/fuzzy.
+- Roles: `ADMIN` | `MEMBER`. Import CSV, delete lead, gestão de usuários, export: só `ADMIN`.
+- Templates WhatsApp/e-mail determinísticos a partir do lead salvo (snapshot do texto na atividade).
+- `nextFollowUpAt` obrigatório quando stage permanece aberto após outreach.
+- Não expor PII/segredos em logs ou responses.
