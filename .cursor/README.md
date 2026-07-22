@@ -17,6 +17,7 @@ Documentação operacional para agentes e humanos no Cursor. Orienta **como** co
 | `docs/product/pilot-validation-plan.md` | Validação do piloto founder-led |
 | `docs/product/product-decision-mvp-technical.md` | Grill BUILD do MVP técnico |
 | `docs/founding/roles-and-governance.md` | Sociedade (`PARTNER`) vs roles (`ADMIN`/`MEMBER`) |
+| `docs/development/mcp-setup.md` | Context7, GitHub, Playwright, Figma |
 | `README.md` | Setup, scripts, roadmap |
 | `.env.example` | Variáveis de ambiente |
 | `.cursor/rules/` | Convenções obrigatórias / contextuais |
@@ -58,9 +59,10 @@ Sequências recomendadas: feature, bugfix, release, checagem de produção.
 Prompts reutilizáveis. Cole no chat ou referencie o arquivo ao pedir uma tarefa.
 `plan-feature` exige product-grill antes de arquitetura.
 
-### Playwright MCP (opcional, local)
+### MCP
 
-Exemplo em `mcp.playwright.example.json`. Não é obrigatório para `pnpm build` nem para a suíte E2E quando existir.
+Exemplo compartilhável: `mcp.example.json`. Setup: `docs/development/mcp-setup.md`. Política: `rules/mcp-usage.mdc`.
+Cópia local `.cursor/mcp.json` fica fora do git. Playwright MCP ≠ `@playwright/test`.
 
 ## PRs pequenas
 

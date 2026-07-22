@@ -6,7 +6,8 @@ Desenvolvida e validada pelo time fundador (3 sócios) em processo real de prosp
 
 ## Status
 
-Fundação documental pronta; MVP técnico com decisão **BUILD**. App ainda não scaffoldado — próximo passo: scaffold + fluxo vertical.
+Fundação documental + workflow MCP prontos; MVP técnico com decisão **BUILD**.  
+App ainda não scaffoldado — próximo passo após MCP verde no Cursor: scaffold + fluxo vertical.
 
 | Doc | Uso |
 | --- | --- |
@@ -14,6 +15,7 @@ Fundação documental pronta; MVP técnico com decisão **BUILD**. App ainda nã
 | [`docs/product/product-decision-mvp-technical.md`](docs/product/product-decision-mvp-technical.md) | Grill **BUILD** do MVP técnico |
 | [`docs/founding/roles-and-governance.md`](docs/founding/roles-and-governance.md) | Sociedade vs sistema + checklist |
 | [`docs/product/pilot-validation-plan.md`](docs/product/pilot-validation-plan.md) | Validação founder-led |
+| [`docs/development/mcp-setup.md`](docs/development/mcp-setup.md) | MCPs (Context7, GitHub, Playwright, Figma) |
 
 ## Time fundador
 

@@ -11,6 +11,9 @@ out/
 .env.local
 .env.*.local
 
+# Cursor MCP local (may reference secrets; use mcp.example.json in git)
+.cursor/mcp.json
+
 # logs / debug
 npm-debug.log*
 yarn-debug.log*

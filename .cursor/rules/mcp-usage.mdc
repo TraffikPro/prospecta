@@ -1,0 +1,40 @@
+---
+description: Política de uso dos MCPs do Prospecta (Context7, GitHub, Playwright, Figma)
+alwaysApply: true
+---
+
+# MCP usage
+
+MCPs aceleram docs, colaboração, smoke de UI e design. **Não** substituem CI, E2E versionado, migrations nem gestão de segredos.
+
+## Context7
+
+- Consultar **antes** de implementar APIs dependentes de versão (Next.js, Prisma, Zod, auth, Playwright, libs novas).
+- Não obrigatório em alteração trivial de copy/CSS sem API nova.
+- Preferir library id + versão instalada no projeto quando conhecida.
+
+## GitHub
+
+- **Leitura por padrão** (repo, commits, PRs, Actions, issues).
+- Escrita (issue, PR, comment, tag, release) **somente** quando o usuário pedir explicitamente.
+- Nunca criar PR, issue, tag ou release implicitamente.
+- Usar só o servidor oficial; token fora do git; escopo mínimo (ideal: só o repo Prospecta).
+- Alternativa aceitável: CLI `gh` quando o MCP não estiver disponível.
+
+## Playwright
+
+- Usar contas/dados de **teste** ou seed; localhost / preview — não contas pessoais reais dos sócios.
+- Exploração via MCP ≠ teste versionado; fluxos aprovados viram `@playwright/test` no CI.
+- Não confundir com `cursor-ide-browser` (IDE); o MCP Playwright é o servidor oficial do projeto.
+
+## Figma
+
+- Inspecionar antes de alterar; não mutar arquivo sem pedido explícito.
+- Não criar telas fora do escopo V1 (fluxo vertical).
+- Design **não** altera regras de domínio sem Product Decision / grill.
+
+## Evitar MCP para
+
+- Produção: migrate/reset, deploy, secrets, escrita em banco
+- Ler `.env` com credenciais
+- Ações destrutivas sem confirmação explícita

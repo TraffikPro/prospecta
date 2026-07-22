@@ -30,6 +30,7 @@ Use o agente certo no prompt (“atue como Frontend Engineer…”) ou combine: 
 - **Validação do piloto** → [`docs/product/pilot-validation-plan.md`](../docs/product/pilot-validation-plan.md)
 - **MVP técnico (BUILD)** → [`docs/product/product-decision-mvp-technical.md`](../docs/product/product-decision-mvp-technical.md)
 - **Sociedade vs ACL** → [`docs/founding/roles-and-governance.md`](../docs/founding/roles-and-governance.md)
+- **MCPs** → [`docs/development/mcp-setup.md`](../docs/development/mcp-setup.md) · rule `mcp-usage`
 
 ## Skills de produto
 
