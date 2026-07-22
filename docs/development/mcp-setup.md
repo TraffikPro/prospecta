@@ -162,12 +162,44 @@ Figma → experiência visual
 
 ```bash
 cp .cursor/mcp.example.json .cursor/mcp.json
+# Obrigatório com NVM: Cursor frequentemente não vê `npx` no PATH → ENOENT
+which npx
+# Edite .cursor/mcp.json e troque /ABSOLUTE/PATH/TO/npx pelo caminho real, ex.:
+# /home/gustavo/.nvm/versions/node/v20.20.0/bin/npx
 export GITHUB_PERSONAL_ACCESS_TOKEN="$(gh auth token)"
 # opcional:
 export CONTEXT7_API_KEY="..."
 ```
 
-Reinicie o Cursor. Rode o comando [`.cursor/commands/verify-mcps.md`](../../.cursor/commands/verify-mcps.md).
+Feche o Cursor por completo e abra de novo **pelo terminal** (herda o token):
+
+```bash
+export GITHUB_PERSONAL_ACCESS_TOKEN="$(gh auth token)"
+cd /home/gustavo/Documentos/prospecta
+cursor .
+```
+
+Rode o comando [`.cursor/commands/verify-mcps.md`](../../.cursor/commands/verify-mcps.md).
+
+### Troubleshooting: `spawn npx ENOENT`
+
+O Cursor não herda o PATH do NVM. **Não** use `"command": "npx"`.
+
+1. `which npx` → caminho absoluto  
+2. Use esse caminho em `context7.command` e `playwright.command` no `.cursor/mcp.json` local  
+3. Alternativa robusta se a versão do Node mudar:
+
+```json
+{
+  "command": "/bin/bash",
+  "args": [
+    "-lc",
+    "source ~/.nvm/nvm.sh && nvm use 20 >/dev/null && exec npx -y @upstash/context7-mcp"
+  ]
+}
+```
+
+Reinício completo (não só reload da janela) após alterar o JSON.
 
 ## Smoke de aceitação
 

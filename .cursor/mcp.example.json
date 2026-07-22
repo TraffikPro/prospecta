@@ -1,14 +1,14 @@
 {
   "mcpServers": {
     "context7": {
-      "command": "npx",
+      "command": "/ABSOLUTE/PATH/TO/npx",
       "args": ["-y", "@upstash/context7-mcp"],
       "env": {
         "CONTEXT7_API_KEY": "${env:CONTEXT7_API_KEY}"
       }
     },
     "github": {
-      "command": "docker",
+      "command": "/usr/bin/docker",
       "args": [
         "run",
         "-i",
@@ -22,7 +22,7 @@
       }
     },
     "playwright": {
-      "command": "npx",
+      "command": "/ABSOLUTE/PATH/TO/npx",
       "args": ["-y", "@playwright/mcp@latest"]
     },
     "figma": {
