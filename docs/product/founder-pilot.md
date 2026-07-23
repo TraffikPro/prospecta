@@ -130,21 +130,16 @@ Meta de disciplina (produto): ≥70% dos leads abertos com próximo passo ou `WO
 | Owner pipeline / usabilidade | Sócio de Operações |
 | Owner métricas / produto | Gustavo |
 
-## Decisões de aquisição (congeladas no piloto)
+## Decisões de aquisição
 
-| Tema | Decisão | Reabrir quando |
+| Tema | Decisão | Notas |
 | --- | --- | --- |
-| Automação Google Maps / scraper | **DEFER** | Houver venda originada no fluxo **e** ICP vencedor claro **e** coleta manual for gargalo |
-| Google Places API / fornecedor / CSV / enrichment | Fora do piloto | Após evidência acima + novo `product-grill` |
+| Scraper Google Maps | **REJECT** | ToS / fragilidade |
+| Google Places → lead-generator → CRM | **VALIDATE** (direção) | Contrato em [ADR 0009](../adr/0009-google-places-lead-ingestion.md); **sem código** até Pilot Day 1 Ready + grill → **BUILD** |
+| CSV como caminho principal | Fallback / export | Não é o alvo do sync |
+| Enrichment pago genérico | Fora até evidência | — |
 
-Ordem preferida **depois** do piloto (se o gargalo for lista):
-
-1. Importação CSV  
-2. Google Places API (oficial)  
-3. Fornecedor de dados  
-4. Enrichment  
-
-Não construir scraper improvisado no produto sem grill.
+Piloto Day 1 continua com **aquisição manual**. A direção Places não bloqueia nem substitui o piloto.
 
 ## Critérios de sucesso do piloto
 
