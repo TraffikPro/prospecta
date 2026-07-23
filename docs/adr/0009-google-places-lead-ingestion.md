@@ -2,7 +2,7 @@
 
 - **Status:** proposed
 - **Data:** 2026-07-23
-- **Relacionado:** [0002-pipeline-lead-activity-v1.md](./0002-pipeline-lead-activity-v1.md), [0006-lead-foundation-v1.md](./0006-lead-foundation-v1.md), [../product/founder-pilot.md](../product/founder-pilot.md)
+- **Relacionado:** [0002-pipeline-lead-activity-v1.md](./0002-pipeline-lead-activity-v1.md), [0006-lead-foundation-v1.md](./0006-lead-foundation-v1.md), [0010-lead-intelligence-pipeline.md](./0010-lead-intelligence-pipeline.md), [../product/founder-pilot.md](../product/founder-pilot.md)
 - **Product Decision:** VALIDATE (contrato/ADR agora; implementação de código **não** autorizada até BUILD explícito da fatia)
 
 ## Contexto
@@ -32,7 +32,7 @@ Isso exige um **contrato de ingestão** no CRM (origem, idempotência, auth máq
 2. **prospecta-lead-generator** é sistema **externo** de aquisição (Places API + score + sync). Não é scraper; usa **Google Places API** (oficial).
 3. Leads externos entram via **API interna** autenticada — não por formulário público.
 4. Domínio do Lead ganha origem e identidade externa:
-   - `source`: `MANUAL` | `GOOGLE_PLACES` | `IMPORT` (enum V1)
+   - `source`: `MANUAL` | `GOOGLE_PLACES` | `REFERRAL` | `IMPORT` (enum V1; ver também ADR 0010)
    - `externalId`: string opcional (ex.: Google `place_id`); **obrigatório** quando `source = GOOGLE_PLACES`
    - unicidade: `@@unique([source, externalId])` quando `externalId` presente (idempotência de re-sync)
 5. Endpoint alvo (nome pode ajustar na implementação):

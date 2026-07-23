@@ -135,7 +135,8 @@ Meta de disciplina (produto): ≥70% dos leads abertos com próximo passo ou `WO
 | Tema | Decisão | Notas |
 | --- | --- | --- |
 | Scraper Google Maps | **REJECT** | ToS / fragilidade |
-| Google Places → lead-generator → CRM | **VALIDATE** (direção) | Contrato em [ADR 0009](../adr/0009-google-places-lead-ingestion.md); **sem código** até Pilot Day 1 Ready + grill → **BUILD** |
+| Google Places → lead-generator → CRM | **VALIDATE** (direção) | Contratos [ADR 0009](../adr/0009-google-places-lead-ingestion.md) + inteligência [ADR 0010](../adr/0010-lead-intelligence-pipeline.md); **sem código** até evidência + grill → **BUILD** |
+| Contato automático (WhatsApp/e-mail em massa) | **REJECT** nesta fase | Humano executa Activity; automação só na descoberta/análise |
 | CSV como caminho principal | Fallback / export | Não é o alvo do sync |
 | Enrichment pago genérico | Fora até evidência | — |
 

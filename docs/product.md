@@ -163,6 +163,7 @@ Checklist societário segue **em paralelo** e não bloqueia o BUILD do fluxo ver
 | `docs/product/founder-pilot-execution.md` | Manual operacional dos sócios (14 dias) |
 | `docs/product/pilot-day-1-checklist.md` | Checklist pré–dia 1 / Pilot Day 1 Ready |
 | `docs/adr/0009-google-places-lead-ingestion.md` | Direção: Places → generator → CRM (proposed) |
+| `docs/adr/0010-lead-intelligence-pipeline.md` | Score + diagnóstico + pitch (proposed; humano no contato) |
 | `docs/founding/roles-and-governance.md` | Sociedade vs sistema |
 | `.cursor/rules/` | Convenções de engenharia |
 | Código em `src/` e `prisma/` | Implementação |
