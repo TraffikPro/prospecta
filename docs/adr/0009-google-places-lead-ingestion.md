@@ -1,9 +1,9 @@
 # ADR 0009 — Google Places lead ingestion (Prospecta as source of truth)
 
-- **Status:** proposed
+- **Status:** accepted
 - **Data:** 2026-07-23
 - **Relacionado:** [0002-pipeline-lead-activity-v1.md](./0002-pipeline-lead-activity-v1.md), [0006-lead-foundation-v1.md](./0006-lead-foundation-v1.md), [0010-lead-intelligence-pipeline.md](./0010-lead-intelligence-pipeline.md), [../product/founder-pilot.md](../product/founder-pilot.md)
-- **Product Decision:** VALIDATE (contrato/ADR agora; implementação de código **não** autorizada até BUILD explícito da fatia)
+- **Product Decision:** **BUILD** — Fatia 1: contrato de ingestão no Prospecta (`source`, `externalId`, `intelligence`, `POST /api/internal/leads`). Generator = fatia seguinte.
 
 ## Contexto
 

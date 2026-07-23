@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   createLeadFormSchema,
+  ingestExternalLeadSchema,
   moveLeadStageFormSchema,
 } from "./lead.schema";
 import {
@@ -82,5 +83,32 @@ describe("stage-change payload", () => {
       formatStageChangeSummary(body),
       "Contatado → Reunião",
     );
+  });
+});
+
+describe("ingestExternalLeadSchema", () => {
+  it("requires externalId for GOOGLE_PLACES", () => {
+    const result = ingestExternalLeadSchema.safeParse({
+      companyName: "Clínica",
+      phone: "13999999999",
+      source: "GOOGLE_PLACES",
+    });
+    assert.equal(result.success, false);
+  });
+
+  it("accepts qualified Places payload", () => {
+    const parsed = ingestExternalLeadSchema.parse({
+      companyName: "Clínica",
+      phone: "13999999999",
+      source: "GOOGLE_PLACES",
+      externalId: "ChIJxxx",
+      intelligence: {
+        score: 90,
+        signals: ["NO_WEBSITE"],
+        pitch: "Abordar com presença digital",
+      },
+    });
+    assert.equal(parsed.externalId, "ChIJxxx");
+    assert.equal(parsed.intelligence?.score, 90);
   });
 });

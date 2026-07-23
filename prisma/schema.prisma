@@ -25,6 +25,13 @@ enum LeadStage {
   LOST
 }
 
+enum LeadSource {
+  MANUAL
+  GOOGLE_PLACES
+  REFERRAL
+  IMPORT
+}
+
 enum ActivityType {
   WHATSAPP
   EMAIL
@@ -77,6 +84,9 @@ model Lead {
   phone          String?
   website        String?
   notes          String?
+  source         LeadSource @default(MANUAL)
+  externalId     String?
+  intelligence   Json?
   stage          LeadStage  @default(NEW)
   nextFollowUpAt DateTime?
   lostReason     String?
@@ -87,11 +97,13 @@ model Lead {
   updatedAt      DateTime   @updatedAt
   activities     Activity[]
 
+  @@unique([source, externalId])
   @@index([stage])
   @@index([ownerId])
   @@index([nextFollowUpAt])
   @@index([email])
   @@index([phone])
+  @@index([source])
 }
 
 model Activity {

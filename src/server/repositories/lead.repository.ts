@@ -1,4 +1,9 @@
-import type { Lead, LeadStage, Prisma } from "@prisma/client";
+import type {
+  Lead,
+  LeadSource,
+  LeadStage,
+  Prisma,
+} from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export type LeadWithOwner = Lead & {
@@ -15,6 +20,10 @@ export type CreateLeadData = {
   email?: string | null;
   phone?: string | null;
   website?: string | null;
+  notes?: string | null;
+  source?: LeadSource;
+  externalId?: string | null;
+  intelligence?: Prisma.InputJsonValue | null;
   stage: LeadStage;
   ownerId: string;
 };
@@ -45,6 +54,20 @@ export async function findDuplicate(
   });
 }
 
+export async function findLeadBySourceExternalId(
+  source: LeadSource,
+  externalId: string,
+): Promise<Lead | null> {
+  return prisma.lead.findUnique({
+    where: {
+      source_externalId: {
+        source,
+        externalId,
+      },
+    },
+  });
+}
+
 export async function createLead(data: CreateLeadData): Promise<Lead> {
   return prisma.lead.create({
     data: {
@@ -53,6 +76,10 @@ export async function createLead(data: CreateLeadData): Promise<Lead> {
       email: data.email || null,
       phone: data.phone || null,
       website: data.website || null,
+      notes: data.notes || null,
+      source: data.source ?? "MANUAL",
+      externalId: data.externalId || null,
+      intelligence: data.intelligence ?? undefined,
       stage: data.stage,
       ownerId: data.ownerId,
     },

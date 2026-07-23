@@ -79,6 +79,12 @@ export default async function LeadDetailPage({ params }: PageProps) {
           <dd className="font-medium">{lead.website || "—"}</dd>
         </div>
         <div>
+          <dt className="text-neutral-500">Origem</dt>
+          <dd className="font-medium" data-testid="lead-source">
+            {lead.source}
+          </dd>
+        </div>
+        <div>
           <dt className="text-neutral-500">Owner</dt>
           <dd className="font-medium">
             {lead.owner.name} ({lead.owner.email})
@@ -91,6 +97,17 @@ export default async function LeadDetailPage({ params }: PageProps) {
           </dd>
         </div>
       </dl>
+
+      {lead.notes ? (
+        <section className="space-y-2" aria-labelledby="notes-heading">
+          <h2 id="notes-heading" className="text-base font-semibold">
+            Diagnóstico / notas
+          </h2>
+          <p className="whitespace-pre-wrap text-sm text-neutral-800">
+            {lead.notes}
+          </p>
+        </section>
+      ) : null}
 
       <section className="space-y-3" aria-labelledby="history-heading">
         <h2 id="history-heading" className="text-base font-semibold">

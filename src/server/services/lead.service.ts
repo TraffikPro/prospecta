@@ -1,4 +1,4 @@
-import type { LeadStage } from "@prisma/client";
+import type { LeadStage, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
   LeadDuplicateError,
@@ -7,6 +7,7 @@ import {
 import { LEAD_STAGE_ORDER } from "@/features/leads/lead.labels";
 import {
   createLeadFormSchema,
+  ingestExternalLeadSchema,
   moveLeadStageFormSchema,
 } from "@/features/leads/lead.schema";
 import {
@@ -20,6 +21,7 @@ import {
   createLead as createLeadRecord,
   findDuplicate,
   findLeadById,
+  findLeadBySourceExternalId,
   listLeads,
   type LeadWithOwner,
 } from "@/server/repositories/lead.repository";
@@ -191,4 +193,126 @@ export async function moveLeadStage(
       activityId: activity.id,
     };
   });
+}
+
+export type IngestExternalLeadResult = {
+  id: string;
+  created: boolean;
+  stage: LeadStage;
+};
+
+function buildNotesFromIntelligence(
+  notes: string | undefined,
+  intelligence:
+    | {
+        summary?: string;
+        pitch?: string;
+        score?: number;
+      }
+    | undefined,
+): string | null {
+  if (notes?.trim()) {
+    return notes.trim();
+  }
+  if (!intelligence) {
+    return null;
+  }
+  const parts: string[] = [];
+  if (typeof intelligence.score === "number") {
+    parts.push(`Score: ${intelligence.score}/100`);
+  }
+  if (intelligence.summary) {
+    parts.push(intelligence.summary);
+  }
+  if (intelligence.pitch) {
+    parts.push(`Pitch: ${intelligence.pitch}`);
+  }
+  return parts.length > 0 ? parts.join("\n") : null;
+}
+
+async function resolveIngestOwnerId(ownerEmail?: string): Promise<string> {
+  const email =
+    ownerEmail?.trim().toLowerCase() ||
+    process.env.LEAD_INGEST_DEFAULT_OWNER_EMAIL?.trim().toLowerCase();
+
+  if (!email) {
+    throw new LeadValidationError(
+      "ownerEmail ou LEAD_INGEST_DEFAULT_OWNER_EMAIL é obrigatório",
+    );
+  }
+
+  const owner = await prisma.user.findFirst({
+    where: { email, isActive: true },
+    select: { id: true },
+  });
+  if (!owner) {
+    throw new LeadValidationError("Owner inválido ou inativo");
+  }
+  return owner.id;
+}
+
+export async function ingestExternalLead(
+  input: unknown,
+): Promise<IngestExternalLeadResult> {
+  const parsed = ingestExternalLeadSchema.safeParse(input);
+  if (!parsed.success) {
+    throw new LeadValidationError(
+      parsed.error.issues[0]?.message ?? "Payload de ingestão inválido",
+    );
+  }
+
+  const data = parsed.data;
+  const companyName = normalizeCompanyName(data.companyName);
+  const email = normalizeEmail(data.email);
+  const phone = normalizePhone(data.phone);
+  const contactName = data.contactName?.trim() || null;
+  const website =
+    data.website && data.website.trim() !== "" ? data.website.trim() : null;
+  const externalId = data.externalId?.trim() || null;
+  const notes = buildNotesFromIntelligence(data.notes, data.intelligence);
+  const intelligence = (data.intelligence ?? null) as Prisma.InputJsonValue | null;
+
+  if (externalId) {
+    const existingByExternal = await findLeadBySourceExternalId(
+      data.source,
+      externalId,
+    );
+    if (existingByExternal) {
+      return {
+        id: existingByExternal.id,
+        created: false,
+        stage: existingByExternal.stage,
+      };
+    }
+  }
+
+  const duplicate = await findDuplicate({
+    emailNormalized: email,
+    phoneNormalized: phone,
+  });
+  if (duplicate) {
+    throw new LeadDuplicateError(duplicate.id);
+  }
+
+  const ownerId = await resolveIngestOwnerId(data.ownerEmail);
+
+  const lead = await createLeadRecord({
+    companyName,
+    contactName,
+    email,
+    phone,
+    website,
+    notes,
+    source: data.source,
+    externalId,
+    intelligence,
+    stage: "NEW",
+    ownerId,
+  });
+
+  return {
+    id: lead.id,
+    created: true,
+    stage: lead.stage,
+  };
 }
