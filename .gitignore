@@ -5,9 +5,12 @@ node_modules/
 # next
 .next/
 out/
-# env / secrets
+# env / secrets (.env.example stays versioned)
 .env
 .env.local
+.env.development
+.env.test
+.env.production
 .env.*.local
 # Cursor MCP local (may reference secrets; use mcp.example.json in git)
 .cursor/mcp.json
@@ -38,3 +41,6 @@ prisma/*.db-journal
 .playwright-mcp/
 # playwright mcp
 # node
+
+# Vercel CLI local link (no secrets; still machine-local)
+.vercel
