@@ -1,18 +1,11 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import { login } from "./helpers";
 
 const adminEmail = process.env.E2E_ADMIN_EMAIL ?? "admin@prospecta.test";
 const adminPassword = process.env.E2E_ADMIN_PASSWORD ?? "AdminTest123!";
 const memberEmail =
   process.env.E2E_MEMBER_EMAIL ?? "comercial@prospecta.test";
 const memberPassword = process.env.E2E_MEMBER_PASSWORD ?? "MemberTest123!";
-
-async function login(page: Page, email: string, password: string) {
-  await page.goto("/login");
-  await page.getByLabel("E-mail").fill(email);
-  await page.getByLabel("Senha").fill(password);
-  await page.getByRole("button", { name: "Entrar" }).click();
-  await page.waitForURL("**/app");
-}
 
 test.describe("auth + ACL", () => {
   test("anonymous user is redirected to login", async ({ page }) => {

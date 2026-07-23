@@ -12,19 +12,28 @@ export default async function AppHomePage() {
     <main className="space-y-4">
       <h1 className="text-xl font-semibold tracking-tight">Área autenticada</h1>
       <p className="text-sm text-neutral-600">
-        Sessão ativa para {user.email}. O fluxo vertical de leads vem na próxima
-        fatia.
+        Sessão ativa para {user.email}.
       </p>
-      {user.role === "ADMIN" ? (
-        <p className="text-sm">
+      <ul className="space-y-2 text-sm">
+        <li>
           <Link
-            href="/admin/users"
+            href="/app/leads"
             className="underline underline-offset-2 hover:text-neutral-950"
           >
-            Rota de prova ACL (ADMIN)
+            Leads
           </Link>
-        </p>
-      ) : null}
+        </li>
+        {user.role === "ADMIN" ? (
+          <li>
+            <Link
+              href="/admin/users"
+              className="underline underline-offset-2 hover:text-neutral-950"
+            >
+              Rota de prova ACL (ADMIN)
+            </Link>
+          </li>
+        ) : null}
+      </ul>
     </main>
   );
 }

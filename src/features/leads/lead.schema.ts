@@ -1,4 +1,9 @@
 import { z } from "zod";
+import {
+  isPhoneDigitCountValid,
+  normalizeEmail,
+  normalizePhone,
+} from "./lead.normalize";
 
 export const leadStageSchema = z.enum([
   "NEW",
@@ -9,6 +14,52 @@ export const leadStageSchema = z.enum([
   "LOST",
 ]);
 
+export const createLeadFormSchema = z
+  .object({
+    companyName: z.string().trim().min(1, "Empresa é obrigatória"),
+    contactName: z.string().trim().optional(),
+    email: z.string().trim().optional(),
+    phone: z.string().trim().optional(),
+    website: z
+      .string()
+      .trim()
+      .optional()
+      .refine(
+        (value) => !value || value === "" || z.string().url().safeParse(value).success,
+        "Website inválido",
+      ),
+  })
+  .superRefine((data, ctx) => {
+    const email = normalizeEmail(data.email);
+    const phone = normalizePhone(data.phone);
+
+    if (!email && !phone) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Informe e-mail ou telefone",
+        path: ["email"],
+      });
+      return;
+    }
+
+    if (email && !z.string().email().safeParse(email).success) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "E-mail inválido",
+        path: ["email"],
+      });
+    }
+
+    if (phone && !isPhoneDigitCountValid(phone)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Telefone deve ter ao menos 10 dígitos",
+        path: ["phone"],
+      });
+    }
+  });
+
+/** @deprecated Prefer createLeadFormSchema; kept for existing tests during transition */
 export const createLeadInputSchema = z
   .object({
     companyName: z.string().trim().min(1),
@@ -26,4 +77,5 @@ export const createLeadInputSchema = z
     path: ["email"],
   });
 
+export type CreateLeadFormInput = z.infer<typeof createLeadFormSchema>;
 export type CreateLeadInput = z.infer<typeof createLeadInputSchema>;

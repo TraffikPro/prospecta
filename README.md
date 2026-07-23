@@ -4,7 +4,7 @@ Plataforma **founder-led** de **prospecção B2B**: pipeline de leads, atividade
 
 ## Status
 
-Auth + ACL `ADMIN` | `MEMBER` ativos. Fluxo vertical de leads ainda não implementado.
+Auth + ACL e Lead Foundation ativos (lista/criação/detalhe). Activity, pipeline visual e handoff ainda não.
 
 | Doc | Uso |
 | --- | --- |
