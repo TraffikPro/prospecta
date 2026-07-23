@@ -123,7 +123,8 @@ Dashboard/analytics complexo, IA, sequências, LinkedIn automation, discador, Wh
 
 Janela: 2 semanas pós-deploy usável.  
 - Operação do app: [product/pilot-validation-plan.md](product/pilot-validation-plan.md)  
-- Piloto comercial (nicho, oferta de sites, aquisição manual): [product/founder-pilot.md](product/founder-pilot.md)
+- Piloto comercial (tese): [product/founder-pilot.md](product/founder-pilot.md)  
+- Execução do piloto (manual dos sócios): [product/founder-pilot-execution.md](product/founder-pilot-execution.md)
 
 ### Critérios de aceite do BUILD
 
@@ -158,7 +159,8 @@ Checklist societário segue **em paralelo** e não bloqueia o BUILD do fluxo ver
 | `docs/product.md` | Este documento (resumo normativo V1) |
 | `docs/product/product-decision-mvp-technical.md` | Grill + decisões detalhadas |
 | `docs/product/pilot-validation-plan.md` | Validação técnica/operacional do piloto |
-| `docs/product/founder-pilot.md` | Piloto comercial (nicho, oferta, aquisição manual) |
+| `docs/product/founder-pilot.md` | Piloto comercial (tese, métricas, DEFER Maps) |
+| `docs/product/founder-pilot-execution.md` | Manual operacional dos sócios (14 dias) |
 | `docs/founding/roles-and-governance.md` | Sociedade vs sistema |
 | `.cursor/rules/` | Convenções de engenharia |
 | Código em `src/` e `prisma/` | Implementação |

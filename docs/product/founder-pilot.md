@@ -1,8 +1,9 @@
 # Piloto fundador — Prospecta
 
-Documento operacional do piloto comercial após o MVP técnico (Auth → Lead → Activity → Pipeline).
+Documento da **tese e critérios** do piloto comercial após o MVP técnico (Auth → Lead → Activity → Pipeline).
 
-Complementa (não substitui) o plano técnico de validação: [pilot-validation-plan.md](pilot-validation-plan.md).
+Manual do dia a dia dos sócios: [founder-pilot-execution.md](founder-pilot-execution.md).  
+Validação técnica do app: [pilot-validation-plan.md](pilot-validation-plan.md).
 
 ## Posicionamento do piloto
 
