@@ -1,5 +1,9 @@
-import { HomeScaffoldNotice } from "@/features/shell/home-scaffold-notice";
+import { redirect } from "next/navigation";
+import { getSessionUser } from "@/server/auth/session";
 
-export default function Home() {
-  return <HomeScaffoldNotice />;
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const user = await getSessionUser();
+  redirect(user ? "/app" : "/login");
 }

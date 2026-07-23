@@ -20,13 +20,12 @@ criar a fundação executável sem implementar o CRM completo nem telas finais.
 
 ## Fora deste commit
 
-- Auth cookie / login
+- Auth cookie / login → ver [0005-auth-sessions-acl-v1.md](./0005-auth-sessions-acl-v1.md)
 - CRUD de leads, import CSV, handoff WhatsApp/e-mail
 - Telas de pipeline
 - CI GitHub Actions (pode vir na sequência)
-- Remote GitHub (ainda inexistente)
 
 ## Consequências
 
 - `pnpm prisma:migrate` exige `DATABASE_URL` real
-- Próxima fatia: auth + ACL `ADMIN`/`MEMBER` + primeiro fluxo vertical
+- Próxima fatia após auth: fluxo vertical de leads
