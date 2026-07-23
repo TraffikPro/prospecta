@@ -4,7 +4,7 @@ Plataforma **founder-led** de **prospecção B2B**: pipeline de leads, atividade
 
 ## Status
 
-Auth + ACL e Lead Foundation ativos (lista/criação/detalhe). Activity, pipeline visual e handoff ainda não.
+Auth + ACL, Lead Foundation e Activity Foundation ativos (histórico + próximo passo no lead). Handoff wa.me/mailto e pipeline visual ainda não.
 
 | Doc | Uso |
 | --- | --- |

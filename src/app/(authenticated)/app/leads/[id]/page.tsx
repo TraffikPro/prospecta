@@ -1,13 +1,23 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { ActivityTimeline } from "@/features/activities/activity-timeline";
+import { CreateActivityForm } from "@/features/activities/create-activity-form";
 import { AuthenticationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
+import { getActivitiesForLead } from "@/server/services/activity.service";
 import { getLeadById } from "@/server/services/lead.service";
 
 type PageProps = {
   params: Promise<{ id: string }>;
 };
+
+function formatDateTime(value: Date): string {
+  return new Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "short",
+    timeStyle: "short",
+  }).format(value);
+}
 
 export default async function LeadDetailPage({ params }: PageProps) {
   const sessionUser = await getSessionUser();
@@ -26,8 +36,10 @@ export default async function LeadDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const activities = await getActivitiesForLead(lead.id);
+
   return (
-    <main className="space-y-6">
+    <main className="space-y-8">
       <div className="space-y-1">
         <p className="text-sm">
           <Link href="/app/leads" className="underline underline-offset-2">
@@ -46,7 +58,9 @@ export default async function LeadDetailPage({ params }: PageProps) {
         </div>
         <div>
           <dt className="text-neutral-500">Stage</dt>
-          <dd className="font-medium">{lead.stage}</dd>
+          <dd className="font-medium" data-testid="lead-stage">
+            {lead.stage}
+          </dd>
         </div>
         <div>
           <dt className="text-neutral-500">E-mail</dt>
@@ -66,7 +80,30 @@ export default async function LeadDetailPage({ params }: PageProps) {
             {lead.owner.name} ({lead.owner.email})
           </dd>
         </div>
+        <div>
+          <dt className="text-neutral-500">Próximo contato</dt>
+          <dd className="font-medium" data-testid="lead-next-follow-up">
+            {lead.nextFollowUpAt ? formatDateTime(lead.nextFollowUpAt) : "—"}
+          </dd>
+        </div>
       </dl>
+
+      <section className="space-y-3" aria-labelledby="history-heading">
+        <h2 id="history-heading" className="text-base font-semibold">
+          Histórico
+        </h2>
+        <ActivityTimeline
+          activities={activities}
+          nextFollowUpAt={lead.nextFollowUpAt}
+        />
+      </section>
+
+      <section aria-labelledby="register-activity-heading">
+        <CreateActivityForm
+          key={`activity-form-${activities.length}`}
+          leadId={lead.id}
+        />
+      </section>
     </main>
   );
 }

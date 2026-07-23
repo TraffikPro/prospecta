@@ -4,3 +4,7 @@ export {
   findLeadById,
   listLeads,
 } from "./lead.repository";
+export {
+  createActivity,
+  listActivitiesByLeadId,
+} from "./activity.repository";
