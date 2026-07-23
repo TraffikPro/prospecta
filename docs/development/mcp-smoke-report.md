@@ -1,51 +1,32 @@
 # MCP smoke report — Prospecta
 
-Última atualização: 2026-07-22 (gate pré-scaffold)
+Última atualização: 2026-07-23 (verify-mcps **na sessão Cursor**)
 
-## Gate da sessão atual
+## Gate
 
 | Check | Status |
 | --- | --- |
-| `.cursor/mcp.json` local | Presente (gitignored); `npx` → caminho absoluto NVM |
-| Correção `spawn npx ENOENT` | Aplicada: `/home/gustavo/.nvm/versions/node/v20.20.0/bin/npx` |
-| `GITHUB_PERSONAL_ACCESS_TOKEN` | Exportar de novo ao reabrir o Cursor pelo terminal |
-| Context7 / GitHub / Playwright na sessão | Aguardam **reinício completo** do Cursor |
-| Scaffold autorizado | **NÃO** — aguarda ponto verde + `verify-mcps` |
+| Context7 na sessão | **OK** (`project-0-prospecta-context7`) |
+| GitHub na sessão | **OK** auth (`project-0-prospecta-github`) |
+| Playwright na sessão | **OK** (`project-0-prospecta-playwright`) |
+| Figma na sessão | **OK** (`project-0-prospecta-figma`, autenticado) |
+| Scaffold técnico autorizado | **SIM** (Figma não bloqueia fundação) |
 
-Após o fix, reinicie com `pkill -f cursor` (se necessário) e `cursor .` a partir do repo.
-
-## Smoke prévio (pacotes oficiais fora da sessão Cursor)
+## verify-mcps (sessão)
 
 | MCP | Status | Evidência |
 | --- | --- | --- |
-| Context7 | OK (stdio) | `/prisma/prisma` + docs Next/HMR |
-| GitHub | PARCIAL (Docker) | Auth OK; remote Prospecta inexistente |
-| Playwright | OK (boot + HTML) | 24 tools; `mcp-smoke.html` inspecionada |
-| Figma | Pendente | Não bloqueia scaffold técnico |
+| Context7 | **OK** | `resolve-library-id` → `/prisma/prisma`; `query-docs` retornou padrão singleton Prisma + Next.js HMR |
+| GitHub | **PARCIAL** | `get_me` → `gustavomarques00`; `search_repositories` prospecta = 0 (sem remote) |
+| Playwright | **OK** | Abriu `http://127.0.0.1:8765/mcp-smoke.html`; título **Prospecta MCP Smoke**; snapshot com `main`, `navigation`, regions |
+| Figma | **OK** | `whoami` → Gustavo Marques (não bloqueia scaffold) |
 
 ## Git local
 
 - Branch: `main`
-- Commits esperados no remote futuro: `1008f80`, `b025c7b` (+ commits seguintes)
-- Remotes: nenhum
+- Commits: `1008f80`, `b025c7b`, `7b57c86`
+- Remotes: nenhum — resolver antes do primeiro push/PR
 
-## O que fazer no reload
+## Próximo
 
-1. No **mesmo terminal** onde o token foi exportado:
-
-```bash
-export GITHUB_PERSONAL_ACCESS_TOKEN="$(gh auth token)"
-cd /home/gustavo/Documentos/prospecta
-cursor .   # ou reabra o projeto a partir deste ambiente
-```
-
-> Se o Cursor for aberto pelo menu gráfico, ele pode **não** herdar o `export`. Nesse caso, cole o token só no `.cursor/mcp.json` local (gitignored) ou configure o env em Settings → MCP → GitHub.
-
-2. Settings → MCP → Context7, GitHub, Playwright com **ponto verde**.
-3. Nesta conversa (ou nova), pedir: executar `verify-mcps`.
-4. Atualizar este report com o resultado **na sessão**.
-5. Só então: scaffold técnico (sem telas finais / sem CRM completo).
-
-## Figma
-
-Pendente. Não bloqueia Next/Prisma/auth/schema/CI. Conectar antes das telas definitivas.
+Scaffold técnico (Next.js + TS + pnpm + Prisma + lint/typecheck + schema inicial), **sem** telas finais de CRM.
