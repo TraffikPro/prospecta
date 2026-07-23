@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
   LeadDuplicateError,
@@ -8,7 +9,10 @@ import {
 import { AuthenticationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
-import { createLeadForOwner } from "@/server/services/lead.service";
+import {
+  createLeadForOwner,
+  moveLeadStage,
+} from "@/server/services/lead.service";
 
 export type CreateLeadState = {
   error?: string;
@@ -67,4 +71,46 @@ export async function createLeadAction(
   }
 
   redirect(`/app/leads/${createdId}`);
+}
+
+export type MoveLeadStageState = {
+  error?: string;
+  ok?: boolean;
+};
+
+export async function moveLeadStageAction(
+  _prev: MoveLeadStageState,
+  formData: FormData,
+): Promise<MoveLeadStageState> {
+  const sessionUser = await getSessionUser();
+
+  try {
+    requireAnyRole(sessionUser, ["ADMIN", "MEMBER"]);
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      redirect("/login");
+    }
+    throw error;
+  }
+
+  const user = sessionUser!;
+  const leadId = formString(formData, "leadId");
+
+  try {
+    await moveLeadStage({
+      leadId,
+      actorId: user.id,
+      stage: formString(formData, "stage"),
+      lostReason: formString(formData, "lostReason") || undefined,
+    });
+  } catch (error) {
+    if (error instanceof LeadValidationError) {
+      return { error: error.message };
+    }
+    throw error;
+  }
+
+  revalidatePath(`/app/leads/${leadId}`);
+  revalidatePath("/app/pipeline");
+  redirect(`/app/leads/${leadId}`);
 }

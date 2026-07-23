@@ -2,6 +2,7 @@ import {
   activityOutcomeLabels,
   activityTypeLabels,
 } from "@/features/activities/activity.labels";
+import { formatStageChangeSummary } from "@/features/leads/stage-change";
 import type { ActivityWithAuthor } from "@/server/repositories/activity.repository";
 
 function formatDateTime(value: Date): string {
@@ -51,7 +52,9 @@ export function ActivityTimeline({ activities, nextFollowUpAt }: Props) {
             ) : null}
             {activity.body ? (
               <p className="mt-2 whitespace-pre-wrap text-neutral-800">
-                {activity.body}
+                {activity.type === "STAGE_CHANGE"
+                  ? formatStageChangeSummary(activity.body)
+                  : activity.body}
               </p>
             ) : null}
           </li>

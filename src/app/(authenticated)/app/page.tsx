@@ -23,6 +23,14 @@ export default async function AppHomePage() {
             Leads
           </Link>
         </li>
+        <li>
+          <Link
+            href="/app/pipeline"
+            className="underline underline-offset-2 hover:text-neutral-950"
+          >
+            Pipeline
+          </Link>
+        </li>
         {user.role === "ADMIN" ? (
           <li>
             <Link

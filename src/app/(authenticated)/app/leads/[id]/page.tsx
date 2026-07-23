@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ActivityTimeline } from "@/features/activities/activity-timeline";
 import { CreateActivityForm } from "@/features/activities/create-activity-form";
+import { MoveStageForm } from "@/features/leads/move-stage-form";
 import { AuthenticationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
@@ -41,9 +42,12 @@ export default async function LeadDetailPage({ params }: PageProps) {
   return (
     <main className="space-y-8">
       <div className="space-y-1">
-        <p className="text-sm">
+        <p className="flex flex-wrap gap-3 text-sm">
           <Link href="/app/leads" className="underline underline-offset-2">
             ← Leads
+          </Link>
+          <Link href="/app/pipeline" className="underline underline-offset-2">
+            Pipeline
           </Link>
         </p>
         <h1 className="text-xl font-semibold tracking-tight">
@@ -96,6 +100,10 @@ export default async function LeadDetailPage({ params }: PageProps) {
           activities={activities}
           nextFollowUpAt={lead.nextFollowUpAt}
         />
+      </section>
+
+      <section aria-labelledby="move-stage-heading">
+        <MoveStageForm leadId={lead.id} currentStage={lead.stage} />
       </section>
 
       <section aria-labelledby="register-activity-heading">

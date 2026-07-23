@@ -77,5 +77,24 @@ export const createLeadInputSchema = z
     path: ["email"],
   });
 
+export const moveLeadStageFormSchema = z
+  .object({
+    leadId: z.string().min(1),
+    stage: leadStageSchema,
+    lostReason: z.string().trim().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.stage === "LOST") {
+      if (!data.lostReason || data.lostReason.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Motivo é obrigatório ao marcar como perdido",
+          path: ["lostReason"],
+        });
+      }
+    }
+  });
+
 export type CreateLeadFormInput = z.infer<typeof createLeadFormSchema>;
 export type CreateLeadInput = z.infer<typeof createLeadInputSchema>;
+export type MoveLeadStageFormInput = z.infer<typeof moveLeadStageFormSchema>;
