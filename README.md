@@ -4,7 +4,7 @@ Plataforma **founder-led** de **prospecção B2B**: pipeline de leads, atividade
 
 ## Status
 
-Auth, Lead, Activity e Pipeline Foundation ativos. Próximo foco: [piloto fundador](docs/product/founder-pilot.md) — [execução](docs/product/founder-pilot-execution.md). Handoff wa.me/mailto e Kanban ainda não.
+Auth, Lead, Activity e Pipeline Foundation ativos. Próximo foco: [piloto](docs/product/founder-pilot.md) — [execução](docs/product/founder-pilot-execution.md) — [checklist dia 1](docs/product/pilot-day-1-checklist.md). Handoff wa.me/mailto e Kanban ainda não.
 
 | Doc | Uso |
 | --- | --- |

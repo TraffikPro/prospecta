@@ -253,11 +253,18 @@ Ver [founder-pilot.md](founder-pilot.md).
 
 ## 9. Antes do dia 1 (checklist)
 
+Checklist completo e ordenado (deploy → usuários → backup → nicho → lista → script → ritual):
+
+→ [pilot-day-1-checklist.md](pilot-day-1-checklist.md)
+
+Resumo mínimo:
+
 - [ ] Nicho, região e hipótese preenchidos (seção 2)
 - [ ] Três sócios com login e papel certo (`ADMIN` / `MEMBER`)
+- [ ] Deploy em produção smoke-testado
 - [ ] Roteiro de primeiro contato alinhado (seção 5)
 - [ ] Combinado: zero lead fora do Prospecta
 - [ ] Data de início e fim definidas
 - [ ] Canal do check-in diário/semanal definido
 
-Quando a checklist estiver completa, **começar a prospecção real**. Até lá, não abrir feature nova.
+Quando [pilot-day-1-checklist.md](pilot-day-1-checklist.md) estiver completo → marco **Pilot Day 1 Ready**. Até lá, não abrir feature nova.
