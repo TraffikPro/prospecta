@@ -2,12 +2,9 @@
 
 Plataforma **founder-led** de **prospecção B2B**: pipeline de leads, atividades, follow-ups e handoff para WhatsApp (`wa.me`) + e-mail (`mailto`/template).
 
-Desenvolvida e validada pelo time fundador (3 sócios) em processo real de prospecção.
-
 ## Status
 
-Fundação documental + workflow MCP prontos; MVP técnico com decisão **BUILD**.  
-App ainda não scaffoldado — próximo passo após MCP verde no Cursor: scaffold + fluxo vertical.
+Scaffold técnico ativo (Next.js 16 + Prisma 6). Fluxo vertical e telas finais ainda não implementados.
 
 | Doc | Uso |
 | --- | --- |
@@ -17,49 +14,45 @@ App ainda não scaffoldado — próximo passo após MCP verde no Cursor: scaffol
 | [`docs/product/pilot-validation-plan.md`](docs/product/pilot-validation-plan.md) | Validação founder-led |
 | [`docs/development/mcp-setup.md`](docs/development/mcp-setup.md) | MCPs (Context7, GitHub, Playwright, Figma) |
 
-## Time fundador
+## Stack
 
-```text
-- 1 sócio responsável por produto e tecnologia (ADMIN no app V1)
-- 2 sócios responsáveis pela validação comercial e operação (MEMBER no app V1)
-```
-
-Sociedade: os três são `PARTNER`. Isso **não** iguala permissões técnicas.
-
-## Stack alvo (V1)
-
-- Next.js (App Router) fullstack
+- Next.js (App Router) + TypeScript + Tailwind
 - Prisma + PostgreSQL
-- Auth com roles `ADMIN` | `MEMBER`
-- Deploy previsto: Vercel (ou equivalente)
-- Package manager: `pnpm`
+- pnpm
+- Auth `ADMIN` \| `MEMBER` (próxima fatia)
 
-## Fora da V1
-
-LinkedIn automation, discador, WhatsApp Business API, sequências AI, enrichment pago obrigatório, multi-tenant SaaS, billing, papel `OWNER`.
-
-## Operação no Cursor
-
-Ver [`.cursor/README.md`](.cursor/README.md) e [`.cursor/AGENTS.md`](.cursor/AGENTS.md).
-
-Fluxo típico de feature:
-
-1. `product-grill` → só **BUILD** segue
-2. `commands/plan-feature.md`
-3. implementação + validação
-4. PR com `## Product Decision`
-
-## Setup (quando o app existir)
+## Setup
 
 ```bash
 pnpm install
 cp .env.example .env
+# preencha DATABASE_URL com Postgres local ou gerenciado
 pnpm prisma:migrate
 pnpm dev
 ```
 
-Variáveis: ver `.env.example`.
+Scripts: `pnpm lint` · `pnpm typecheck` · `pnpm test` · `pnpm build`
+
+## Estrutura
+
+```text
+src/
+  app/                 # rotas App Router
+  features/            # UI + schemas por domínio
+  lib/                 # prisma, env, utilitários
+  server/
+    actions/
+    services/
+    repositories/
+prisma/
+  schema.prisma
+  migrations/
+```
+
+## Operação no Cursor
+
+Ver [`.cursor/README.md`](.cursor/README.md). MCPs: Context7 antes de APIs versionadas.
 
 ## Licença
 
-Privado — uso do time fundador (titularidade a registrar em `docs/founding/`).
+Privado — uso do time fundador.
