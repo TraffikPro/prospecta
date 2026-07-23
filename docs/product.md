@@ -121,7 +121,9 @@ Dashboard/analytics complexo, IA, sequências, LinkedIn automation, discador, Wh
 - `MEETING` e `WON`  
 - Feedback de usabilidade dos `MEMBER`  
 
-Janela: 2 semanas pós-deploy usável. Detalhe: [product/pilot-validation-plan.md](product/pilot-validation-plan.md).
+Janela: 2 semanas pós-deploy usável.  
+- Operação do app: [product/pilot-validation-plan.md](product/pilot-validation-plan.md)  
+- Piloto comercial (nicho, oferta de sites, aquisição manual): [product/founder-pilot.md](product/founder-pilot.md)
 
 ### Critérios de aceite do BUILD
 
@@ -140,11 +142,12 @@ Cumpridos na [decisão do MVP](product/product-decision-mvp-technical.md) (fluxo
 ## Estágio atual
 
 ```text
-product-grill MVP técnico = BUILD
-→ fundação documental commitada
-→ scaffold + fluxo vertical
-→ piloto founder-led (3 sócios)
+FASE 0–5 — MVP técnico (Auth → Lead → Activity → Pipeline) = feito
+→ FASE 6 — piloto fundador (14 dias; aquisição manual; oferta de sites)
+→ automação Maps / Places API = DEFER até evidência do piloto
 ```
+
+Detalhe do piloto comercial: [product/founder-pilot.md](product/founder-pilot.md).
 
 Checklist societário segue **em paralelo** e não bloqueia o BUILD do fluxo vertical.
 
@@ -154,7 +157,8 @@ Checklist societário segue **em paralelo** e não bloqueia o BUILD do fluxo ver
 | --- | --- |
 | `docs/product.md` | Este documento (resumo normativo V1) |
 | `docs/product/product-decision-mvp-technical.md` | Grill + decisões detalhadas |
-| `docs/product/pilot-validation-plan.md` | Validação do piloto |
+| `docs/product/pilot-validation-plan.md` | Validação técnica/operacional do piloto |
+| `docs/product/founder-pilot.md` | Piloto comercial (nicho, oferta, aquisição manual) |
 | `docs/founding/roles-and-governance.md` | Sociedade vs sistema |
 | `.cursor/rules/` | Convenções de engenharia |
 | Código em `src/` e `prisma/` | Implementação |

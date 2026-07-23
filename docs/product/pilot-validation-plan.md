@@ -1,5 +1,7 @@
 # Plano de validação do piloto — Prospecta
 
+Plano **técnico/operacional** do fluxo no app. Para objetivo comercial (venda de sites), nicho, qualificação e DEFER do Maps, ver [founder-pilot.md](founder-pilot.md).
+
 ## Contexto
 
 Produto **founder-led**: três sócios operam prospecção real no Prospecta.
