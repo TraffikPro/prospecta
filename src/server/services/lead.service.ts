@@ -23,7 +23,11 @@ import {
   type IntelligenceInboxFilters,
   type IntelligenceInboxLead,
 } from "@/features/leads/intelligence/inbox";
-import { buildMyQueue, type MyQueueView } from "@/features/leads/my-queue";
+import {
+  buildMyQueue,
+  type MyQueueFilter,
+  type MyQueueView,
+} from "@/features/leads/my-queue";
 import {
   createLead as createLeadRecord,
   findDuplicate,
@@ -107,11 +111,17 @@ export async function getLeads(): Promise<LeadWithOwner[]> {
   return listLeads();
 }
 
+/**
+ * Operational queue for one owner.
+ * Loads owned active leads once, then applies filter/sort on the server
+ * (derived buckets need Activity + nextFollowUpAt — not a pure Prisma WHERE).
+ */
 export async function getMyQueueForOwner(
   ownerId: string,
+  filter?: MyQueueFilter,
 ): Promise<MyQueueView> {
   const leads = await listLeadsForOwnerQueue(ownerId);
-  return buildMyQueue(leads);
+  return buildMyQueue(leads, { filter });
 }
 
 export type IntelligenceInboxResult = {

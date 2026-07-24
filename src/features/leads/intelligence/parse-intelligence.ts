@@ -58,6 +58,7 @@ export function parseLeadIntelligence(raw: unknown): LeadIntelligence | null {
 
   const score = parseScore(record.score);
   const qualification = parseQualification(record.qualification);
+  const campaign = parseText(record.campaign, 120);
   const signals = parseSignals(record.signals);
   // Prefer diagnostic; accept legacy `summary`.
   const diagnostic =
@@ -67,6 +68,7 @@ export function parseLeadIntelligence(raw: unknown): LeadIntelligence | null {
   const hasContent =
     typeof score === "number" ||
     Boolean(qualification) ||
+    Boolean(campaign) ||
     signals.length > 0 ||
     Boolean(diagnostic) ||
     Boolean(pitch);
@@ -78,6 +80,7 @@ export function parseLeadIntelligence(raw: unknown): LeadIntelligence | null {
   return {
     score,
     qualification,
+    campaign,
     signals,
     diagnostic,
     pitch,

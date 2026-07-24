@@ -132,7 +132,10 @@ export default async function LeadDetailPage({ params }: PageProps) {
         <MoveStageForm leadId={lead.id} currentStage={lead.stage} />
       </section>
 
-      <section aria-labelledby="register-activity-heading">
+      <section
+        id="register-activity"
+        aria-labelledby="register-activity-heading"
+      >
         <CreateActivityForm
           key={`activity-form-${activities.length}`}
           leadId={lead.id}

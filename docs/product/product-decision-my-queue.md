@@ -39,3 +39,7 @@ Fila operacional ↓ tempo até primeira Activity e ↑ % dos 5 leads com Activi
 ## Métrica
 
 Tempo até primeira Activity; % do lote Santos com Activity.
+
+## Evolução
+
+Ver [product-decision-operational-queue-v1.md](product-decision-operational-queue-v1.md) (filtros, ordenação, CTA).
