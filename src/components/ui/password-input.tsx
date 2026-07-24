@@ -121,7 +121,6 @@ const VisibilityTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(
   function VisibilityTrigger(props, ref) {
     return (
       <IconButton
-        tabIndex={-1}
         ref={ref}
         me="-2"
         aspectRatio="square"
@@ -129,6 +128,7 @@ const VisibilityTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(
         variant="ghost"
         height="calc(100% - {spacing.2})"
         aria-label="Alternar visibilidade"
+        type="button"
         {...props}
       />
     );

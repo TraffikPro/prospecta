@@ -29,7 +29,11 @@ function InfoValue({
   testId?: string;
 }) {
   return (
-    <DataList.ItemValue fontWeight="medium" data-testid={testId}>
+    <DataList.ItemValue
+      fontWeight="medium"
+      overflowWrap="anywhere"
+      data-testid={testId}
+    >
       {children}
     </DataList.ItemValue>
   );
