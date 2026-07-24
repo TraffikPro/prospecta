@@ -46,3 +46,7 @@ backup/
 
 # Vercel CLI local link (no secrets; still machine-local)
 .vercel
+
+# Hygiene dry-run reports (may contain lead PII)
+hygiene-e2e-leads-report-*.json
+.env.production.local.dryrun

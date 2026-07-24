@@ -1,6 +1,8 @@
 import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
 
+import { assertSafeForMutableTestsOrThrow } from "../../src/lib/safety/production-mutation-guard";
+
 loadEnvConfig(process.cwd());
 
 type CreateIntelligenceLeadInput = {
@@ -20,6 +22,13 @@ type CreateIntelligenceLeadInput = {
 export async function createIntelligenceLead(
   input: CreateIntelligenceLeadInput,
 ): Promise<{ id: string }> {
+  assertSafeForMutableTestsOrThrow({
+    databaseUrl: process.env.DATABASE_URL,
+    appUrl:
+      process.env.PLAYWRIGHT_BASE_URL || process.env.NEXT_PUBLIC_APP_URL,
+    breakGlass: process.env.PROSPECTA_ALLOW_PROD_DB_MUTATION,
+  });
+
   const prisma = new PrismaClient();
   try {
     const email = input.ownerEmail.trim().toLowerCase();
