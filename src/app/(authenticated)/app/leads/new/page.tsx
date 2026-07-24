@@ -1,4 +1,6 @@
+import { Heading, Stack } from "@chakra-ui/react";
 import { redirect } from "next/navigation";
+
 import { CreateLeadForm } from "@/features/leads/create-lead-form";
 import { AuthenticationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
@@ -16,9 +18,11 @@ export default async function NewLeadPage() {
   }
 
   return (
-    <main className="space-y-6">
-      <h1 className="text-xl font-semibold tracking-tight">Novo lead</h1>
+    <Stack as="main" gap="6">
+      <Heading as="h1" size="lg">
+        Novo lead
+      </Heading>
       <CreateLeadForm />
-    </main>
+    </Stack>
   );
 }

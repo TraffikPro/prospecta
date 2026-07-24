@@ -23,7 +23,10 @@ test.describe("lead foundation", () => {
     await page.waitForURL(/\/app\/leads\/.+/);
     await expect(page.getByRole("heading", { name: company })).toBeVisible();
     await expect(page.getByText(email)).toBeVisible();
-    await expect(page.getByText("NEW")).toBeVisible();
+    await expect(page.getByTestId("lead-stage")).toHaveAttribute(
+      "data-stage",
+      "NEW",
+    );
   });
 
   test("duplicate email shows DUPLICATE_LEAD error", async ({ page }) => {

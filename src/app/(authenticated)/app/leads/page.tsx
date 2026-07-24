@@ -1,5 +1,9 @@
-import Link from "next/link";
+import { Heading, HStack, Stack, Text } from "@chakra-ui/react";
+import NextLink from "next/link";
 import { redirect } from "next/navigation";
+
+import { Button } from "@/components/ui/button";
+import { LeadTable } from "@/features/leads/components/lead-table";
 import { AuthenticationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
@@ -19,36 +23,30 @@ export default async function LeadsPage() {
   const leads = await getLeads();
 
   return (
-    <main className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-xl font-semibold tracking-tight">Leads</h1>
-        <Link
-          href="/app/leads/new"
-          className="rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white"
-        >
-          + Novo Lead
-        </Link>
-      </div>
+    <Stack as="main" gap="6">
+      <HStack justify="space-between" align="center" gap="4">
+        <Heading as="h1" size="lg">
+          Leads
+        </Heading>
+        <Button asChild size="sm">
+          <NextLink href="/app/leads/new">+ Novo Lead</NextLink>
+        </Button>
+      </HStack>
 
       {leads.length === 0 ? (
-        <p className="text-sm text-neutral-600">Nenhum lead cadastrado</p>
+        <Text fontSize="sm" color="fg.muted">
+          Nenhum lead cadastrado
+        </Text>
       ) : (
-        <ul className="divide-y divide-neutral-200 rounded-md border border-neutral-200 bg-white">
-          {leads.map((lead) => (
-            <li key={lead.id}>
-              <Link
-                href={`/app/leads/${lead.id}`}
-                className="flex items-center justify-between gap-3 px-4 py-3 text-sm hover:bg-neutral-50"
-              >
-                <span className="font-medium text-neutral-900">
-                  {lead.companyName}
-                </span>
-                <span className="text-neutral-500">{lead.stage}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <LeadTable
+          leads={leads.map((lead) => ({
+            id: lead.id,
+            companyName: lead.companyName,
+            stage: lead.stage,
+            source: lead.source,
+          }))}
+        />
       )}
-    </main>
+    </Stack>
   );
 }

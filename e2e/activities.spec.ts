@@ -21,7 +21,10 @@ test.describe("activity foundation", () => {
     await page.getByRole("button", { name: "Salvar lead" }).click();
     await page.waitForURL(/\/app\/leads\/.+/);
 
-    await expect(page.getByTestId("lead-stage")).toHaveText("NEW");
+    await expect(page.getByTestId("lead-stage")).toHaveAttribute(
+      "data-stage",
+      "NEW",
+    );
 
     await page.getByLabel("Tipo").selectOption("WHATSAPP");
     await page.getByLabel("Resultado").selectOption("INTERESTED");
@@ -30,7 +33,10 @@ test.describe("activity foundation", () => {
     await page.getByRole("button", { name: "Salvar atividade" }).click();
 
     await expect(page.getByText("Atividade registrada.")).toBeVisible();
-    await expect(page.getByTestId("lead-stage")).toHaveText("CONTACTED");
+    await expect(page.getByTestId("lead-stage")).toHaveAttribute(
+      "data-stage",
+      "CONTACTED",
+    );
     await expect(page.getByText("Falou com responsável financeiro")).toBeVisible();
     await expect(page.getByText("Resultado: Interessado")).toBeVisible();
     await expect(

@@ -16,7 +16,7 @@ Tailwind → 0 usos → remover deps/config
 | 0 | Foundation + Intelligence View + Inbox | Feito |
 | 1 | Login | Feito (esta fatia) |
 | 2 | Layout autenticado (nav, user, logout) | Feito (esta fatia) |
-| 3 | Leads lista / new / detail (shell Tailwind restante) | Pendente |
+| 3 | Leads lista / new / detail (+ stage/activity no detail) | Feito |
 | 4 | Pipeline | Pendente |
 | 5 | Activity (timeline + form) | Pendente |
 | 6 | Admin users | Pendente |
