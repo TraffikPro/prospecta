@@ -1,42 +1,35 @@
-# Chakra Interaction & Feedback v1 — Decision BUILD
+# Chakra Interaction & Feedback v1 — Decision BUILD → DONE
 
 - **Data:** 2026-07-24
-- **Decisão:** **BUILD** (não DONE — validação de fechamento pendente)
+- **Decisão:** **BUILD** → **DONE** (shipped + smoke focal confirmado)
 - **Classificação:** WORKSPACE
 - **Chakra:** `@chakra-ui/react` ^3.36.1
-- **PRs:** [#22](https://github.com/TraffikPro/prospecta/pull/22) (A), [#23](https://github.com/TraffikPro/prospecta/pull/23) (B), [#24](https://github.com/TraffikPro/prospecta/pull/24) (SkipNav fix)
-- **Produção:** `https://prospecta-ten-tau.vercel.app`
+- **PRs:** [#22](https://github.com/TraffikPro/prospecta/pull/22) (A), [#23](https://github.com/TraffikPro/prospecta/pull/23) (B), [#24](https://github.com/TraffikPro/prospecta/pull/24) (SkipNav fix), [#26](https://github.com/TraffikPro/prospecta/pull/26) (status BUILD)
+- **Produção:** `https://prospecta-ten-tau.vercel.app` (deploy `#24` em `d457f12`; tip atual inclui o fix)
+- **Smoke:** `scripts/smoke-skipnav-prod.mjs`
 
 ## Product Decision
 
 ```text
 Portfolio Comercial v1: DONE
-Chakra Interaction & Feedback v1: BUILD
+Chakra Interaction & Feedback v1: BUILD → DONE
   PR A — Interaction & Feedback (merged #22)
   PR B — Forms & Data Display (merged #23)
-  SkipNav target fix — merged #24 em main
-  Deploy e smoke focal — pendentes de confirmação
+  SkipNav target fix (merged #24)
+  Status realinhado para BUILD (#26) até smoke
+  Deploy #24 + smoke focal SkipNav — PASS
 ```
 
-## Estado atual (bloqueio de DONE)
+## Fechamento (2026-07-24)
 
 ```text
 PRs A e B mergeadas
-Correção SkipNav mergeada em main (#24)
-Deploy e smoke focal pendentes
+SkipNav #24 mergeada e em Production (d457f12)
+Smoke focal SkipNav desktop 1440×900 + mobile 390×844 — OVERALL PASS
+Login / navegação curta — PASS
 ```
 
-**Regra:** a documentação só marca **DONE** após merge relevante, deploy e smoke focal do SkipNav confirmados. Não afirmar validação que ainda não ocorreu.
-
-**Nota:** um doc anterior chegou a registrar `BUILD → DONE` (PR [#25](https://github.com/TraffikPro/prospecta/pull/25)) sem fechar esse critério; este documento corrige o status para **BUILD**.
-
-## Critério para DONE
-
-Quando o fechamento operacional estiver completo:
-
-1. Confirmar deploy da correção SkipNav em produção
-2. Smoke focal SkipNav (desktop + 390px): Tab → ativar SkipNav → foco em `#main-content` → próximo Tab no conteúdo
-3. Nova PR documental pequena: `BUILD → DONE`
+**Regra preservada:** DONE só após merge, deploy e smoke confirmados. O registro prematuro via [#25](https://github.com/TraffikPro/prospecta/pull/25) foi corrigido por [#26](https://github.com/TraffikPro/prospecta/pull/26) (`BUILD`); este documento fecha `BUILD → DONE` com evidência de smoke.
 
 ## PR A — Interaction & Feedback
 
@@ -63,14 +56,24 @@ Branch: `feat/chakra-forms-data-display-v1` → merged `#23` (`79a32a9`)
 Branch: `fix/skipnav-main-content-id` → merged `#24` (`d457f12` / `0430061`)
 
 - `SkipNavLink` e `SkipNavContent` alinhados em `#main-content`
-- Foco visível restaurado no `main`
+- Foco visível restaurado no `main` (`_focusVisible`)
+- Label do link: “Ir para o conteúdo”
 
-Código em `main`. **Deploy e smoke focal ainda não fecham DONE.**
+## Smoke produção (2026-07-24)
 
-## Smoke produção
+Script: `scripts/smoke-skipnav-prod.mjs` (somente UI; sem mutação de DB além do login).
 
-- Autenticado A+B: entregue nas PRs A/B (histórico operacional separado)
-- Focal SkipNav pós-`#24`: **pendente de confirmação** (desktop + 390px)
+| Check | Resultado |
+|--------|-----------|
+| Deploy Production contém `#24` (`d457f12`) | PASS |
+| Login / navegação curta (MEMBER → `/app`) | PASS |
+| Desktop `1440×900` — `href="#main-content"` | PASS |
+| Desktop — ativar SkipNav foca `#main-content` | PASS |
+| Desktop — foco visível no `main` | PASS |
+| Desktop — próximo `Tab` dentro do conteúdo principal | PASS |
+| Mobile `390×844` — mesmos critérios SkipNav | PASS |
+
+**OVERALL PASS** — suíte A+B completa não repetida; apenas smoke focal + login/navegação curta.
 
 ## Fora das entregas
 
