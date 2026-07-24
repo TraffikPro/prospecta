@@ -19,6 +19,8 @@ Execução diária: [founder-pilot-execution.md](founder-pilot-execution.md)
 - [ ] `DATABASE_URL` / `AUTH_SECRET` / seed passwords de produção configurados
 - [ ] Smoke pós-deploy:
   - [ ] login dos 3 sócios
+  - [ ] abrir `/app/intelligence` e ver oportunidades priorizadas (se houver leads com inteligência)
+  - [ ] abrir lead detail com Lead Intelligence (score / pitch)
   - [ ] criar lead
   - [ ] registrar Activity
   - [ ] mover stage no pipeline

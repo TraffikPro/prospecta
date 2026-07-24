@@ -19,6 +19,7 @@ Usar na V1:
 - `pnpm`
 - Deploy em Vercel (ou equivalente) + Postgres gerenciado
 - WhatsApp via link `wa.me` e e-mail via `mailto`/template (sem APIs de envio)
+- UI: Chakra UI v3 como padrão ([ADR 0011](./0011-ui-stack-keep-tailwind.md)); Tailwind legado até migração gradual
 
 ## Alternativas consideradas
 

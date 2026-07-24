@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ActivityTimeline } from "@/features/activities/activity-timeline";
 import { CreateActivityForm } from "@/features/activities/create-activity-form";
+import { IntelligenceCard } from "@/features/leads/components/intelligence";
+import { parseLeadIntelligence } from "@/features/leads/intelligence/parse-intelligence";
 import { MoveStageForm } from "@/features/leads/move-stage-form";
 import { AuthenticationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
@@ -38,6 +40,7 @@ export default async function LeadDetailPage({ params }: PageProps) {
   }
 
   const activities = await getActivitiesForLead(lead.id);
+  const intelligence = parseLeadIntelligence(lead.intelligence);
 
   return (
     <main className="space-y-8">
@@ -45,6 +48,12 @@ export default async function LeadDetailPage({ params }: PageProps) {
         <p className="flex flex-wrap gap-3 text-sm">
           <Link href="/app/leads" className="underline underline-offset-2">
             ← Leads
+          </Link>
+          <Link
+            href="/app/intelligence"
+            className="underline underline-offset-2"
+          >
+            Inteligência
           </Link>
           <Link href="/app/pipeline" className="underline underline-offset-2">
             Pipeline
@@ -98,10 +107,19 @@ export default async function LeadDetailPage({ params }: PageProps) {
         </div>
       </dl>
 
+      {intelligence ? (
+        <section aria-labelledby="intelligence-heading">
+          <h2 id="intelligence-heading" className="sr-only">
+            Lead Intelligence
+          </h2>
+          <IntelligenceCard intelligence={intelligence} />
+        </section>
+      ) : null}
+
       {lead.notes ? (
         <section className="space-y-2" aria-labelledby="notes-heading">
           <h2 id="notes-heading" className="text-base font-semibold">
-            Diagnóstico / notas
+            Notas
           </h2>
           <p className="whitespace-pre-wrap text-sm text-neutral-800">
             {lead.notes}

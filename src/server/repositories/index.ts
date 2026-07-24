@@ -3,6 +3,7 @@ export {
   findDuplicate,
   findLeadById,
   listLeads,
+  listLeadsWithIntelligence,
 } from "./lead.repository";
 export {
   createActivity,

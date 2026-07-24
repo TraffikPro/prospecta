@@ -39,3 +39,22 @@ Use o agente certo no prompt (“atue como Frontend Engineer…”) ou combine: 
 | Product grill | [`skills/product-grill/SKILL.md`](skills/product-grill/SKILL.md) |
 | Revenue-centric design | [`skills/revenue-centric-design/SKILL.md`](skills/revenue-centric-design/SKILL.md) |
 | Prospect quality | [`skills/prospect-quality/SKILL.md`](skills/prospect-quality/SKILL.md) |
+
+## Skills de UI (Chakra UI v3) — padrão
+
+**Product Decision:** [ADOPT CHAKRA v3](../docs/product/product-decision-ui-stack-keep-tailwind.md) · [ADR 0011](../docs/adr/0011-ui-stack-keep-tailwind.md)
+
+```text
+Chakra: design system padrão (novas telas / telas tocadas).
+Tailwind: legado até migração gradual.
+```
+
+Fonte: [chakra-ui.com/docs/get-started/ai/skills](https://chakra-ui.com/docs/get-started/ai/skills).
+
+| Skill | Path | Papel no Prospecta |
+| --- | --- | --- |
+| Builder | [`skills/chakra-ui-builder/SKILL.md`](skills/chakra-ui-builder/SKILL.md) | Setup, theme, componentes Chakra v3 |
+| Migrate | [`skills/chakra-ui-migrate/SKILL.md`](skills/chakra-ui-migrate/SKILL.md) | Só se houver padrões v2 (não é o caso) |
+| Refactor | [`skills/chakra-ui-refactor/SKILL.md`](skills/chakra-ui-refactor/SKILL.md) | Review e conversão Tailwind→Chakra **quando a tela for tocada** |
+
+Regra: não big-bang. Não apagar Tailwind de uma vez. Priorizar Lead Intelligence View e fluxo comercial.

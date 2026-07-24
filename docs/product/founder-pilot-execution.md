@@ -7,6 +7,11 @@ Validação técnica do app: [pilot-validation-plan.md](pilot-validation-plan.md
 
 **Regra de ouro:** Prospecta é a única fonte da verdade. Planilha só rascunha captura; depois disso, tudo vai para o app.
 
+**Loop Lead Intelligence (pós-Inbox):**  
+`/app/intelligence` → escolher prioridade → lead detail (pitch) → contato → Activity.  
+Campanha lote 1: [campaign-santos-odonto-batch-1.md](campaign-santos-odonto-batch-1.md).  
+**Freeze:** sem features novas até evidência do primeiro lote de 5 contatos.
+
 ---
 
 ## 1. Objetivo do piloto

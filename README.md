@@ -16,11 +16,12 @@ Auth, Lead, Activity, Pipeline e **ingestão externa** (`POST /api/internal/lead
 
 ## Stack
 
-- Next.js (App Router) + TypeScript + Tailwind
+- Next.js (App Router) + TypeScript + **Chakra UI v3** (design system; Tailwind legado até migração)
 - Prisma + PostgreSQL
 - pnpm
 - Sessão em cookie HttpOnly + tabela `Session`
 - Roles `ADMIN` | `MEMBER`
+- UI: [ADR 0011](docs/adr/0011-ui-stack-keep-tailwind.md)
 
 ## Setup
 

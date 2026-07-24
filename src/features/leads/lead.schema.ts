@@ -108,6 +108,9 @@ export const leadIntelligenceSchema = z
     qualification: z.enum(["HIGH", "MEDIUM", "LOW"]).optional(),
     signals: z.array(z.string().trim().min(1)).max(20).optional(),
     pitch: z.string().trim().max(2000).optional(),
+    /** Preferred commercial diagnosis field for UI. */
+    diagnostic: z.string().trim().max(2000).optional(),
+    /** Legacy alias; UI adapter maps to diagnostic. */
     summary: z.string().trim().max(2000).optional(),
     rating: z.number().min(0).max(5).optional(),
     reviews: z.number().int().min(0).optional(),
