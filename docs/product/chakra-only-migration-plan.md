@@ -6,7 +6,7 @@ Referência: [ADR 0011](../adr/0011-ui-stack-keep-tailwind.md)
 
 ```text
 Next.js → Chakra UI v3 only
-Tailwind → 0 usos → remover deps/config
+Tailwind → 0 usos → removido
 ```
 
 ## Fases
@@ -14,23 +14,22 @@ Tailwind → 0 usos → remover deps/config
 | Fase | Escopo | Status |
 | --- | --- | --- |
 | 0 | Foundation + Intelligence View + Inbox | Feito |
-| 1 | Login | Feito (esta fatia) |
-| 2 | Layout autenticado (nav, user, logout) | Feito (esta fatia) |
+| 1 | Login | Feito |
+| 2 | Layout autenticado (nav, user, logout) | Feito |
 | 3 | Leads lista / new / detail (+ stage/activity no detail) | Feito |
-| 4 | Pipeline | Feito (esta fatia) |
-| 5 | Activity (timeline + form) | Feito no detail (Fase 3); sem superfície independente |
-| 6 | Admin users + forbidden | Feito (esta fatia) |
-| 7 | Remover Tailwind (`tailwindcss`, `@tailwindcss/postcss`, `globals.css` import) | Pendente |
+| 4 | Pipeline | Feito |
+| 5 | Activity (timeline + form) | Feito no detail (Fase 3) |
+| 6 | Admin users + forbidden | Feito |
+| 7 | Remover Tailwind + `/app` home residual | Feito (esta fatia) |
 
 ## Regras
 
-- Telas novas / migradas: **só Chakra**
-- Não introduzir híbridos
+- Telas: **só Chakra**
 - Preferir `src/components/ui/*` + tokens em `src/theme/`
-- Uma fase por PR quando possível; validar `lint` / `typecheck` / `build` + E2E auth relevante
+- Sem híbridos Tailwind + Chakra
 
 ## Critério de conclusão
 
 - Nenhum `className` utilitário Tailwind em `src/`
 - `package.json` sem `tailwindcss` / `@tailwindcss/postcss`
-- Smoke: login → Inbox → lead detail → Activity
+- Smoke: login → Inbox → lead detail → Pipeline → Admin (ACL)

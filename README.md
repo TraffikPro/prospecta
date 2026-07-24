@@ -16,7 +16,7 @@ Auth, Lead, Activity, Pipeline e **ingestão externa** (`POST /api/internal/lead
 
 ## Stack
 
-- Next.js (App Router) + TypeScript + **Chakra UI v3** (design system oficial; migração Chakra-only em curso)
+- Next.js (App Router) + TypeScript + **Chakra UI v3** (design system oficial; Tailwind removido)
 - Prisma + PostgreSQL
 - pnpm
 - Sessão em cookie HttpOnly + tabela `Session`

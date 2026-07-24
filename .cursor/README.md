@@ -46,14 +46,14 @@ Papéis lógicos para planejar, implementar ou revisar. Não são automações m
 | `prospect-quality` | Qualidade de lista/lead, dedupe leve, campos mínimos, anti-lixo no CSV |
 | `chakra-ui-builder` | Design system Chakra v3 (padrão UI) |
 | `chakra-ui-migrate` | Migração Chakra v2→v3 |
-| `chakra-ui-refactor` | Review / Tailwind→Chakra (incremental) |
+| `chakra-ui-refactor` | Review / polish Chakra |
 
 Nenhuma feature relevante deve começar sem `product-grill`.
 `REDUCE SCOPE` → cortar → re-grill → só seguir com **BUILD**.
 Registrar decisão em `## Product Decision` (plano + corpo da PR).
 Ver `workflows/feature-development.md`.
 
-**UI stack:** CHAKRA ONLY ([ADR 0011](../docs/adr/0011-ui-stack-keep-tailwind.md), [plano](../docs/product/chakra-only-migration-plan.md)).
+**UI stack:** Chakra UI v3 only — Tailwind removido ([ADR 0011](../docs/adr/0011-ui-stack-keep-tailwind.md)).
 
 ### Workflows (`.cursor/workflows/`)
 

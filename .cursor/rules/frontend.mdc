@@ -13,8 +13,7 @@ alwaysApply: false
 - Desktop-first para sócios `MEMBER`; utilizável no celular.
 - Ações só `ADMIN` ocultas/desabilitadas com clareza; server é a barreira.
 - Server Components por padrão; Client só com interação.
-- **UI oficial:** Chakra UI v3 only ([ADR 0011](../../docs/adr/0011-ui-stack-keep-tailwind.md), [plano](../../docs/product/chakra-only-migration-plan.md)).
+- **UI oficial:** Chakra UI v3 only ([ADR 0011](../../docs/adr/0011-ui-stack-keep-tailwind.md)).
 - `src/theme/`, `src/components/ui/`, `src/components/layout/`; Provider no root layout.
-- **Proibido** em telas novas/migradas: classes Tailwind, CSS Modules novos, híbridos.
-- Tailwind só até a fase correspondente do plano; remoção na fase 7.
+- **Proibido:** classes Tailwind, CSS Modules novos, híbridos.
 - Skills `chakra-ui-*` = tooling primário; sem charts/dashboard vanity na V1.
