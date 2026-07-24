@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dr. Consultório — Modelo demonstrativo</title>
+    <meta
+      name="description"
+      content="Site-conceito enxuto para profissional odontológico individual. Não representa um cliente real."
+    />
+    <style>
+      :root {
+        --bg: #fffbeb;
+        --ink: #292524;
+        --accent: #b45309;
+        --card: #ffffff;
+        --muted: #78716c;
+        --line: #fde68a;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+      }
+      .banner {
+        background: #78350f;
+        color: #fffbeb;
+        text-align: center;
+        font-size: 0.8rem;
+        padding: 0.55rem 1rem;
+      }
+      .wrap {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 2.5rem 1.25rem 3rem;
+      }
+      .avatar {
+        width: 72px;
+        height: 72px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #fbbf24, #92400e);
+        margin-bottom: 1rem;
+      }
+      h1 {
+        margin: 0 0 0.35rem;
+        font-size: 1.75rem;
+      }
+      .role {
+        color: var(--accent);
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+      .lead {
+        color: var(--muted);
+        margin: 0 0 1.5rem;
+      }
+      .list {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 0.75rem;
+        padding: 0.25rem 0;
+        margin-bottom: 1.25rem;
+      }
+      .list div {
+        padding: 0.85rem 1rem;
+        border-top: 1px solid var(--line);
+      }
+      .list div:first-child {
+        border-top: 0;
+      }
+      .list strong {
+        display: block;
+        font-size: 0.95rem;
+      }
+      .list span {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      .actions a {
+        flex: 1;
+        min-width: 140px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        border-radius: 0.5rem;
+        font-weight: 600;
+      }
+      .primary {
+        background: var(--accent);
+        color: white;
+      }
+      .secondary {
+        background: white;
+        color: var(--accent);
+        border: 1px solid var(--accent);
+      }
+      footer {
+        margin-top: 2rem;
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="banner">
+      Modelo demonstrativo · Site-conceito · DevFlow Labs — não é case de cliente
+    </div>
+    <div class="wrap">
+      <div class="avatar" aria-hidden="true"></div>
+      <h1>Dra. Ana Ribeiro</h1>
+      <div class="role">Cirurgiã-dentista · Consultório individual</div>
+      <p class="lead">
+        Modelo enxuto para profissional autônomo: presença clara, serviços e
+        contato imediato sem páginas desnecessárias.
+      </p>
+      <div class="list">
+        <div>
+          <strong>Serviços</strong>
+          <span>Consulta, limpeza, restauração e orientação preventiva.</span>
+        </div>
+        <div>
+          <strong>Horários</strong>
+          <span>Exemplo: seg–sex, 9h–18h.</span>
+        </div>
+        <div>
+          <strong>Localização</strong>
+          <span>Endereço fictício para demonstração.</span>
+        </div>
+      </div>
+      <div class="actions">
+        <a class="primary" href="#whatsapp">WhatsApp</a>
+        <a class="secondary" href="#mapa">Como chegar</a>
+      </div>
+      <footer id="whatsapp">
+        Site-conceito para demonstração comercial. Conteúdo fictício.
+        <span id="mapa"></span>
+      </footer>
+    </div>
+  </body>
+</html>

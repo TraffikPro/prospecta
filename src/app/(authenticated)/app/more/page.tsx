@@ -40,6 +40,15 @@ export default async function MorePage() {
           display="flex"
           alignItems="center"
         >
+          <Link href="/app/portfolio">Portfólio</Link>
+        </ChakraLink>
+        <ChakraLink
+          asChild
+          textDecoration="underline"
+          minH="touch"
+          display="flex"
+          alignItems="center"
+        >
           <Link href="/app/leads">Lista de leads</Link>
         </ChakraLink>
         <ChakraLink

@@ -38,6 +38,11 @@ export default async function AppHomePage() {
       label: "Pipeline",
       description: "Veja leads por etapa do funil.",
     },
+    {
+      href: "/app/portfolio",
+      label: "Portfólio",
+      description: "Modelos demonstrativos para apresentar na conversa.",
+    },
   ];
 
   if (user.role === "ADMIN") {
