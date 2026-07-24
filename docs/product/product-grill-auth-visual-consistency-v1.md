@@ -1,20 +1,22 @@
 # Product Grill — Auth Visual Consistency v1
 
 - **Data:** 2026-07-24
-- **Status:** **GRILL** fechado · **Fatia A BUILD autorizada** · Fatia B pendente pós-A
+- **Status:** **GRILL** fechado · **Fatia A DONE** · Fatia B BUILD autorizada (próximo)
 - **Classificação:** WORKSPACE
 - **Baseline:** [Login Visual Refresh v1 — DONE](product-decision-login-visual-refresh-v1.md) (PR #28)
+- **Fatia A PR:** [#31](https://github.com/TraffikPro/prospecta/pull/31) → `d456ae3`
+- **Produção Fatia A:** `https://prospecta-ten-tau.vercel.app`
+- **Smoke A:** `scripts/smoke-auth-recovery-visual-prod.mjs` — OVERALL PASS
 - **Relacionado:** [Auth Experience v1](product-decision-auth-experience-v1.md), ADR 0011 (Chakra only), ADR 0012 (reset), ADR 0013 (`mustChangePassword`)
 
 ## Product Decision
 
 ```text
 Login Visual Refresh v1: DONE
-    → Auth Visual Consistency v1: GRILL → Fatia A BUILD
-         Fatia A — Auth público (forgot + reset) — BUILD autorizado
-         Fatia B — Primeiro acesso (change-password) — após merge/deploy/smoke da A
+    → Auth Visual Consistency v1
+         Fatia A — Auth público (forgot + reset) — DONE (#31)
+         Fatia B — Primeiro acesso (change-password) — BUILD (após A)
 ```
-
 ---
 
 ## 1. Problema
@@ -136,8 +138,8 @@ Fatia B — feat(auth): align first access visual experience
 ## 8. Decisão
 
 - Grill **fechado** com ambiguidades resolvidas (2026-07-24).  
-- **Fatia A: BUILD autorizado.**  
-- Fatia B: só após merge + deploy + smoke da A.
+- **Fatia A: DONE** — merge #31, deploy Production, smoke desktop+mobile OVERALL PASS.  
+- **Fatia B: BUILD autorizado** (TaskAuthShell + change-password).
 
 ## 9. Justificativa
 
