@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Heading, HStack, Link as ChakraLink, Stack } from "@chakra-ui/react";
 
+import { ContextualNav } from "@/components/navigation";
 import { PipelineBoard } from "@/features/pipeline/components/pipeline-board";
 import { AuthenticationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
@@ -23,6 +24,7 @@ export default async function PipelinePage() {
 
   return (
     <Stack as="main" gap="8">
+      <ContextualNav items={[{ label: "Pipeline" }]} />
       <HStack justify="space-between" align="center" gap="4" flexWrap="wrap">
         <Heading as="h1" size="lg" fontWeight="semibold">
           Pipeline

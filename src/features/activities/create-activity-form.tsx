@@ -30,13 +30,13 @@ const outcomes = Object.keys(activityOutcomeLabels) as ActivityOutcome[];
 
 type Props = {
   leadId: string;
-  /** Prefer `/app/my-leads` (optionally with active filter). */
-  queueReturnHref?: string;
+  /** Allowlisted contextual return (fila / inteligência / pipeline / leads). */
+  returnHref?: string;
 };
 
 export function CreateActivityForm({
   leadId,
-  queueReturnHref = "/app/my-leads",
+  returnHref = "/app/my-leads",
 }: Props) {
   const router = useRouter();
   const [state, formAction, pending] = useActionState(
@@ -58,12 +58,9 @@ export function CreateActivityForm({
   );
 
   useEffect(() => {
-    if (!state.ok) {
-      return;
+    if (state.ok) {
+      router.refresh();
     }
-    setBody("");
-    setNextFollowUpAt("");
-    router.refresh();
   }, [state.ok, router]);
 
   return (
@@ -171,7 +168,7 @@ export function CreateActivityForm({
                   minH="11"
                   width={{ base: "full", md: "fit-content" }}
                 >
-                  <NextLink href={queueReturnHref}>Voltar à fila</NextLink>
+                  <NextLink href={returnHref}>Voltar</NextLink>
                 </Button>
               </Stack>
             ) : null}

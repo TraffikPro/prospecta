@@ -3,6 +3,7 @@
 import { Card, Heading, HStack, Stack, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 
+import { buildLeadDetailHref } from "@/components/navigation";
 import type { IntelligenceInboxLead } from "@/features/leads/intelligence/inbox";
 
 import { PitchPreview } from "./pitch-preview";
@@ -24,7 +25,7 @@ export function LeadScoreCard({ item }: LeadScoreCardProps) {
       data-testid="intelligence-inbox-card"
       _hover={{ borderColor: "brand.focusRing", bg: "bg.subtle" }}
     >
-      <NextLink href={`/app/leads/${item.id}`}>
+      <NextLink href={buildLeadDetailHref(item.id, "intelligence")}>
         <Card.Body py="4" px="4">
           <Stack gap="3">
             <HStack justify="space-between" align="start" gap="3">

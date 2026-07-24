@@ -1,6 +1,7 @@
 import NextLink from "next/link";
 import { Card, Heading, Stack, Text } from "@chakra-ui/react";
 
+import { buildLeadDetailHref } from "@/components/navigation";
 import { Button } from "@/components/ui/button";
 import { LeadPriorityBadge } from "@/features/leads/components/lead-priority-badge";
 import {
@@ -23,11 +24,7 @@ function formatFollowUp(value: Date | null): string {
 }
 
 function leadHref(leadId: string, filter: MyQueueView["filter"], hash?: string) {
-  const params = new URLSearchParams({ from: "queue" });
-  if (filter !== "all") {
-    params.set("filter", filter);
-  }
-  const base = `/app/leads/${leadId}?${params.toString()}`;
+  const base = buildLeadDetailHref(leadId, "my-leads", filter);
   return hash ? `${base}#${hash}` : base;
 }
 

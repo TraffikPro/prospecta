@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Heading, Link as ChakraLink, Stack, Text } from "@chakra-ui/react";
 
+import { ContextualNav } from "@/components/navigation";
 import { LogoutButton } from "@/features/auth/logout-button";
 import { AuthenticationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
@@ -22,6 +23,7 @@ export default async function MorePage() {
 
   return (
     <Stack as="main" gap="6">
+      <ContextualNav items={[{ label: "Mais" }]} />
       <Stack gap="1">
         <Heading as="h1" size="lg" fontWeight="semibold">
           Mais

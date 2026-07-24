@@ -4,6 +4,8 @@ import type { LeadSource, LeadStage } from "@prisma/client";
 import { Link as ChakraLink, Table, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 
+import { buildLeadDetailHref } from "@/components/navigation";
+
 import { LeadSourceBadge } from "./lead-source-badge";
 import { LeadStageBadge } from "./lead-stage-badge";
 
@@ -41,7 +43,7 @@ export function LeadTable({ leads }: LeadTableProps) {
           <Table.Row key={lead.id} _hover={{ bg: "bg.subtle" }}>
             <Table.Cell>
               <ChakraLink asChild fontWeight="medium">
-                <NextLink href={`/app/leads/${lead.id}`}>
+                <NextLink href={buildLeadDetailHref(lead.id, "leads")}>
                   {lead.companyName}
                 </NextLink>
               </ChakraLink>

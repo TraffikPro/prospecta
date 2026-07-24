@@ -1,6 +1,7 @@
 import { Heading, Stack, Text } from "@chakra-ui/react";
 import { redirect } from "next/navigation";
 
+import { ContextualNav } from "@/components/navigation";
 import { MyQueueFilters } from "@/features/leads/components/my-queue-filters";
 import { MyQueueList } from "@/features/leads/components/my-queue-list";
 import { MyQueueSummaryCards } from "@/features/leads/components/my-queue-summary";
@@ -34,6 +35,7 @@ export default async function MyLeadsPage({ searchParams }: MyLeadsPageProps) {
 
   return (
     <Stack as="main" gap="6">
+      <ContextualNav items={[{ label: "Minha fila" }]} />
       <Stack gap="1">
         <Heading as="h1" size="lg" fontWeight="semibold">
           Minha operação

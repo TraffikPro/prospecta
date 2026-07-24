@@ -1,6 +1,7 @@
 import { forbidden, redirect } from "next/navigation";
 import { Heading, Stack, Text } from "@chakra-ui/react";
 
+import { ContextualNav } from "@/components/navigation";
 import { UsersTable } from "@/features/admin/components/users-table";
 import { AuthenticationError, AuthorizationError } from "@/server/auth/errors";
 import { requireRole } from "@/server/auth/guards";
@@ -26,6 +27,12 @@ export default async function AdminUsersPage() {
 
   return (
     <Stack as="main" gap="6">
+      <ContextualNav
+        items={[
+          { label: "Mais", href: "/app/more" },
+          { label: "Usuários" },
+        ]}
+      />
       <Stack gap="1">
         <Heading as="h1" size="lg" fontWeight="semibold">
           Usuários
