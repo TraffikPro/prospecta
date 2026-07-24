@@ -1,9 +1,13 @@
 import { forbidden, redirect } from "next/navigation";
+import { Heading, Stack, Text } from "@chakra-ui/react";
+
+import { UsersTable } from "@/features/admin/components/users-table";
 import { AuthenticationError, AuthorizationError } from "@/server/auth/errors";
 import { requireRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
+import { getAdminUsers } from "@/server/services/user.service";
 
-export default async function AdminAclProofPage() {
+export default async function AdminUsersPage() {
   const sessionUser = await getSessionUser();
 
   try {
@@ -18,13 +22,20 @@ export default async function AdminAclProofPage() {
     throw error;
   }
 
+  const users = await getAdminUsers();
+
   return (
-    <main className="space-y-3">
-      <h1 className="text-xl font-semibold tracking-tight">ACL proof (ADMIN)</h1>
-      <p className="text-sm text-neutral-600">
-        Rota exclusiva de ADMIN para validar autorização server-side. Gestão de
-        usuários fica fora desta fatia.
-      </p>
-    </main>
+    <Stack as="main" gap="6">
+      <Stack gap="1">
+        <Heading as="h1" size="lg" fontWeight="semibold">
+          Usuários
+        </Heading>
+        <Text fontSize="sm" color="fg.muted">
+          Visão administrativa somente leitura. Sem CRUD nesta fatia.
+        </Text>
+      </Stack>
+
+      <UsersTable users={users} />
+    </Stack>
   );
 }
