@@ -6,7 +6,9 @@ import { ActivityTimeline } from "@/features/activities/activity-timeline";
 import { CreateActivityForm } from "@/features/activities/create-activity-form";
 import { IntelligenceCard } from "@/features/leads/components/intelligence";
 import { LeadInfoCard } from "@/features/leads/components/lead-info-card";
+import { LeadNextActionCard } from "@/features/leads/components/lead-next-action-card";
 import { parseLeadIntelligence } from "@/features/leads/intelligence/parse-intelligence";
+import { getNextAction, pickLatestOutcome } from "@/features/leads/next-action";
 import { MoveStageForm } from "@/features/leads/move-stage-form";
 import { AuthenticationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
@@ -44,6 +46,14 @@ export default async function LeadDetailPage({ params }: PageProps) {
 
   const activities = await getActivitiesForLead(lead.id);
   const intelligence = parseLeadIntelligence(lead.intelligence);
+  const nextAction = getNextAction({
+    stage: lead.stage,
+    nextFollowUpAt: lead.nextFollowUpAt,
+    latestOutcome: pickLatestOutcome(activities),
+  });
+  const followUpLabel = lead.nextFollowUpAt
+    ? formatDateTime(lead.nextFollowUpAt)
+    : "—";
 
   return (
     <Stack as="main" gap="8">
@@ -71,10 +81,10 @@ export default async function LeadDetailPage({ params }: PageProps) {
         source={lead.source}
         ownerName={lead.owner.name}
         ownerEmail={lead.owner.email}
-        nextFollowUpLabel={
-          lead.nextFollowUpAt ? formatDateTime(lead.nextFollowUpAt) : "—"
-        }
+        nextFollowUpLabel={followUpLabel}
       />
+
+      <LeadNextActionCard view={nextAction} followUpLabel={followUpLabel} />
 
       {intelligence ? (
         <section aria-labelledby="intelligence-heading">
