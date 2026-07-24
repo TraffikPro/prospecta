@@ -1,6 +1,7 @@
 "use client";
 
 import type { ActivityOutcome } from "@prisma/client";
+import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useMemo, useState } from "react";
 
@@ -29,9 +30,14 @@ const outcomes = Object.keys(activityOutcomeLabels) as ActivityOutcome[];
 
 type Props = {
   leadId: string;
+  /** Prefer `/app/my-leads` (optionally with active filter). */
+  queueReturnHref?: string;
 };
 
-export function CreateActivityForm({ leadId }: Props) {
+export function CreateActivityForm({
+  leadId,
+  queueReturnHref = "/app/my-leads",
+}: Props) {
   const router = useRouter();
   const [state, formAction, pending] = useActionState(
     createActivityAction,
@@ -39,6 +45,8 @@ export function CreateActivityForm({ leadId }: Props) {
   );
   const [type, setType] = useState<"WHATSAPP" | "EMAIL" | "NOTE">("WHATSAPP");
   const [outcome, setOutcome] = useState<ActivityOutcome>("SENT_NO_REPLY");
+  const [body, setBody] = useState("");
+  const [nextFollowUpAt, setNextFollowUpAt] = useState("");
 
   const requiresFollowUp = useMemo(
     () =>
@@ -50,28 +58,32 @@ export function CreateActivityForm({ leadId }: Props) {
   );
 
   useEffect(() => {
-    if (state.ok) {
-      router.refresh();
+    if (!state.ok) {
+      return;
     }
+    setBody("");
+    setNextFollowUpAt("");
+    router.refresh();
   }, [state.ok, router]);
 
   return (
     <Card.Root variant="outline" borderRadius="card">
       <Card.Body>
         <form action={formAction}>
-          <Stack gap="4" maxW="lg">
+          <Stack gap="4" maxW={{ base: "full", lg: "lg" }} w="full">
             <input type="hidden" name="leadId" value={leadId} />
 
             <Heading as="h2" size="md" id="register-activity-heading">
               Registrar atividade
             </Heading>
 
-            <Field.Root>
+            <Field.Root required>
               <Field.Label>Tipo</Field.Label>
-              <NativeSelect.Root>
+              <NativeSelect.Root size="lg">
                 <NativeSelect.Field
                   name="type"
                   value={type}
+                  minH="11"
                   onChange={(event) =>
                     setType(event.target.value as "WHATSAPP" | "EMAIL" | "NOTE")
                   }
@@ -85,12 +97,13 @@ export function CreateActivityForm({ leadId }: Props) {
             </Field.Root>
 
             {type !== "NOTE" ? (
-              <Field.Root>
+              <Field.Root required>
                 <Field.Label>Resultado</Field.Label>
-                <NativeSelect.Root>
+                <NativeSelect.Root size="lg">
                   <NativeSelect.Field
                     name="outcome"
                     value={outcome}
+                    minH="11"
                     onChange={(event) =>
                       setOutcome(event.target.value as ActivityOutcome)
                     }
@@ -111,20 +124,28 @@ export function CreateActivityForm({ leadId }: Props) {
               <Textarea
                 name="body"
                 required
-                rows={3}
+                rows={4}
+                minH="28"
+                fontSize="md"
                 placeholder="O que aconteceu no contato?"
+                value={body}
+                onChange={(event) => setBody(event.target.value)}
               />
             </Field.Root>
 
             <Field.Root required={requiresFollowUp}>
               <Field.Label>
                 Próximo passo (data)
-                {requiresFollowUp ? "" : " (opcional)"}
+                {requiresFollowUp ? " — obrigatório" : " (opcional)"}
               </Field.Label>
               <Input
                 name="nextFollowUpAt"
                 type="datetime-local"
                 required={requiresFollowUp}
+                minH="11"
+                fontSize="md"
+                value={nextFollowUpAt}
+                onChange={(event) => setNextFollowUpAt(event.target.value)}
               />
             </Field.Root>
 
@@ -137,22 +158,45 @@ export function CreateActivityForm({ leadId }: Props) {
               </Alert.Root>
             ) : null}
             {state.ok ? (
-              <Alert.Root status="success" variant="subtle" role="status">
-                <Alert.Indicator />
-                <Alert.Content>
-                  <Alert.Description>Atividade registrada.</Alert.Description>
-                </Alert.Content>
-              </Alert.Root>
+              <Stack gap="3">
+                <Alert.Root status="success" variant="subtle" role="status">
+                  <Alert.Indicator />
+                  <Alert.Content>
+                    <Alert.Description>Atividade registrada.</Alert.Description>
+                  </Alert.Content>
+                </Alert.Root>
+                <Button
+                  asChild
+                  variant="outline"
+                  minH="11"
+                  width={{ base: "full", md: "fit-content" }}
+                >
+                  <NextLink href={queueReturnHref}>Voltar à fila</NextLink>
+                </Button>
+              </Stack>
             ) : null}
 
-            <Button
-              type="submit"
-              width="fit-content"
-              loading={pending}
-              disabled={pending}
+            <Stack
+              gap="2"
+              position={{ base: "sticky", md: "static" }}
+              bottom={{ base: "4", md: "auto" }}
+              bg={{ base: "bg", md: "transparent" }}
+              py={{ base: "2", md: "0" }}
+              mt="2"
+              zIndex="1"
+              borderTopWidth={{ base: "1px", md: "0" }}
+              borderColor="border"
             >
-              {pending ? "Salvando…" : "Salvar atividade"}
-            </Button>
+              <Button
+                type="submit"
+                width={{ base: "full", md: "fit-content" }}
+                minH="11"
+                loading={pending}
+                disabled={pending}
+              >
+                {pending ? "Salvando…" : "Salvar atividade"}
+              </Button>
+            </Stack>
           </Stack>
         </form>
       </Card.Body>

@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
-import { APP_HOME_PATH } from "@/server/auth/login-redirect";
+import { postAuthPath } from "@/server/auth/login-redirect";
 import { hashPassword, verifyPassword } from "@/server/auth/password";
 import { getSessionUser } from "@/server/auth/session";
 
@@ -70,5 +70,10 @@ export async function changePasswordAction(
     },
   });
 
-  redirect(APP_HOME_PATH);
+  redirect(
+    postAuthPath({
+      mustChangePassword: false,
+      role: sessionUser.role,
+    }),
+  );
 }

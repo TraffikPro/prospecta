@@ -1,6 +1,6 @@
 "use client";
 
-import { List, Stack, Text } from "@chakra-ui/react";
+import { Flex, Stack, Text } from "@chakra-ui/react";
 
 import { signalLabel } from "@/features/leads/intelligence/signal-labels";
 
@@ -18,16 +18,24 @@ export function SignalList({ signals }: SignalListProps) {
       <Text fontSize="sm" fontWeight="semibold">
         Sinais encontrados
       </Text>
-      <List.Root gap="1.5" variant="plain" align="center">
+      <Flex gap="2" flexWrap="wrap">
         {signals.map((signal) => (
-          <List.Item key={signal} fontSize="sm">
-            <List.Indicator asChild color="success.fg">
-              <span aria-hidden="true">✓</span>
-            </List.Indicator>
+          <Text
+            as="span"
+            key={signal}
+            fontSize="sm"
+            px="2.5"
+            py="1.5"
+            borderRadius="md"
+            borderWidth="1px"
+            borderColor="border"
+            bg="bg.muted"
+            lineHeight="short"
+          >
             {signalLabel(signal)}
-          </List.Item>
+          </Text>
         ))}
-      </List.Root>
+      </Flex>
     </Stack>
   );
 }

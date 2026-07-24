@@ -49,7 +49,10 @@ export async function loginAction(
 
   await createSession(user.id);
   redirect(
-    postAuthPath({ mustChangePassword: user.mustChangePassword }),
+    postAuthPath({
+      mustChangePassword: user.mustChangePassword,
+      role: user.role,
+    }),
   );
 }
 

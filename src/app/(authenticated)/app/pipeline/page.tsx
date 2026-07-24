@@ -8,13 +8,6 @@ import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
 import { getLeadsGroupedByStage } from "@/server/services/lead.service";
 
-function formatFollowUp(value: Date): string {
-  return new Intl.DateTimeFormat("pt-BR", {
-    dateStyle: "short",
-    timeStyle: "short",
-  }).format(value);
-}
-
 export default async function PipelinePage() {
   const sessionUser = await getSessionUser();
   try {
@@ -39,7 +32,7 @@ export default async function PipelinePage() {
         </ChakraLink>
       </HStack>
 
-      <PipelineBoard grouped={grouped} formatFollowUp={formatFollowUp} />
+      <PipelineBoard grouped={grouped} />
     </Stack>
   );
 }

@@ -15,6 +15,7 @@ export const PASSWORD_CHANGED_MESSAGE =
 
 export const CHANGE_PASSWORD_PATH = "/change-password";
 export const APP_HOME_PATH = "/app";
+export const MY_LEADS_PATH = "/app/my-leads";
 
 export const MUST_CHANGE_PASSWORD_MESSAGE =
   "Você precisa alterar sua senha para continuar.";
@@ -26,8 +27,20 @@ export function loginPath(reason?: LoginReason): string {
   return LOGIN_PATH;
 }
 
-export function postAuthPath(user: { mustChangePassword: boolean }): string {
-  return user.mustChangePassword ? CHANGE_PASSWORD_PATH : APP_HOME_PATH;
+type PostAuthUser = {
+  mustChangePassword: boolean;
+  role?: "ADMIN" | "MEMBER";
+};
+
+/** After auth: force password change, else MEMBER lands on operational queue. */
+export function postAuthPath(user: PostAuthUser): string {
+  if (user.mustChangePassword) {
+    return CHANGE_PASSWORD_PATH;
+  }
+  if (user.role === "MEMBER") {
+    return MY_LEADS_PATH;
+  }
+  return APP_HOME_PATH;
 }
 
 export function isSessionExpiredReason(

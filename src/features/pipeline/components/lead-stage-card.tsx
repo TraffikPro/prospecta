@@ -55,12 +55,13 @@ export function LeadStageCard({ lead, followUpLabel }: LeadStageCardProps) {
           </Stack>
           <Button
             asChild
-            size="sm"
+            size="md"
+            minH="11"
             variant="outline"
             colorPalette="gray"
-            alignSelf="flex-start"
+            alignSelf="stretch"
           >
-            <Link href={href}>Abrir</Link>
+            <Link href={href}>Abrir lead</Link>
           </Button>
         </Stack>
       </Card.Body>

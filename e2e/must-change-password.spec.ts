@@ -56,13 +56,14 @@ test.describe("must change password (Fatia 3)", () => {
     await page.getByLabel("Confirmar nova senha").fill(nextPassword);
     await page.getByRole("button", { name: "Alterar senha" }).click();
 
-    await expect(page).toHaveURL(/\/app/);
+    await expect(page).toHaveURL(/\/app\/my-leads/);
     await expect(
-      page.getByRole("heading", { name: "Área autenticada" }),
+      page.getByRole("heading", { name: "Minha operação", exact: true }),
     ).toBeVisible();
 
     await page.getByRole("button", { name: "Sair" }).click();
     await login(page, memberEmail, nextPassword);
-    await expect(page).toHaveURL(/\/app/);
+    await expect(page).toHaveURL(/\/app\/my-leads/);
   });
 });
+

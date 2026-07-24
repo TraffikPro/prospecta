@@ -49,6 +49,7 @@ test.describe("lead intelligence view", () => {
     await expect(page.getByTestId("intelligence-diagnostic")).toContainText(
       diagnostic,
     );
+    await page.getByTestId("intelligence-pitch-toggle").click();
     await expect(page.getByTestId("intelligence-pitch-text")).toHaveText(pitch);
 
     await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
