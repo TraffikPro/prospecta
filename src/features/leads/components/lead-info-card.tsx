@@ -10,15 +10,12 @@ import { LeadStageBadge } from "./lead-stage-badge";
 
 type LeadInfoCardProps = {
   companyName: string;
-  contactName: string | null;
   email: string | null;
   phone: string | null;
-  website: string | null;
   stage: LeadStage;
   source: LeadSource;
   ownerName: string;
   ownerEmail: string;
-  nextFollowUpLabel: string;
 };
 
 function InfoValue({
@@ -39,17 +36,15 @@ function InfoValue({
   );
 }
 
+/** Compact lead header — name, stage, source, owner, primary phone/email. */
 export function LeadInfoCard({
   companyName,
-  contactName,
   email,
   phone,
-  website,
   stage,
   source,
   ownerName,
   ownerEmail,
-  nextFollowUpLabel,
 }: LeadInfoCardProps) {
   return (
     <Card.Root variant="outline" borderRadius="card">
@@ -83,10 +78,6 @@ export function LeadInfoCard({
           data-testid="lead-info-list"
         >
           <DataList.Item>
-            <DataList.ItemLabel>Contato</DataList.ItemLabel>
-            <InfoValue>{contactName || "—"}</InfoValue>
-          </DataList.Item>
-          <DataList.Item>
             <DataList.ItemLabel>Owner</DataList.ItemLabel>
             <InfoValue>
               {ownerName} ({ownerEmail})
@@ -99,16 +90,6 @@ export function LeadInfoCard({
           <DataList.Item>
             <DataList.ItemLabel>Telefone</DataList.ItemLabel>
             <InfoValue>{phone || "—"}</InfoValue>
-          </DataList.Item>
-          <DataList.Item>
-            <DataList.ItemLabel>Website</DataList.ItemLabel>
-            <InfoValue>{website || "—"}</InfoValue>
-          </DataList.Item>
-          <DataList.Item>
-            <DataList.ItemLabel>Próximo contato</DataList.ItemLabel>
-            <InfoValue testId="lead-next-follow-up">
-              {nextFollowUpLabel}
-            </InfoValue>
           </DataList.Item>
         </DataList.Root>
       </Card.Body>

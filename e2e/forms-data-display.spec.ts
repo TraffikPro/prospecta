@@ -33,6 +33,7 @@ test.describe("chakra forms and data display v1", () => {
     await page.waitForURL(LEAD_DETAIL_URL);
 
     await expect(page.getByTestId("lead-info-list")).toBeVisible();
+    await page.getByRole("button", { name: /Detalhes da origem/i }).click();
     await expect(page.getByTestId("lead-next-follow-up")).toBeVisible();
 
     await page.getByLabel("Tipo").selectOption("NOTE");

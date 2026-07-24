@@ -1,13 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { Clipboard, Stack, Text } from "@chakra-ui/react";
+import { Box, Clipboard, Stack, Text } from "@chakra-ui/react";
 
 import { Button } from "@/components/ui/button";
 
 type PitchBoxProps = {
   pitch: string;
 };
+
+/** Collapsed visual hint only — never mutates the source pitch / Clipboard value. */
+function pitchPreview(pitch: string): string {
+  const compact = pitch.replace(/\s+/g, " ").trim();
+  if (compact.length <= 120) {
+    return compact;
+  }
+  return `${compact.slice(0, 117).trimEnd()}…`;
+}
 
 export function PitchBox({ pitch }: PitchBoxProps) {
   const [expanded, setExpanded] = useState(false);
@@ -26,20 +35,27 @@ export function PitchBox({ pitch }: PitchBoxProps) {
         Sugestão de abordagem
       </Text>
 
-      {expanded ? (
-        <Text
-          fontSize="sm"
-          whiteSpace="pre-wrap"
-          color="fg"
-          data-testid="intelligence-pitch-text"
-        >
-          {pitch}
-        </Text>
-      ) : (
-        <Text fontSize="sm" color="fg.muted" data-testid="intelligence-pitch-preview">
-          Toque em “Ver abordagem” para ler o pitch completo.
-        </Text>
-      )}
+      <Box id="intelligence-pitch-panel">
+        {expanded ? (
+          <Text
+            fontSize="sm"
+            whiteSpace="pre-wrap"
+            color="fg"
+            data-testid="intelligence-pitch-text"
+          >
+            {pitch}
+          </Text>
+        ) : (
+          <Text
+            fontSize="sm"
+            color="fg.muted"
+            aria-hidden="true"
+            data-testid="intelligence-pitch-preview"
+          >
+            {pitchPreview(pitch)}
+          </Text>
+        )}
+      </Box>
 
       <Stack gap="2" direction={{ base: "column", sm: "row" }}>
         <Button
@@ -49,6 +65,8 @@ export function PitchBox({ pitch }: PitchBoxProps) {
           colorPalette="gray"
           width={{ base: "full", sm: "auto" }}
           onClick={() => setExpanded((value) => !value)}
+          aria-expanded={expanded}
+          aria-controls="intelligence-pitch-panel"
           data-testid="intelligence-pitch-toggle"
         >
           {expanded ? "Recolher abordagem" : "Ver abordagem"}

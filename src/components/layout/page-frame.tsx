@@ -2,11 +2,12 @@ import type { ReactNode } from "react";
 
 import { Stack, type StackProps } from "@chakra-ui/react";
 
-export type PageWidth = "form" | "detail" | "list";
+export type PageWidth = "form" | "detail" | "detailWide" | "list";
 
 const MAX_W: Record<PageWidth, StackProps["maxW"]> = {
   form: "containerForm",
   detail: "containerDetail",
+  detailWide: "containerDetailWide",
   list: "containerList",
 };
 
@@ -18,7 +19,7 @@ type PageFrameProps = {
 
 /**
  * Responsive content width by screen type (Visual Foundation v1).
- * form 720 · detail 960 · list/pipeline 1200.
+ * form 720 · detail 960 · detailWide 1200 · list/pipeline 1200.
  */
 export function PageFrame({
   width = "list",

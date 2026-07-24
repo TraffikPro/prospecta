@@ -76,6 +76,8 @@ const config = defineConfig({
         containerForm: { value: "45rem" },
         /** Lead detail — 960px */
         containerDetail: { value: "60rem" },
+        /** Lead detail wide (Fatia A) — 1200px */
+        containerDetailWide: { value: "75rem" },
         /** Lists / pipeline — 1200px */
         containerList: { value: "75rem" },
         touch: { value: "2.75rem" },
