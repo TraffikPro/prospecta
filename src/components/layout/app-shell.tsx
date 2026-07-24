@@ -55,7 +55,9 @@ export function AppShell({ userName, userRole, children }: AppShellProps) {
 
   return (
     <Box minH="100vh" bg="bg.subtle" pb={{ base: "20", md: "0" }} overflowX="hidden">
-      <SkipNavLink data-testid="skip-nav-link">Ir para o conteúdo</SkipNavLink>
+      <SkipNavLink id="main-content" data-testid="skip-nav-link">
+        Ir para o conteúdo
+      </SkipNavLink>
       <Box
         as="header"
         borderBottomWidth="1px"
@@ -141,7 +143,18 @@ export function AppShell({ userName, userRole, children }: AppShellProps) {
         </Container>
       </Box>
 
-      <SkipNavContent as="main" id="main-content" tabIndex={-1}>
+      <SkipNavContent
+        as="main"
+        id="main-content"
+        tabIndex={-1}
+        style={{}}
+        _focusVisible={{
+          outlineWidth: "2px",
+          outlineStyle: "solid",
+          outlineColor: "blue.500",
+          outlineOffset: "2px",
+        }}
+      >
         <Container
           as="div"
           maxW="containerList"
