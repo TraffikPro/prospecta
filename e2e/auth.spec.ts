@@ -62,7 +62,7 @@ test.describe("auth + ACL", () => {
   }) => {
     await page.goto("/login");
     await page.getByLabel("E-mail").fill("nobody@prospecta.test");
-    await page.getByLabel("Senha").fill("wrong-password");
+    await page.getByLabel("Senha", { exact: true }).fill("wrong-password");
     await page.getByRole("button", { name: "Entrar" }).click();
     await expect(page.getByText("Credenciais inválidas.")).toBeVisible();
   });

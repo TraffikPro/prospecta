@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 
 import type { LeadSource, LeadStage } from "@prisma/client";
-import { Card, Grid, Heading, Stack, Text } from "@chakra-ui/react";
+import { Card, DataList, Heading, Stack } from "@chakra-ui/react";
 
 import { LeadSourceBadge } from "./lead-source-badge";
 import { LeadStageBadge } from "./lead-stage-badge";
@@ -21,24 +21,21 @@ type LeadInfoCardProps = {
   nextFollowUpLabel: string;
 };
 
-function InfoItem({
-  label,
+function InfoValue({
   children,
   testId,
 }: {
-  label: string;
   children: ReactNode;
   testId?: string;
 }) {
   return (
-    <Stack gap="1">
-      <Text fontSize="xs" color="fg.muted" fontWeight="medium">
-        {label}
-      </Text>
-      <Text fontSize="sm" fontWeight="medium" data-testid={testId}>
-        {children}
-      </Text>
-    </Stack>
+    <DataList.ItemValue
+      fontWeight="medium"
+      overflowWrap="anywhere"
+      data-testid={testId}
+    >
+      {children}
+    </DataList.ItemValue>
   );
 }
 
@@ -77,22 +74,43 @@ export function LeadInfoCard({
         </Stack>
       </Card.Header>
       <Card.Body>
-        <Grid
-          templateColumns={{ base: "1fr", sm: "1fr 1fr" }}
+        <DataList.Root
+          orientation="vertical"
+          size="sm"
+          display="grid"
+          gridTemplateColumns={{ base: "1fr", sm: "1fr 1fr" }}
           gap="4"
-          fontSize="sm"
+          data-testid="lead-info-list"
         >
-          <InfoItem label="Contato">{contactName || "—"}</InfoItem>
-          <InfoItem label="Owner">
-            {ownerName} ({ownerEmail})
-          </InfoItem>
-          <InfoItem label="E-mail">{email || "—"}</InfoItem>
-          <InfoItem label="Telefone">{phone || "—"}</InfoItem>
-          <InfoItem label="Website">{website || "—"}</InfoItem>
-          <InfoItem label="Próximo contato" testId="lead-next-follow-up">
-            {nextFollowUpLabel}
-          </InfoItem>
-        </Grid>
+          <DataList.Item>
+            <DataList.ItemLabel>Contato</DataList.ItemLabel>
+            <InfoValue>{contactName || "—"}</InfoValue>
+          </DataList.Item>
+          <DataList.Item>
+            <DataList.ItemLabel>Owner</DataList.ItemLabel>
+            <InfoValue>
+              {ownerName} ({ownerEmail})
+            </InfoValue>
+          </DataList.Item>
+          <DataList.Item>
+            <DataList.ItemLabel>E-mail</DataList.ItemLabel>
+            <InfoValue>{email || "—"}</InfoValue>
+          </DataList.Item>
+          <DataList.Item>
+            <DataList.ItemLabel>Telefone</DataList.ItemLabel>
+            <InfoValue>{phone || "—"}</InfoValue>
+          </DataList.Item>
+          <DataList.Item>
+            <DataList.ItemLabel>Website</DataList.ItemLabel>
+            <InfoValue>{website || "—"}</InfoValue>
+          </DataList.Item>
+          <DataList.Item>
+            <DataList.ItemLabel>Próximo contato</DataList.ItemLabel>
+            <InfoValue testId="lead-next-follow-up">
+              {nextFollowUpLabel}
+            </InfoValue>
+          </DataList.Item>
+        </DataList.Root>
       </Card.Body>
     </Card.Root>
   );

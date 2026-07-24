@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, Stack, Text } from "@chakra-ui/react";
+import { Text, Timeline } from "@chakra-ui/react";
 
 import {
   activityOutcomeLabels,
@@ -31,7 +31,7 @@ export function ActivityTimeline({ activities, nextFollowUpAt }: Props) {
   }
 
   return (
-    <Stack as="ol" gap="3" listStyleType="none">
+    <Timeline.Root size="sm" variant="subtle" data-testid="activity-timeline">
       {activities.map((activity) => {
         const typeLabel =
           activity.type === "STAGE_CHANGE"
@@ -39,50 +39,53 @@ export function ActivityTimeline({ activities, nextFollowUpAt }: Props) {
             : activityTypeLabels[activity.type];
 
         return (
-          <Card.Root
-            as="li"
-            key={activity.id}
-            variant="outline"
-            borderRadius="card"
-            size="sm"
-          >
-            <Card.Body py="3" px="4">
-              <Stack gap="1">
-                <Text fontSize="xs" color="fg.muted">
-                  {formatDateTime(activity.createdAt)}
-                </Text>
-                <Text fontSize="sm" fontWeight="medium">
-                  {activity.author.name}
-                </Text>
-                <Text fontSize="sm">{typeLabel}</Text>
-                {activity.outcome ? (
-                  <Text fontSize="sm">
-                    <Text as="span" color="fg.muted">
-                      Resultado:{" "}
-                    </Text>
-                    {activityOutcomeLabels[activity.outcome]}
+          <Timeline.Item key={activity.id}>
+            <Timeline.Connector>
+              <Timeline.Separator />
+              <Timeline.Indicator />
+            </Timeline.Connector>
+            <Timeline.Content>
+              <Timeline.Description>
+                {formatDateTime(activity.createdAt)}
+              </Timeline.Description>
+              <Timeline.Title>
+                {activity.author.name} · {typeLabel}
+              </Timeline.Title>
+              {activity.outcome ? (
+                <Text fontSize="sm">
+                  <Text as="span" color="fg.muted">
+                    Resultado:{" "}
                   </Text>
-                ) : null}
-                {activity.body ? (
-                  <Text fontSize="sm" whiteSpace="pre-wrap">
-                    {activity.type === "STAGE_CHANGE"
-                      ? formatStageChangeSummary(activity.body)
-                      : activity.body}
-                  </Text>
-                ) : null}
-              </Stack>
-            </Card.Body>
-          </Card.Root>
+                  {activityOutcomeLabels[activity.outcome]}
+                </Text>
+              ) : null}
+              {activity.body ? (
+                <Text fontSize="sm" whiteSpace="pre-wrap">
+                  {activity.type === "STAGE_CHANGE"
+                    ? formatStageChangeSummary(activity.body)
+                    : activity.body}
+                </Text>
+              ) : null}
+            </Timeline.Content>
+          </Timeline.Item>
         );
       })}
       {nextFollowUpAt ? (
-        <Text as="li" fontSize="sm">
-          <Text as="span" color="fg.muted">
-            Próximo contato:{" "}
-          </Text>
-          {formatDateTime(nextFollowUpAt)}
-        </Text>
+        <Timeline.Item>
+          <Timeline.Connector>
+            <Timeline.Separator />
+            <Timeline.Indicator />
+          </Timeline.Connector>
+          <Timeline.Content>
+            <Timeline.Title>
+              <Text as="span" color="fg.muted" fontWeight="normal">
+                Próximo contato:{" "}
+              </Text>
+              {formatDateTime(nextFollowUpAt)}
+            </Timeline.Title>
+          </Timeline.Content>
+        </Timeline.Item>
       ) : null}
-    </Stack>
+    </Timeline.Root>
   );
 }

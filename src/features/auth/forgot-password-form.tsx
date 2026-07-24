@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 
-import { Alert, Field, Stack, Text } from "@chakra-ui/react";
+import { Alert, Field, Fieldset, Stack, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -41,34 +41,43 @@ export function ForgotPasswordForm() {
 
   return (
     <form action={formAction}>
-      <Stack gap="4" width="full">
-        <Field.Root required>
-          <Field.Label>E-mail</Field.Label>
-          <Input
-            name="email"
-            type="email"
-            autoComplete="username"
-            required
-          />
-        </Field.Root>
+      <Fieldset.Root disabled={pending}>
+        <Fieldset.Content>
+          <Stack gap="4" width="full">
+            <Field.Root required>
+              <Field.Label>E-mail</Field.Label>
+              <Input
+                name="email"
+                type="email"
+                autoComplete="username"
+                required
+              />
+            </Field.Root>
 
-        {state.error ? (
-          <Alert.Root status="error" variant="subtle" role="alert">
-            <Alert.Indicator />
-            <Alert.Content>
-              <Alert.Description>{state.error}</Alert.Description>
-            </Alert.Content>
-          </Alert.Root>
-        ) : null}
+            {state.error ? (
+              <Alert.Root status="error" variant="subtle" role="alert">
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Description>{state.error}</Alert.Description>
+                </Alert.Content>
+              </Alert.Root>
+            ) : null}
 
-        <Button type="submit" width="full" loading={pending} disabled={pending}>
-          {pending ? "Enviando…" : "Enviar"}
-        </Button>
+            <Button
+              type="submit"
+              width="full"
+              loading={pending}
+              disabled={pending}
+            >
+              {pending ? "Enviando…" : "Enviar"}
+            </Button>
 
-        <Text fontSize="sm" color="fg.muted">
-          <NextLink href="/login">Voltar ao login</NextLink>
-        </Text>
-      </Stack>
+            <Text fontSize="sm" color="fg.muted">
+              <NextLink href="/login">Voltar ao login</NextLink>
+            </Text>
+          </Stack>
+        </Fieldset.Content>
+      </Fieldset.Root>
     </form>
   );
 }

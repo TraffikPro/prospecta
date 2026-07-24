@@ -39,7 +39,7 @@ test.describe("must change password (Fatia 3)", () => {
 
     await page.goto("/login");
     await page.getByLabel("E-mail").fill(memberEmail);
-    await page.getByLabel("Senha").fill(memberPassword);
+    await page.getByLabel("Senha", { exact: true }).fill(memberPassword);
     await page.getByRole("button", { name: "Entrar" }).click();
 
     await expect(page).toHaveURL(/\/change-password/);
