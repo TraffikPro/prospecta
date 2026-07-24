@@ -1,7 +1,15 @@
 # Campanha — Santos Odontologia (Lote 1)
 
-**Status:** em validação comercial (código congelado)  
+**Status:** lote reingerido — operação comercial aberta (código congelado)  
 **Pergunta:** a inteligência gera conversa comercial real?
+
+## Estado pós-reset (2026-07-24)
+
+| Item | Valor |
+| --- | --- |
+| Reset Neon | Leads/Activities zerados; Users preservados |
+| Sync | `created=5 existing=0 failed=0` (`santos-odontologia-2026-07`) |
+| Próximo | Contato real + Activity (sem alterar score) |
 
 ## Product Decision (VALIDATE)
 
@@ -76,17 +84,17 @@ Next Follow Up: data combinada (se houver continuidade)
 
 | Lead | Contato | Resposta | Reunião | Resultado |
 | --- | --- | --- | --- | --- |
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+| Comsorriso | | | | |
+| Clínica Brasil Sorriso - Gonzaga | | | | |
+| Lux Estética Odontológica Santos | | | | |
+| Centro Santista de Odontologia | | | | |
+| Drª Ariany de França Ferreira | | | | |
 
 ### Totais
 
 | Métrica | Valor |
 | --- | --- |
-| Leads HIGH no pool | 18 |
+| Leads no lote (sync) | 5 |
 | Contato (lote) | 0 / 5 |
 | Respostas | 0 |
 | Reuniões | 0 |
