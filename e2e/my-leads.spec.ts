@@ -6,7 +6,7 @@ const memberEmail =
 const memberPassword = process.env.E2E_MEMBER_PASSWORD ?? "MemberTest123!";
 
 test.describe("my leads queue", () => {
-  test("member sees owned lead in Minha fila and opens detail", async ({
+  test("member filters queue and registers activity from card CTA", async ({
     page,
   }) => {
     const stamp = Date.now();
@@ -25,16 +25,38 @@ test.describe("my leads queue", () => {
     await expect(
       page.getByRole("heading", { name: "Minha operação", exact: true }),
     ).toBeVisible();
-    await expect(page.getByTestId("my-queue-summary")).toBeVisible();
+    await expect(page.getByTestId("my-queue-filters")).toBeVisible();
     await expect(page.getByText(company, { exact: true })).toBeVisible();
-    await expect(page.getByText("Fazer primeiro contato").first()).toBeVisible();
+    await expect(
+      page.getByText("Fazer primeiro contato").first(),
+    ).toBeVisible();
 
+    await page.getByTestId("my-queue-filter-new").click();
+    await expect(page).toHaveURL(/filter=new/);
+    await expect(page.getByText(company, { exact: true })).toBeVisible();
+
+    await page.getByTestId("my-queue-filter-overdue").click();
+    await expect(page).toHaveURL(/filter=overdue/);
+    await expect(page.getByText(company, { exact: true })).toHaveCount(0);
+
+    await page.getByTestId("my-queue-filter-new").click();
     await page
       .getByTestId("my-queue-card")
       .filter({ hasText: company })
-      .getByRole("link", { name: "Abrir" })
+      .getByRole("link", { name: "Registrar contato" })
       .click();
+
     await page.waitForURL(/\/app\/leads\/.+/);
-    await expect(page.getByTestId("lead-next-action")).toBeVisible();
+    await expect(page.locator("#register-activity")).toBeVisible();
+
+    const form = page.locator("#register-activity");
+    await form.getByLabel("Tipo").selectOption("WHATSAPP");
+    await form.getByLabel("Resultado").selectOption("SENT_NO_REPLY");
+    await form.getByLabel("Descrição").fill("Contato via Minha fila E2E");
+    await form.getByLabel(/Próximo passo/).fill("2026-08-01T10:00");
+    await form.getByRole("button", { name: "Salvar atividade" }).click();
+
+    await expect(page.getByText("Atividade registrada.")).toBeVisible();
+    await expect(page.getByText("Contato via Minha fila E2E")).toBeVisible();
   });
 });
