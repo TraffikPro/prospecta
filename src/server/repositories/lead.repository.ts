@@ -1,4 +1,11 @@
-import { Prisma, type Lead, type LeadSource, type LeadStage } from "@prisma/client";
+import {
+  Prisma,
+  type ActivityOutcome,
+  type ActivityType,
+  type Lead,
+  type LeadSource,
+  type LeadStage,
+} from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export type LeadWithOwner = Lead & {
@@ -99,6 +106,38 @@ export async function listLeads(): Promise<LeadWithOwner[]> {
     include: {
       owner: {
         select: { id: true, name: true, email: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export type LeadForOwnerQueue = LeadWithOwner & {
+  activities: Array<{
+    outcome: ActivityOutcome | null;
+    type: ActivityType;
+    createdAt: Date;
+  }>;
+};
+
+/** Active leads owned by user, with latest non–stage-change activity for queue UI. */
+export async function listLeadsForOwnerQueue(
+  ownerId: string,
+): Promise<LeadForOwnerQueue[]> {
+  return prisma.lead.findMany({
+    where: {
+      ownerId,
+      stage: { notIn: ["WON", "LOST"] },
+    },
+    include: {
+      owner: {
+        select: { id: true, name: true, email: true },
+      },
+      activities: {
+        where: { type: { not: "STAGE_CHANGE" } },
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: { outcome: true, type: true, createdAt: true },
       },
     },
     orderBy: { createdAt: "desc" },

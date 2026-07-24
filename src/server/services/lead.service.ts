@@ -23,12 +23,14 @@ import {
   type IntelligenceInboxFilters,
   type IntelligenceInboxLead,
 } from "@/features/leads/intelligence/inbox";
+import { buildMyQueue, type MyQueueView } from "@/features/leads/my-queue";
 import {
   createLead as createLeadRecord,
   findDuplicate,
   findLeadById,
   findLeadBySourceExternalId,
   listLeads,
+  listLeadsForOwnerQueue,
   listLeadsWithIntelligence,
   type LeadWithOwner,
 } from "@/server/repositories/lead.repository";
@@ -103,6 +105,13 @@ export async function getLeadById(id: string): Promise<LeadWithOwner | null> {
 
 export async function getLeads(): Promise<LeadWithOwner[]> {
   return listLeads();
+}
+
+export async function getMyQueueForOwner(
+  ownerId: string,
+): Promise<MyQueueView> {
+  const leads = await listLeadsForOwnerQueue(ownerId);
+  return buildMyQueue(leads);
 }
 
 export type IntelligenceInboxResult = {

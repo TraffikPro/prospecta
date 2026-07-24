@@ -4,6 +4,7 @@ export {
   getLeadById,
   getLeads,
   getLeadsGroupedByStage,
+  getMyQueueForOwner,
   ingestExternalLead,
   moveLeadStage,
 } from "./lead.service";

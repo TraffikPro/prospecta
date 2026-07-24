@@ -1,81 +1,24 @@
-# Workspace / Meus leads — Decision DEFER
+# Workspace / Meus leads — Decision DEFER → REOPENED
 
-- **Data:** 2026-07-24
-- **Decisão:** **DEFER**
-- **Classificação:** WORKSPACE (quando reabrir)
-- **Relacionado:** [campaign-santos-odonto-batch-1.md](campaign-santos-odonto-batch-1.md), [product-decision-lead-next-action.md](product-decision-lead-next-action.md), [product-decision-dashboard-defer.md](product-decision-dashboard-defer.md)
+- **Data (DEFER):** 2026-07-24
+- **Data (reabertura):** 2026-07-24
+- **Classificação:** WORKSPACE
+- **Sucessor:** [product-decision-my-queue.md](product-decision-my-queue.md) (**BUILD** reduzido)
 
-## Status
+## Histórico
 
-**DEFERRED** — não autoriza `/app/workspace`, Kanban nem fila completa.
-
-## Regra
-
-```text
-Sem sintoma → sem Workspace
-```
-
-Hipótese de “fila operacional” ≠ gargalo observado. O fluxo acabou de ganhar **Próxima ação** no Lead Detail; ainda não sabemos se o comercial executa os 5 contatos com Inbox + Detail.
-
-## Contexto atual
-
-```text
-Intelligence Inbox ✅
-Lead Detail + Próxima ação ✅
-Activity ✅
-
-Pergunta aberta:
-O comercial consegue executar os 5 contatos com o fluxo atual?
-```
-
-## O que observar na operação
-
-| Caso | Sintoma | Próximo produto |
+| Status | Quando | Nota |
 | --- | --- | --- |
-| 1 | “Está fácil, consigo executar.” | Nada |
-| 2 | “Não sei qual lead fazer primeiro.” | Workspace / priorização |
-| 3 | “Sei qual fazer, mas esqueço follow-up.” | Filtro menor (`Follow-up hoje` / Meus) — não necessariamente Workspace |
+| **DEFER** | 2026-07-24 | Sem sintoma observado; freeze do lote Santos |
+| **REOPENED** | 2026-07-24 | Operadores relataram dificuldade em decidir o próximo lead |
+| **BUILD REDUCED** | 2026-07-24 | `/app/my-leads` — não Workspace completo |
 
-## Condições para reabrir o grill
+Documento mantido como histórico. Implementação autorizada só no decision de **Minha fila**.
 
-Qualquer uma:
-
-- 5 contatos concluídos no lote Santos; **ou**
-- ≥3 Activities reais registradas; **ou**
-- comercial pedir fila / priorização
-
-## Primeira versão esperada (quando BUILD)
-
-**Não** começar com `/app/workspace` + Kanban + cards especiais.
-
-Preferir evolução incremental em `/app/leads`:
+## Regra original (ainda válida para módulos grandes)
 
 ```text
-Filtros:
-[Meus leads]
-[Follow-up hoje]
-[Sem atividade]
+Sem sintoma → sem Workspace completo
 ```
 
-Reutiliza: owner, `nextFollowUpAt`, Activity existentes.
-
-## Próximo passo agora
-
-```text
-Intelligence Inbox
-        ↓
-Lead Detail
-        ↓
-Próxima ação
-        ↓
-Contato
-        ↓
-Activity
-```
-
-Próximo código relevante deve nascer de **reclamação real** do comercial, não de possibilidade.
-
-## Owner / revisão
-
-- Owner: produto + comercial
-- Revisão: após primeiros contatos Santos ou ao atingir condição de reabertura
+Workspace Kanban / módulo amplo continua fora até nova evidência. A fatia aprovada é fila mínima sobre dados existentes.
