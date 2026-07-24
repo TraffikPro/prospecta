@@ -22,7 +22,8 @@ Fatia 3 — mustChangePassword (primeiro acesso): BUILD
 
 Login refinado, forgot stub, sessão expirada.
 
-**Follow-up visual:** [Login Visual Refresh v1](product-decision-login-visual-refresh-v1.md) — **DONE** (PR #28, smoke produção 2026-07-24).
+**Follow-up visual:** [Login Visual Refresh v1](product-decision-login-visual-refresh-v1.md) — **DONE** (PR #28).  
+**Consistência:** [Auth Visual Consistency v1](product-decision-auth-visual-consistency-v1.md) — **DONE** (PRs #31 + #33, 2026-07-24).
 
 ## Fatia 2 — BUILD
 
