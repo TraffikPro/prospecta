@@ -25,6 +25,10 @@ test.describe("activity foundation", () => {
       "data-stage",
       "NEW",
     );
+    await expect(page.getByTestId("lead-next-action")).toBeVisible();
+    await expect(page.getByTestId("next-action-recommended")).toHaveText(
+      "Fazer primeiro contato",
+    );
 
     await page.getByLabel("Tipo").selectOption("WHATSAPP");
     await page.getByLabel("Resultado").selectOption("INTERESTED");
@@ -42,5 +46,8 @@ test.describe("activity foundation", () => {
     await expect(
       page.getByRole("listitem").filter({ hasText: "WhatsApp" }).first(),
     ).toBeVisible();
+    await expect(page.getByTestId("next-action-recommended")).toHaveText(
+      "Continuar conversa",
+    );
   });
 });
