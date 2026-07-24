@@ -1,65 +1,52 @@
 # Auth Experience v1 — Decision
 
-- **Data:** 2026-07-23
+- **Data:** 2026-07-23 (atualizado 2026-07-24)
 - **Classificação:** PLATFORM
-- **Relacionado:** [ADR 0005](../adr/0005-auth-sessions-acl-v1.md)
+- **Relacionado:** [ADR 0005](../adr/0005-auth-sessions-acl-v1.md), [ADR 0012](../adr/0012-password-reset-resend.md), [ADR 0013](../adr/0013-must-change-password.md)
 
 ## Product Decision
 
 ```text
-Fatia 1 — Auth UX Foundation: BUILD
-Fatia 2 — Password Reset + Resend: PLANNED
-Fatia 3 — mustChangePassword (primeiro acesso): DEFER
+Fatia 1 — Auth UX Foundation: BUILD (shipped — PR #9)
+Fatia 2 — Password Reset + Resend: BUILD
+Fatia 3 — mustChangePassword (primeiro acesso): BUILD
 ```
 
 ## Evidência
 
-- Login + sessão + ACL já existem em produção com operadores reais.
-- Ciclo de identidade incompleto (recuperação, primeiro acesso, UX de sessão).
-- Não interfere no experimento comercial (lote Santos).
+- Operadores reais com contas criadas manualmente / senha temporária.
+- Fatia 1–2 cobrem UX e recovery; falta fechar o ciclo de primeiro acesso.
+- Autorização explícita para Fatia 3.
 
-## Fatia 1 — BUILD (autorizada)
+## Fatia 1 — BUILD (shipped)
+
+Login refinado, forgot stub, sessão expirada.
+
+## Fatia 2 — BUILD
+
+`PasswordResetToken`, Resend via `EmailProvider`, `/reset-password`, invalidação de sessões.
+
+## Fatia 3 — BUILD (autorizada)
 
 Escopo:
 
-- Login Chakra refinado (loading, erros claros)
-- Link “Esqueci minha senha”
-- Rota `/forgot-password` com copy anti-enumeração (stub, sem e-mail)
-- Redirect de sessão inválida → `/login?reason=session_expired`
-- Mensagem: “Sua sessão expirou. Entre novamente para continuar.”
+- `User.mustChangePassword`
+- Login / rotas autenticadas → `/change-password` enquanto a flag estiver ativa
+- Formulário: senha atual + nova + confirmação
+- Limpar flag após troca bem-sucedida e após reset (Fatia 2)
 
 Fora:
 
-- Prisma migration / `PasswordResetToken`
-- Resend / envio de e-mail
-- `mustChangePassword`
-- MFA / OAuth / SSO / papéis novos
-
-## Fatia 2 — PLANNED (Resend)
-
-Provider aprovado: **Resend**, atrás de interface:
-
-```text
-Auth Recovery
-      │
-      ▼
-Email Provider Interface
-      │
-      └── ResendAdapter
-```
-
-Checkpoint antes de implementar: uso real pelos operadores e necessidade de recuperação.
-
-## Fatia 3 — DEFER
-
-`mustChangePassword` / troca obrigatória no primeiro acesso — reavaliar após Fatia 2 estável.
+- CRUD de usuários na UI
+- MFA / OAuth / SSO
+- Expiração periódica de senha / política complexa
 
 ## Hipótese
 
-Fundação de identidade ↓ atrito de acesso e ↑ maturidade do case técnico, sem mudar o funil comercial.
+Troca obrigatória no primeiro acesso ↓ credencial temporária permanente e ↑ higiene de identidade no piloto.
 
-## Métrica (Fatia 1)
+## Métrica (Fatia 3)
 
-- Login e ACL existentes continuam verdes
-- E2E `auth-recovery-ui` cobre link, stub e mensagem de sessão
-- Copy do forgot não revela existência de e-mail
+- Usuário com flag não acessa `/app` até trocar a senha
+- Após troca, flag fica `false` e o app abre normalmente
+- E2E cobre o gate + troca

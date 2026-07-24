@@ -8,32 +8,39 @@ import NextLink from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  requestPasswordResetAction,
-  type ForgotPasswordState,
+  resetPasswordAction,
+  type ResetPasswordState,
 } from "@/server/actions/password-reset";
-import { FORGOT_PASSWORD_ACK_MESSAGE } from "@/server/auth/login-redirect";
+import { PASSWORD_CHANGED_MESSAGE } from "@/server/auth/login-redirect";
 
-const initialState: ForgotPasswordState = {};
+const initialState: ResetPasswordState = {};
 
-export function ForgotPasswordForm() {
+type ResetPasswordFormProps = {
+  token: string;
+};
+
+export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const [state, formAction, pending] = useActionState(
-    requestPasswordResetAction,
+    resetPasswordAction,
     initialState,
   );
 
-  if (state.acknowledged) {
+  if (state.ok) {
     return (
       <Stack gap="4" width="full">
-        <Alert.Root status="success" variant="subtle" role="status">
+        <Alert.Root
+          status="success"
+          variant="subtle"
+          role="status"
+          data-testid="password-reset-success"
+        >
           <Alert.Indicator />
           <Alert.Content>
-            <Alert.Description data-testid="forgot-password-ack">
-              {FORGOT_PASSWORD_ACK_MESSAGE}
-            </Alert.Description>
+            <Alert.Description>{PASSWORD_CHANGED_MESSAGE}</Alert.Description>
           </Alert.Content>
         </Alert.Root>
         <Text fontSize="sm">
-          <NextLink href="/login">Voltar ao login</NextLink>
+          <NextLink href="/login">Fazer login</NextLink>
         </Text>
       </Stack>
     );
@@ -41,14 +48,27 @@ export function ForgotPasswordForm() {
 
   return (
     <form action={formAction}>
+      <input type="hidden" name="token" value={token} />
       <Stack gap="4" width="full">
         <Field.Root required>
-          <Field.Label>E-mail</Field.Label>
+          <Field.Label>Nova senha</Field.Label>
           <Input
-            name="email"
-            type="email"
-            autoComplete="username"
+            name="password"
+            type="password"
+            autoComplete="new-password"
             required
+            minLength={8}
+          />
+        </Field.Root>
+
+        <Field.Root required>
+          <Field.Label>Confirmar senha</Field.Label>
+          <Input
+            name="confirmPassword"
+            type="password"
+            autoComplete="new-password"
+            required
+            minLength={8}
           />
         </Field.Root>
 
@@ -62,7 +82,7 @@ export function ForgotPasswordForm() {
         ) : null}
 
         <Button type="submit" width="full" loading={pending} disabled={pending}>
-          {pending ? "Enviando…" : "Enviar"}
+          {pending ? "Alterando…" : "Alterar senha"}
         </Button>
 
         <Text fontSize="sm" color="fg.muted">

@@ -9,6 +9,7 @@ const admin: SessionUser = {
   name: "Admin",
   email: "admin@prospecta.test",
   role: "ADMIN",
+  mustChangePassword: false,
 };
 
 const member: SessionUser = {
@@ -16,6 +17,7 @@ const member: SessionUser = {
   name: "Member",
   email: "comercial@prospecta.test",
   role: "MEMBER",
+  mustChangePassword: false,
 };
 
 describe("auth guards", () => {

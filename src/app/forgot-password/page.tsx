@@ -2,6 +2,7 @@ import { Box, Card, Heading, Stack, Text } from "@chakra-ui/react";
 import { redirect } from "next/navigation";
 
 import { ForgotPasswordForm } from "@/features/auth/forgot-password-form";
+import { postAuthPath } from "@/server/auth/login-redirect";
 import { getSessionUser } from "@/server/auth/session";
 
 export const dynamic = "force-dynamic";
@@ -9,7 +10,7 @@ export const dynamic = "force-dynamic";
 export default async function ForgotPasswordPage() {
   const user = await getSessionUser();
   if (user) {
-    redirect("/app");
+    redirect(postAuthPath(user));
   }
 
   return (

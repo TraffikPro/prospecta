@@ -52,6 +52,7 @@ async function main() {
         role: user.role,
         passwordHash,
         isActive: true,
+        mustChangePassword: false,
       },
       create: {
         email: user.email,
@@ -59,6 +60,8 @@ async function main() {
         role: user.role,
         passwordHash,
         isActive: true,
+        // E2E / seed users keep false. New operator accounts: mustChangePassword true.
+        mustChangePassword: false,
       },
     });
   }
