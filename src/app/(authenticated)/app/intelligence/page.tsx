@@ -1,9 +1,12 @@
 import { Stack, Text } from "@chakra-ui/react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { PageFrame } from "@/components/layout/page-frame";
 import { PageHeading } from "@/components/layout/page-heading";
 import { ContextualNav } from "@/components/navigation";
+import { AppEmptyState } from "@/components/ui/app-empty-state";
+import { Button } from "@/components/ui/button";
 import {
   IntelligenceFilters,
   LeadScoreCard,
@@ -55,13 +58,22 @@ export default async function IntelligenceInboxPage({ searchParams }: PageProps)
       <IntelligenceFilters filters={filters} />
 
       {items.length === 0 ? (
-        <Text
-          fontSize="sm"
-          color="fg.muted"
+        <AppEmptyState
           data-testid="intelligence-inbox-empty"
-        >
-          Nenhuma oportunidade com inteligência para este filtro.
-        </Text>
+          title="Nenhuma oportunidade com inteligência para este filtro."
+          description="Ajuste score/origem ou volte para Todos para ver a fila completa."
+          action={
+            filters.qualification !== "ALL" || filters.source !== "ALL" ? (
+              <Button asChild size="md" minH="touch" variant="outline" colorPalette="gray">
+                <Link href="/app/intelligence">Limpar filtros</Link>
+              </Button>
+            ) : (
+              <Button asChild size="md" minH="touch" variant="outline" colorPalette="gray">
+                <Link href="/app/my-leads">Ir para Minha fila</Link>
+              </Button>
+            )
+          }
+        />
       ) : (
         <Stack gap="3" data-testid="intelligence-inbox-list">
           {items.map((item) => (

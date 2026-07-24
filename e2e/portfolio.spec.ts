@@ -58,7 +58,7 @@ test.describe("portfolio commercial v1 desktop", () => {
 
     const firstCard = cards.first();
     await firstCard.getByTestId("portfolio-copy-link").click();
-    await expect(firstCard.getByTestId("portfolio-copy-link")).toHaveText(
+    await expect(firstCard.getByTestId("portfolio-copy-link")).toContainText(
       "Link copiado",
     );
 

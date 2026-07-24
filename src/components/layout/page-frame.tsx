@@ -27,7 +27,6 @@ export function PageFrame({
 }: PageFrameProps) {
   return (
     <Stack
-      as="main"
       gap={gap}
       w="full"
       maxW={MAX_W[width]}

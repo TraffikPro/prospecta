@@ -2,6 +2,7 @@ import NextLink from "next/link";
 import { Card, Heading, Stack, Text } from "@chakra-ui/react";
 
 import { buildLeadDetailHref } from "@/components/navigation";
+import { AppEmptyState } from "@/components/ui/app-empty-state";
 import { Button } from "@/components/ui/button";
 import { LeadPriorityBadge } from "@/features/leads/components/lead-priority-badge";
 import {
@@ -30,12 +31,39 @@ function leadHref(leadId: string, filter: MyQueueView["filter"], hash?: string) 
 
 export function MyQueueList({ view }: MyQueueListProps) {
   if (view.items.length === 0) {
+    const isAllEmpty = view.summary.total === 0;
+    const title = isAllEmpty
+      ? MY_QUEUE_EMPTY_BY_FILTER.all
+      : MY_QUEUE_EMPTY_BY_FILTER[view.filter];
+
     return (
-      <Text fontSize="sm" color="fg.muted" data-testid="my-queue-empty">
-        {view.summary.total === 0
-          ? MY_QUEUE_EMPTY_BY_FILTER.all
-          : MY_QUEUE_EMPTY_BY_FILTER[view.filter]}
-      </Text>
+      <AppEmptyState
+        data-testid="my-queue-empty"
+        title={title}
+        description={
+          isAllEmpty
+            ? "Cadastre um lead ou aguarde novos da inteligência."
+            : "Troque o filtro ou volte para Todos para ver o restante da fila."
+        }
+        action={
+          isAllEmpty ? (
+            <Button asChild size="md" minH="touch" width={{ base: "full", sm: "auto" }}>
+              <NextLink href="/app/leads/new">Cadastrar lead</NextLink>
+            </Button>
+          ) : view.filter !== "all" ? (
+            <Button
+              asChild
+              size="md"
+              minH="touch"
+              variant="outline"
+              colorPalette="gray"
+              width={{ base: "full", sm: "auto" }}
+            >
+              <NextLink href="/app/my-leads">Ver todos</NextLink>
+            </Button>
+          ) : null
+        }
+      />
     );
   }
 

@@ -2,7 +2,16 @@
 
 import type { ReactNode } from "react";
 
-import { Box, Container, HStack, Link as ChakraLink, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Container,
+  HStack,
+  Link as ChakraLink,
+  SkipNavContent,
+  SkipNavLink,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -46,6 +55,7 @@ export function AppShell({ userName, userRole, children }: AppShellProps) {
 
   return (
     <Box minH="100vh" bg="bg.subtle" pb={{ base: "20", md: "0" }} overflowX="hidden">
+      <SkipNavLink data-testid="skip-nav-link">Ir para o conteúdo</SkipNavLink>
       <Box
         as="header"
         borderBottomWidth="1px"
@@ -131,14 +141,16 @@ export function AppShell({ userName, userRole, children }: AppShellProps) {
         </Container>
       </Box>
 
-      <Container
-        as="div"
-        maxW="containerList"
-        px={{ base: "4", md: "6" }}
-        py={{ base: "5", md: "8" }}
-      >
-        {children}
-      </Container>
+      <SkipNavContent as="main" id="main-content" tabIndex={-1}>
+        <Container
+          as="div"
+          maxW="containerList"
+          px={{ base: "4", md: "6" }}
+          py={{ base: "5", md: "8" }}
+        >
+          {children}
+        </Container>
+      </SkipNavContent>
 
       <Box
         as="nav"

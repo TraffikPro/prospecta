@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Clipboard } from "@chakra-ui/react";
 
 import { Button } from "@/components/ui/button";
 
@@ -11,39 +11,34 @@ type CopyLinkButtonProps = {
   label?: string;
 };
 
+function absoluteCopyValue(url: string): string {
+  return toAbsolutePortfolioUrl(url, {
+    appUrl: process.env.NEXT_PUBLIC_APP_URL,
+    origin: typeof window !== "undefined" ? window.location.origin : undefined,
+  });
+}
+
 export function CopyLinkButton({
   url,
   label = "Copiar link",
 }: CopyLinkButtonProps) {
-  const [copied, setCopied] = useState(false);
-
-  async function handleCopy() {
-    const absolute = toAbsolutePortfolioUrl(url, {
-      appUrl: process.env.NEXT_PUBLIC_APP_URL,
-      origin: typeof window !== "undefined" ? window.location.origin : undefined,
-    });
-    try {
-      await navigator.clipboard.writeText(absolute);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2000);
-    } catch {
-      setCopied(false);
-    }
-  }
+  const value = absoluteCopyValue(url);
 
   return (
-    <Button
-      type="button"
-      size="md"
-      minH="touch"
-      variant="outline"
-      colorPalette="gray"
-      flex="1"
-      onClick={handleCopy}
-      data-testid="portfolio-copy-link"
-      aria-live="polite"
-    >
-      {copied ? "Link copiado" : label}
-    </Button>
+    <Clipboard.Root value={value}>
+      <Clipboard.Trigger asChild>
+        <Button
+          type="button"
+          size="md"
+          minH="touch"
+          variant="outline"
+          colorPalette="gray"
+          flex="1"
+          data-testid="portfolio-copy-link"
+        >
+          <Clipboard.Indicator copied="Link copiado">{label}</Clipboard.Indicator>
+        </Button>
+      </Clipboard.Trigger>
+    </Clipboard.Root>
   );
 }

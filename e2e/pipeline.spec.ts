@@ -39,6 +39,9 @@ test.describe("pipeline foundation", () => {
     await page.getByTestId("move-stage-select").selectOption("MEETING");
     await page.getByTestId("move-stage-submit").click();
 
+    await expect(
+      page.getByRole("status").filter({ hasText: "Etapa atualizada" }),
+    ).toBeVisible({ timeout: 10_000 });
     await expect(page.getByTestId("lead-stage")).toHaveAttribute(
       "data-stage",
       "MEETING",
@@ -75,6 +78,9 @@ test.describe("pipeline foundation", () => {
     await page.getByTestId("move-stage-select").selectOption("LOST");
     await page.getByTestId("lost-reason").fill("Sem orçamento no trimestre");
     await page.getByTestId("move-stage-submit").click();
+    await expect(
+      page.getByRole("status").filter({ hasText: "Etapa atualizada" }),
+    ).toBeVisible({ timeout: 10_000 });
     await expect(page.getByTestId("lead-stage")).toHaveAttribute(
       "data-stage",
       "LOST",

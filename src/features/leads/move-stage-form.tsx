@@ -1,7 +1,8 @@
 "use client";
 
 import type { LeadStage } from "@prisma/client";
-import { useActionState, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect, useState } from "react";
 
 import {
   Alert,
@@ -14,6 +15,7 @@ import {
 
 import { SectionHeading } from "@/components/layout/page-heading";
 import { Button } from "@/components/ui/button";
+import { notifySuccess } from "@/components/ui/toaster";
 import { LEAD_STAGE_ORDER, leadStageLabels } from "@/features/leads/lead.labels";
 import {
   moveLeadStageAction,
@@ -28,11 +30,24 @@ type Props = {
 };
 
 export function MoveStageForm({ leadId, currentStage }: Props) {
+  const router = useRouter();
   const [state, formAction, pending] = useActionState(
-    moveLeadStageAction,
+    async (prev: MoveLeadStageState, formData: FormData) => {
+      const next = await moveLeadStageAction(prev, formData);
+      if (next.ok) {
+        notifySuccess("Etapa atualizada");
+      }
+      return next;
+    },
     initialState,
   );
   const [selectedStage, setSelectedStage] = useState<LeadStage>(currentStage);
+
+  useEffect(() => {
+    if (state.ok) {
+      router.refresh();
+    }
+  }, [state.ok, router]);
 
   return (
     <Card.Root variant="outline" borderRadius="card">

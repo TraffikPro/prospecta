@@ -1,9 +1,12 @@
 import { SimpleGrid, Text } from "@chakra-ui/react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { PageFrame } from "@/components/layout/page-frame";
 import { PageHeading } from "@/components/layout/page-heading";
 import { ContextualNav } from "@/components/navigation";
+import { AppEmptyState } from "@/components/ui/app-empty-state";
+import { Button } from "@/components/ui/button";
 import {
   listAvailableNiches,
   PORTFOLIO_CATALOG,
@@ -59,14 +62,18 @@ export default async function PortfolioPage({ searchParams }: PageProps) {
       />
 
       {models.length === 0 ? (
-        <Text
-          fontSize="sm"
-          color="fg.muted"
+        <AppEmptyState
           data-testid="portfolio-empty"
-        >
-          Nenhum modelo demonstrativo disponível para este filtro. Ajuste o
-          nicho ou peça a publicação de novos sites-conceito.
-        </Text>
+          title="Nenhum modelo demonstrativo neste filtro."
+          description="Volte para Todos ou peça a publicação de novos sites-conceito do nicho."
+          action={
+            nicheFilter !== "ALL" ? (
+              <Button asChild size="md" minH="touch" variant="outline" colorPalette="gray">
+                <Link href="/app/portfolio">Ver todos os modelos</Link>
+              </Button>
+            ) : null
+          }
+        />
       ) : (
         <SimpleGrid
           columns={{ base: 1, md: 2, xl: 3 }}
