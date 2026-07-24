@@ -1,15 +1,17 @@
-# Breadcrumb Navigation v1 — Decision BUILD
+# Breadcrumb Navigation v1 — Decision BUILD → DONE
 
 - **Data:** 2026-07-24
-- **Decisão:** **BUILD**
+- **Decisão:** **BUILD** → **DONE** (shipped)
 - **Classificação:** PLATFORM
+- **PR:** [#14](https://github.com/TraffikPro/prospecta/pull/14) (merged)
+- **Produção:** `https://prospecta-ten-tau.vercel.app` @ `39223ae`
 - **Relacionado:** [product-decision-mobile-experience-v1.md](product-decision-mobile-experience-v1.md)
 
 ## Product Decision
 
 ```text
 Mobile Experience v1: DONE
-    → Breadcrumb Navigation v1: BUILD
+    → Breadcrumb Navigation v1: BUILD → DONE
 ```
 
 ## Problema
@@ -38,3 +40,20 @@ E2E: fila filtrada → lead → breadcrumb → voltar com `?filter=`; 0 overflow
 
 In: rotas autenticadas listadas; origem allowlisted.  
 Out: histórico global, auth pages, menus dropdown, auto-pathname, redesign shell, regras de domínio.
+
+## Smoke produção (2026-07-24)
+
+**OVERALL PASS** em `https://prospecta-ten-tau.vercel.app` (`scripts/smoke-breadcrumbs-prod.mjs`):
+
+```text
+PASS  Minha fila?filter=new → lead → ← Minha fila (filtro ok)
+PASS  Inteligência → lead → ← Inteligência
+PASS  Pipeline → lead → ← Pipeline
+PASS  Leads → Novo lead → Leads
+PASS  voltar do navegador preserva filter da fila
+PASS  origem inválida cai em Leads
+PASS  bottom nav presente no mobile
+PASS  mobile: back compacto / sem overflow / ← Minha fila com filtro
+PASS  mobile novo lead: sem overflow
+PASS  Mais → Usuários → Mais
+```
