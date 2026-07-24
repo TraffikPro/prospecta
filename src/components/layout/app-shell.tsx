@@ -15,6 +15,7 @@ type AppShellProps = {
 };
 
 const NAV = [
+  { href: "/app/my-leads", label: "Minha fila" },
   { href: "/app/intelligence", label: "Inteligência" },
   { href: "/app/leads", label: "Leads" },
   { href: "/app/pipeline", label: "Pipeline" },
