@@ -22,6 +22,8 @@ Fatia 3 — mustChangePassword (primeiro acesso): BUILD
 
 Login refinado, forgot stub, sessão expirada.
 
+**Follow-up visual:** [Login Visual Refresh v1](product-decision-login-visual-refresh-v1.md) — **DONE** (PR #28, smoke produção 2026-07-24).
+
 ## Fatia 2 — BUILD
 
 `PasswordResetToken`, Resend via `EmailProvider`, `/reset-password`, invalidação de sessões.
