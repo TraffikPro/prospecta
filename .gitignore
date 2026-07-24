@@ -35,6 +35,8 @@ playwright/.auth/
 # prisma
 prisma/*.db
 prisma/*.db-journal
+# pilot reset logical backups (may contain lead PII)
+backup/
 # typescript
 *.tsbuildinfo
 # Playwright MCP local artifacts
