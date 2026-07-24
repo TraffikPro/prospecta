@@ -1,6 +1,7 @@
-import { Box, Card, Heading, Stack, Text } from "@chakra-ui/react";
+import { Heading, Stack, Text } from "@chakra-ui/react";
 import { redirect } from "next/navigation";
 
+import { PublicAuthShell } from "@/features/auth/components/public-auth-shell";
 import { ForgotPasswordForm } from "@/features/auth/forgot-password-form";
 import { postAuthPath } from "@/server/auth/login-redirect";
 import { getSessionUser } from "@/server/auth/session";
@@ -14,36 +15,18 @@ export default async function ForgotPasswordPage() {
   }
 
   return (
-    <Box
-      as="main"
-      minH="100vh"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      px="6"
-      py="10"
-      bg="bg.subtle"
-    >
-      <Card.Root
-        width="full"
-        maxW="sm"
-        variant="outline"
-        borderRadius="card"
-      >
-        <Card.Header>
-          <Stack gap="2">
-            <Heading as="h1" size="xl">
-              Recuperar acesso
-            </Heading>
-            <Text fontSize="sm" color="fg.muted">
-              Digite seu email e enviaremos instruções.
-            </Text>
-          </Stack>
-        </Card.Header>
-        <Card.Body>
-          <ForgotPasswordForm />
-        </Card.Body>
-      </Card.Root>
-    </Box>
+    <PublicAuthShell>
+      <Stack gap="6">
+        <Stack gap="1">
+          <Heading as="h1" textStyle="pageTitle">
+            Recuperar acesso
+          </Heading>
+          <Text textStyle="meta">
+            Digite seu email e enviaremos instruções.
+          </Text>
+        </Stack>
+        <ForgotPasswordForm />
+      </Stack>
+    </PublicAuthShell>
   );
 }
