@@ -54,10 +54,12 @@ test.describe("password reset (Fatia 2)", () => {
     );
 
     await login(page, memberEmail, nextPassword);
+    await expect(page).toHaveURL(/\/app\/my-leads/);
     await expect(
-      page.getByRole("heading", { name: "Área autenticada" }),
+      page.getByRole("heading", { name: "Minha operação", exact: true }),
     ).toBeVisible();
   });
+
 
   test("expired or bogus token is rejected", async ({ page }) => {
     await page.goto("/reset-password?token=not-a-real-token");

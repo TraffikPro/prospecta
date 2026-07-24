@@ -1,4 +1,4 @@
-import { HStack } from "@chakra-ui/react";
+import { Box, HStack } from "@chakra-ui/react";
 import NextLink from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -33,37 +33,48 @@ function countForFilter(
 
 export function MyQueueFilters({ active, summary }: MyQueueFiltersProps) {
   return (
-    <HStack
+    <Box
       as="nav"
-      gap="2"
-      flexWrap="wrap"
       aria-label="Filtros da fila"
       data-testid="my-queue-filters"
+      overflowX="auto"
+      overflowY="hidden"
+      mx={{ base: "-4", md: "0" }}
+      px={{ base: "4", md: "0" }}
+      css={{
+        WebkitOverflowScrolling: "touch",
+        scrollbarWidth: "none",
+        "&::-webkit-scrollbar": { display: "none" },
+      }}
     >
-      {MY_QUEUE_FILTERS.map((filter) => {
-        const count = countForFilter(filter.id, summary);
-        const href =
-          filter.id === "all"
-            ? "/app/my-leads"
-            : `/app/my-leads?filter=${filter.id}`;
-        const isActive = active === filter.id;
+      <HStack gap="2" flexWrap="nowrap" minW="min-content" pb="1">
+        {MY_QUEUE_FILTERS.map((filter) => {
+          const count = countForFilter(filter.id, summary);
+          const href =
+            filter.id === "all"
+              ? "/app/my-leads"
+              : `/app/my-leads?filter=${filter.id}`;
+          const isActive = active === filter.id;
 
-        return (
-          <Button
-            key={filter.id}
-            asChild
-            size="sm"
-            variant={isActive ? "solid" : "outline"}
-            colorPalette={isActive ? "brand" : "gray"}
-            data-testid={`my-queue-filter-${filter.id}`}
-            data-active={isActive ? "true" : "false"}
-          >
-            <NextLink href={href}>
-              {filter.label} ({count})
-            </NextLink>
-          </Button>
-        );
-      })}
-    </HStack>
+          return (
+            <Button
+              key={filter.id}
+              asChild
+              size="md"
+              minH="11"
+              flexShrink={0}
+              variant={isActive ? "solid" : "outline"}
+              colorPalette={isActive ? "brand" : "gray"}
+              data-testid={`my-queue-filter-${filter.id}`}
+              data-active={isActive ? "true" : "false"}
+            >
+              <NextLink href={href}>
+                {filter.label} ({count})
+              </NextLink>
+            </Button>
+          );
+        })}
+      </HStack>
+    </Box>
   );
 }

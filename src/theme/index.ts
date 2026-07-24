@@ -65,6 +65,8 @@ const config = defineConfig({
         sm: { value: "0.5rem" },
         md: { value: "1rem" },
         lg: { value: "1.5rem" },
+        /** Minimum comfortable touch target (44px). */
+        touch: { value: "2.75rem" },
       },
       radii: {
         card: { value: "0.75rem" },

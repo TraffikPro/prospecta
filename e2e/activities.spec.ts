@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { login } from "./helpers";
+import { LEAD_DETAIL_URL, login } from "./helpers";
 
 const memberEmail =
   process.env.E2E_MEMBER_EMAIL ?? "comercial@prospecta.test";
@@ -19,7 +19,7 @@ test.describe("activity foundation", () => {
     await page.getByLabel("Empresa").fill(company);
     await page.getByLabel("E-mail").fill(email);
     await page.getByRole("button", { name: "Salvar lead" }).click();
-    await page.waitForURL(/\/app\/leads\/.+/);
+    await page.waitForURL(LEAD_DETAIL_URL);
 
     await expect(page.getByTestId("lead-stage")).toHaveAttribute(
       "data-stage",

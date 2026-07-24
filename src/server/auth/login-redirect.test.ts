@@ -46,6 +46,21 @@ describe("login redirect helpers", () => {
 
   it("routes first-access users to change-password", () => {
     assert.equal(postAuthPath({ mustChangePassword: true }), "/change-password");
+    assert.equal(
+      postAuthPath({ mustChangePassword: true, role: "MEMBER" }),
+      "/change-password",
+    );
+  });
+
+  it("routes MEMBER to my-leads and ADMIN to /app", () => {
+    assert.equal(
+      postAuthPath({ mustChangePassword: false, role: "MEMBER" }),
+      "/app/my-leads",
+    );
+    assert.equal(
+      postAuthPath({ mustChangePassword: false, role: "ADMIN" }),
+      "/app",
+    );
     assert.equal(postAuthPath({ mustChangePassword: false }), "/app");
   });
 });

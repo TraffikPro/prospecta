@@ -92,6 +92,14 @@ export const MY_QUEUE_FILTERS: Array<{
   { id: "conversation", label: "Em conversa" },
 ];
 
+export const MY_QUEUE_EMPTY_BY_FILTER: Record<MyQueueFilter, string> = {
+  all: "Nenhum lead ativo na sua fila. Leads WON/LOST ficam de fora.",
+  new: "Nenhum lead aguardando primeiro contato neste filtro.",
+  "follow-up": "Nenhum follow-up para hoje neste filtro.",
+  overdue: "Nenhum lead atrasado neste filtro.",
+  conversation: "Nenhum lead em conversa neste filtro.",
+};
+
 export function parseMyQueueFilter(
   value: string | undefined,
 ): MyQueueFilter {

@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { login } from "./helpers";
+import { LEAD_DETAIL_URL, login } from "./helpers";
 
 const memberEmail =
   process.env.E2E_MEMBER_EMAIL ?? "comercial@prospecta.test";
@@ -19,7 +19,7 @@ test.describe("my leads queue", () => {
     await page.getByLabel("Empresa").fill(company);
     await page.getByLabel("E-mail").fill(email);
     await page.getByRole("button", { name: "Salvar lead" }).click();
-    await page.waitForURL(/\/app\/leads\/.+/);
+    await page.waitForURL(LEAD_DETAIL_URL);
 
     await page.goto("/app/my-leads");
     await expect(
@@ -46,7 +46,7 @@ test.describe("my leads queue", () => {
       .getByRole("link", { name: "Registrar contato" })
       .click();
 
-    await page.waitForURL(/\/app\/leads\/.+/);
+    await page.waitForURL(LEAD_DETAIL_URL);
     await expect(page.locator("#register-activity")).toBeVisible();
 
     const form = page.locator("#register-activity");

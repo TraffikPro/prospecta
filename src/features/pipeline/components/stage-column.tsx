@@ -10,7 +10,7 @@ import { StageBadge } from "./stage-badge";
 type StageColumnProps = {
   stage: LeadStage;
   leads: LeadStageCardData[];
-  formatFollowUp: (value: Date) => string;
+  formatFollowUp: (value: Date | string) => string;
 };
 
 export function StageColumn({
