@@ -1,15 +1,17 @@
 # Campanha — Santos Odontologia (Lote 1)
 
-**Status:** lote reingerido — operação comercial aberta (código congelado)  
+**Status:** experimento comercial oficial — aguardando primeiro ciclo de Activity  
 **Pergunta:** a inteligência gera conversa comercial real?
 
-## Estado pós-reset (2026-07-24)
+## Estado operacional
 
 | Item | Valor |
 | --- | --- |
-| Reset Neon | Leads/Activities zerados; Users preservados |
-| Sync | `created=5 existing=0 failed=0` (`santos-odontologia-2026-07`) |
-| Próximo | Contato real + Activity (sem alterar score) |
+| Campanha | Santos Odontologia 2026-07 (`santos-odontologia-2026-07`) |
+| Leads | 5 HIGH (GOOGLE_PLACES) |
+| Owner | Comercial (`ysfellipe98@gmail.com`) — MEMBER ativo |
+| Activities | 0 → próximo marco = **primeira Activity real** |
+| Freeze de produto | score / sinais / pitch / telas / novas cidades |
 
 ## Product Decision (VALIDATE)
 
@@ -63,32 +65,50 @@ Próximo avanço = operação + aprendizado.
 | Ferramenta | `/app/intelligence` → lead detail → Activity |
 | Chave JSON | `santos-odontologia-2026-07` |
 
-## Dia 1 — ritual do comercial
+## Protocolo por lead
 
-1. Abrir `/app/intelligence`
-2. Filtrar **HIGH** (e origem Places se útil)
-3. Escolher os **5** maiores scores
-4. Abrir detalhe → usar pitch sugerido
-5. Contatar (WhatsApp / e-mail)
-6. Registrar **Activity** + próximo passo / outcome
+### Antes do contato
 
-### Activity mínima esperada
+1. Abrir Intelligence Inbox → Lead Detail  
+2. Ler diagnóstico + pitch  
+3. Pergunta mental (30s): *“por que esta empresa é uma oportunidade?”*  
+   Se não conseguir explicar, registrar na coluna Observação.
+
+### Ordem de abordagem (não pular / não ampliar)
+
+1. Comsorriso  
+2. Clínica Brasil Sorriso - Gonzaga  
+3. Lux Estética Odontológica Santos  
+4. Centro Santista de Odontologia  
+5. Drª Ariany de França Ferreira  
+
+### Após cada contato (obrigatório)
 
 ```text
-Channel: WHATSAPP (ou EMAIL)
-Outcome: SENT_NO_REPLY | REPLIED | INTERESTED | …
-Next Follow Up: data combinada (se houver continuidade)
+Lead → Activity → Outcome → Next Follow Up
 ```
+
+| Situação | Type | Outcome | Follow-up |
+| --- | --- | --- | --- |
+| Sem resposta | WHATSAPP | SENT_NO_REPLY | +3 dias |
+| Respondeu | WHATSAPP | REPLIED | next step no body |
+| Reunião | WHATSAPP / NOTE | MEETING_SCHEDULED | data da reunião |
+
+Sem Activity não há aprendizado.
+
+### O que não fazer no lote
+
+Não alterar score, pesos, sinais, pitch por lead, IA de mensagem, dashboard, website audit nem coletar novas cidades. Variável sob teste = Intelligence + oferta + abordagem atuais.
 
 ## Acompanhamento do lote (atualizar à mão)
 
-| Lead | Contato | Resposta | Reunião | Resultado |
-| --- | --- | --- | --- | --- |
-| Comsorriso | | | | |
-| Clínica Brasil Sorriso - Gonzaga | | | | |
-| Lux Estética Odontológica Santos | | | | |
-| Centro Santista de Odontologia | | | | |
-| Drª Ariany de França Ferreira | | | | |
+| # | Lead | Contato | Resposta | Reunião | Observação qualitativa |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Comsorriso | | | | |
+| 2 | Clínica Brasil Sorriso - Gonzaga | | | | |
+| 3 | Lux Estética Odontológica Santos | | | | |
+| 4 | Centro Santista de Odontologia | | | | |
+| 5 | Drª Ariany de França Ferreira | | | | |
 
 ### Totais
 
@@ -100,14 +120,15 @@ Next Follow Up: data combinada (se houver continuidade)
 | Reuniões | 0 |
 | WON | 0 |
 
-## Decisão após o lote
+## Decisão após o lote (grill com números)
 
-| Resultado | Próximo passo |
-| --- | --- |
-| Muitas respostas | Escalar aquisição (mais cidades/nichos) |
-| Poucas respostas / argumento fraco | Melhorar inteligência (audit site / pitch) — hipótese C |
-| Comercial não usa a Inbox / fila confusa | UX operacional (Workspace) — hipótese B |
-| Mistura de campanhas na operação | Campaign Foundation mínima — hipótese A |
+| Cenário | Leitura | Próximo passo |
+| --- | --- | --- |
+| Respostas altas + reunião | Máquina funciona | Escalar aquisição |
+| 5 contatos / 0 respostas | Lead, mensagem, canal ou oferta | Investigar; hipótese C se argumento fraco |
+| Respostas sem reunião | Posicionamento comercial | Ajustar oferta/pitch (não score às cegas) |
+| Comercial não usa Inbox | Fricção de execução | Workspace — hipótese B |
+| Mistura de campanhas | Atribuição | Campaign Foundation — hipótese A |
 
 ## Referências
 
