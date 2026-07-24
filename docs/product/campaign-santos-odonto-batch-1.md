@@ -1,16 +1,46 @@
 # Campanha — Santos Odontologia (Lote 1)
 
-**Status:** pronto para execução (código congelado pós Intelligence Inbox)  
+**Status:** em validação comercial (código congelado)  
 **Pergunta:** a inteligência gera conversa comercial real?
+
+## Product Decision (VALIDATE)
+
+| Campo | Valor |
+| --- | --- |
+| Decisão | **VALIDATE** — sem Campaign entity / Workspace / Website Intelligence |
+| Motivo | Provar o primeiro ciclo Score → Contato → Resposta → Reunião antes de schema |
+| Campanha no dado | Mantém `intelligence.campaign` (JSON), ex.: `santos-odontologia-2026-07` |
+| Próximo passo técnico | **Nenhum** até evidência do lote |
+
+### Hipóteses a discriminar (após o lote)
+
+| Hipótese | Sintoma | Próximo produto |
+| --- | --- | --- |
+| A — Campaign | Precisa comparar Santos vs outra cidade/nicho; atribuição mistura | Campaign Foundation mínima |
+| B — Execução | Inbox aberta, sem clareza de “quem contactar hoje” | Commercial Workspace |
+| C — Argumento | Respostas sem valor percebido / silêncio forte | Website Intelligence + pitch |
+
+### Critérios para BUILD Campaign Foundation
+
+Abrir schema **somente se**:
+
+1. Segunda campanha na fila **e**
+2. Necessidade operacional **recorrente** de atribuição  
+   (ex.: “preciso saber quais leads são da campanha X — o comercial está misturando”)
+
+BUILD mínimo (quando autorizado): `Campaign { id, name, createdAt }` + `Lead.campaignId?` — sem métricas, dashboard, status, orçamento ou membros.
 
 ## Freeze técnico
 
-Não abrir novas features até haver evidência deste lote:
+Não abrir:
 
-- sem dashboard / analytics
-- sem auditoria de site
-- sem IA de abordagem
-- sem novas fontes de aquisição
+- migration / entidade Campaign
+- CRUD / telas de campanha
+- dashboard / analytics
+- auditoria de site
+- IA de abordagem
+- novas fontes de aquisição
+- Workspace
 
 Próximo avanço = operação + aprendizado.
 
@@ -23,6 +53,7 @@ Próximo avanço = operação + aprendizado.
 | Pool HIGH | ~18 (meta) |
 | Lote inicial | **5** leads (maiores scores na Inbox) |
 | Ferramenta | `/app/intelligence` → lead detail → Activity |
+| Chave JSON | `santos-odontologia-2026-07` |
 
 ## Dia 1 — ritual do comercial
 
@@ -41,7 +72,17 @@ Outcome: SENT_NO_REPLY | REPLIED | INTERESTED | …
 Next Follow Up: data combinada (se houver continuidade)
 ```
 
-## Acompanhamento (atualizar à mão)
+## Acompanhamento do lote (atualizar à mão)
+
+| Lead | Contato | Resposta | Reunião | Resultado |
+| --- | --- | --- | --- | --- |
+| | | | | |
+| | | | | |
+| | | | | |
+| | | | | |
+| | | | | |
+
+### Totais
 
 | Métrica | Valor |
 | --- | --- |
@@ -56,10 +97,11 @@ Next Follow Up: data combinada (se houver continuidade)
 | Resultado | Próximo passo |
 | --- | --- |
 | Muitas respostas | Escalar aquisição (mais cidades/nichos) |
-| Poucas respostas | Melhorar inteligência (audit site / sinais) |
-| Comercial não usa a Inbox | UX operacional (meu lote / follow-ups) |
+| Poucas respostas / argumento fraco | Melhorar inteligência (audit site / pitch) — hipótese C |
+| Comercial não usa a Inbox / fila confusa | UX operacional (Workspace) — hipótese B |
+| Mistura de campanhas na operação | Campaign Foundation mínima — hipótese A |
 
-## Product Decision
+## Referências
 
 BUILD Inbox: [product-decision-intelligence-inbox.md](product-decision-intelligence-inbox.md)  
 Execução geral: [founder-pilot-execution.md](founder-pilot-execution.md)
