@@ -4,6 +4,7 @@ import {
   qualificationColorPalette,
   type LeadQualification,
 } from "@/features/leads/intelligence";
+import { qualificationLabels } from "@/features/leads/lead.labels";
 
 type LeadPriorityBadgeProps = {
   qualification: LeadQualification | null;
@@ -30,7 +31,7 @@ export function LeadPriorityBadge({
           variant="subtle"
           size="sm"
         >
-          {qualification}
+          {qualificationLabels[qualification]}
         </Badge>
       ) : null}
       {typeof score === "number" ? (

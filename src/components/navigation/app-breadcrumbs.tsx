@@ -26,7 +26,7 @@ export function AppBreadcrumbs({ items }: AppBreadcrumbsProps) {
           return (
             <Fragment key={`${item.label}-${index}`}>
               {index > 0 ? <Breadcrumb.Separator>/</Breadcrumb.Separator> : null}
-              <Breadcrumb.Item minH="11" display="inline-flex" alignItems="center">
+              <Breadcrumb.Item minH="touch" display="inline-flex" alignItems="center">
                 {isLast || !item.href ? (
                   <Breadcrumb.CurrentLink
                     aria-current="page"

@@ -4,6 +4,7 @@ import { Badge, type BadgeProps } from "@chakra-ui/react";
 
 import { qualificationColorPalette } from "@/features/leads/intelligence/qualification";
 import type { LeadQualification } from "@/features/leads/intelligence/types";
+import { qualificationLabels } from "@/features/leads/lead.labels";
 
 type QualificationBadgeProps = {
   qualification: LeadQualification;
@@ -20,7 +21,7 @@ export function QualificationBadge({
       size={size}
       data-testid="intelligence-qualification"
     >
-      {qualification}
+      {qualificationLabels[qualification]}
     </Badge>
   );
 }

@@ -39,20 +39,47 @@ export function PipelineBoard({ grouped }: PipelineBoardProps) {
 
   return (
     <>
-      <Stack
-        gap="8"
-        display={{ base: "none", md: "flex" }}
-        data-testid="pipeline-desktop"
-      >
-        {LEAD_STAGE_ORDER.map((stage) => (
-          <StageColumn
-            key={stage}
-            stage={stage}
-            leads={grouped[stage]}
-            formatFollowUp={formatFollowUp}
-          />
-        ))}
-      </Stack>
+      <Box display={{ base: "none", md: "block" }} data-testid="pipeline-desktop">
+        <Accordion.Root
+          collapsible
+          multiple={false}
+          defaultValue={[initialStage]}
+        >
+          <Stack gap="2">
+            {LEAD_STAGE_ORDER.map((stage) => {
+              const leads = grouped[stage];
+              return (
+                <Accordion.Item
+                  key={stage}
+                  value={stage}
+                  borderWidth="1px"
+                  borderColor="border"
+                  borderRadius="card"
+                  bg="bg"
+                  px="3"
+                  data-testid={`pipeline-desktop-stage-${stage}`}
+                >
+                  <Accordion.ItemTrigger minH="touch" py="3">
+                    <Box flex="1" textAlign="left">
+                      <StageBadge stage={stage} count={leads.length} />
+                    </Box>
+                    <Accordion.ItemIndicator />
+                  </Accordion.ItemTrigger>
+                  <Accordion.ItemContent>
+                    <Accordion.ItemBody pb="4">
+                      <StageColumn
+                        stage={stage}
+                        leads={leads}
+                        formatFollowUp={formatFollowUp}
+                      />
+                    </Accordion.ItemBody>
+                  </Accordion.ItemContent>
+                </Accordion.Item>
+              );
+            })}
+          </Stack>
+        </Accordion.Root>
+      </Box>
 
       <Box display={{ base: "block", md: "none" }} data-testid="pipeline-mobile">
         <Accordion.Root
@@ -68,7 +95,7 @@ export function PipelineBoard({ grouped }: PipelineBoardProps) {
                 value={stage}
                 data-testid={`pipeline-mobile-stage-${stage}`}
               >
-                <Accordion.ItemTrigger minH="11" py="3">
+                <Accordion.ItemTrigger minH="touch" py="3">
                   <Box flex="1" textAlign="left">
                     <StageBadge stage={stage} count={leads.length} />
                   </Box>

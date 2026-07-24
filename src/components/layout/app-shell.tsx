@@ -6,6 +6,7 @@ import { Box, Container, HStack, Link as ChakraLink, Stack, Text } from "@chakra
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 
+import { roleLabels } from "@/features/admin/role.labels";
 import { LogoutButton } from "@/features/auth/logout-button";
 
 type AppShellProps = {
@@ -32,6 +33,13 @@ function isActivePath(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+function roleLabel(role: string): string {
+  if (role === "ADMIN" || role === "MEMBER") {
+    return roleLabels[role];
+  }
+  return role;
+}
+
 export function AppShell({ userName, userRole, children }: AppShellProps) {
   const pathname = usePathname();
 
@@ -47,15 +55,15 @@ export function AppShell({ userName, userRole, children }: AppShellProps) {
         zIndex="docked"
         style={{ paddingTop: "env(safe-area-inset-top)" }}
       >
-        <Container maxW="3xl" py={{ base: "3", md: "4" }} px={{ base: "4", md: "6" }}>
+        <Container maxW="containerList" py={{ base: "3", md: "4" }} px={{ base: "4", md: "6" }}>
           <Stack gap={{ base: "0", md: "3" }}>
-            <HStack justify="space-between" align="center" gap="4" minH="11">
+            <HStack justify="space-between" align="center" gap="4" minH="touch">
               <Stack gap="0" minW="0">
                 <Text fontSize="sm" fontWeight="semibold">
                   Prospecta
                 </Text>
                 <Text fontSize="xs" color="fg.muted" truncate>
-                  {userName} · {userRole}
+                  {userName} · {roleLabel(userRole)}
                 </Text>
               </Stack>
               <Box display={{ base: "none", md: "block" }}>
@@ -124,7 +132,7 @@ export function AppShell({ userName, userRole, children }: AppShellProps) {
 
       <Container
         as="div"
-        maxW="3xl"
+        maxW="containerList"
         px={{ base: "4", md: "6" }}
         py={{ base: "5", md: "8" }}
       >

@@ -57,7 +57,7 @@ export function LeadStageCard({ lead, followUpLabel }: LeadStageCardProps) {
           <Button
             asChild
             size="md"
-            minH="11"
+            minH="touch"
             variant="outline"
             colorPalette="gray"
             alignSelf="stretch"

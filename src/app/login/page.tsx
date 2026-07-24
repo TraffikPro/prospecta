@@ -49,7 +49,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
               Prospecta
             </Heading>
             <Text fontSize="sm" color="fg.muted">
-              Entre com sua conta do time fundador.
+              Entre com sua conta para continuar.
             </Text>
           </Stack>
         </Card.Header>

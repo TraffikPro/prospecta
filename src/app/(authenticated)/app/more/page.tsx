@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Heading, Link as ChakraLink, Stack, Text } from "@chakra-ui/react";
+import { Link as ChakraLink, Stack } from "@chakra-ui/react";
 
+import { PageFrame } from "@/components/layout/page-frame";
+import { PageHeading } from "@/components/layout/page-heading";
 import { ContextualNav } from "@/components/navigation";
+import { roleLabels } from "@/features/admin/role.labels";
 import { LogoutButton } from "@/features/auth/logout-button";
 import { AuthenticationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
@@ -22,32 +25,46 @@ export default async function MorePage() {
   const user = sessionUser!;
 
   return (
-    <Stack as="main" gap="6">
+    <PageFrame width="list" gap="6">
       <ContextualNav items={[{ label: "Mais" }]} />
-      <Stack gap="1">
-        <Heading as="h1" size="lg" fontWeight="semibold">
-          Mais
-        </Heading>
-        <Text fontSize="sm" color="fg.muted">
-          {user.name} · {user.role}
-        </Text>
-      </Stack>
+      <PageHeading
+        title="Mais"
+        meta={`${user.name} · ${roleLabels[user.role]}`}
+      />
 
       <Stack gap="3" fontSize="md">
-        <ChakraLink asChild textDecoration="underline" minH="11" display="flex" alignItems="center">
+        <ChakraLink
+          asChild
+          textDecoration="underline"
+          minH="touch"
+          display="flex"
+          alignItems="center"
+        >
           <Link href="/app/leads">Lista de leads</Link>
         </ChakraLink>
-        <ChakraLink asChild textDecoration="underline" minH="11" display="flex" alignItems="center">
-          <Link href="/app">Área autenticada</Link>
+        <ChakraLink
+          asChild
+          textDecoration="underline"
+          minH="touch"
+          display="flex"
+          alignItems="center"
+        >
+          <Link href="/app">Início</Link>
         </ChakraLink>
         {user.role === "ADMIN" ? (
-          <ChakraLink asChild textDecoration="underline" minH="11" display="flex" alignItems="center">
-            <Link href="/admin/users">Usuários (ADMIN)</Link>
+          <ChakraLink
+            asChild
+            textDecoration="underline"
+            minH="touch"
+            display="flex"
+            alignItems="center"
+          >
+            <Link href="/admin/users">Usuários</Link>
           </ChakraLink>
         ) : null}
       </Stack>
 
       <LogoutButton />
-    </Stack>
+    </PageFrame>
   );
 }

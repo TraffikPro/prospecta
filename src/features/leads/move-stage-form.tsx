@@ -7,12 +7,12 @@ import {
   Alert,
   Card,
   Field,
-  Heading,
   NativeSelect,
   Stack,
   Textarea,
 } from "@chakra-ui/react";
 
+import { SectionHeading } from "@/components/layout/page-heading";
 import { Button } from "@/components/ui/button";
 import { LEAD_STAGE_ORDER, leadStageLabels } from "@/features/leads/lead.labels";
 import {
@@ -40,12 +40,10 @@ export function MoveStageForm({ leadId, currentStage }: Props) {
         <form action={formAction}>
           <Stack gap="4" maxW="md">
             <input type="hidden" name="leadId" value={leadId} />
-            <Heading as="h2" size="md" id="move-stage-heading">
-              Alterar stage
-            </Heading>
+            <SectionHeading id="move-stage-heading">Alterar etapa</SectionHeading>
 
             <Field.Root>
-              <Field.Label>Novo stage</Field.Label>
+              <Field.Label>Nova etapa</Field.Label>
               <NativeSelect.Root>
                 <NativeSelect.Field
                   name="stage"
@@ -54,6 +52,7 @@ export function MoveStageForm({ leadId, currentStage }: Props) {
                     setSelectedStage(event.target.value as LeadStage)
                   }
                   data-testid="move-stage-select"
+                  style={{ minHeight: "44px" }}
                 >
                   {LEAD_STAGE_ORDER.map((value) => (
                     <option key={value} value={value}>
@@ -90,11 +89,12 @@ export function MoveStageForm({ leadId, currentStage }: Props) {
             <Button
               type="submit"
               width="fit-content"
+              minH="touch"
               loading={pending}
               disabled={pending}
               data-testid="move-stage-submit"
             >
-              {pending ? "Salvando…" : "Salvar stage"}
+              {pending ? "Salvando…" : "Salvar etapa"}
             </Button>
           </Stack>
         </form>

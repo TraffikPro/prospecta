@@ -1,7 +1,9 @@
-import { Heading, HStack, Stack, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { redirect } from "next/navigation";
+import { Text } from "@chakra-ui/react";
 
+import { PageFrame } from "@/components/layout/page-frame";
+import { PageHeading } from "@/components/layout/page-heading";
 import { ContextualNav } from "@/components/navigation";
 import { Button } from "@/components/ui/button";
 import { LeadTable } from "@/features/leads/components/lead-table";
@@ -24,21 +26,19 @@ export default async function LeadsPage() {
   const leads = await getLeads();
 
   return (
-    <Stack as="main" gap="6">
+    <PageFrame width="list" gap="6">
       <ContextualNav items={[{ label: "Leads" }]} />
-      <HStack justify="space-between" align="center" gap="4">
-        <Heading as="h1" size="lg">
-          Leads
-        </Heading>
-        <Button asChild size="sm">
-          <NextLink href="/app/leads/new">+ Novo Lead</NextLink>
-        </Button>
-      </HStack>
+      <PageHeading
+        title="Leads"
+        actions={
+          <Button asChild size="md" minH="touch">
+            <NextLink href="/app/leads/new">+ Novo Lead</NextLink>
+          </Button>
+        }
+      />
 
       {leads.length === 0 ? (
-        <Text fontSize="sm" color="fg.muted">
-          Nenhum lead cadastrado
-        </Text>
+        <Text textStyle="meta">Nenhum lead cadastrado</Text>
       ) : (
         <LeadTable
           leads={leads.map((lead) => ({
@@ -49,6 +49,6 @@ export default async function LeadsPage() {
           }))}
         />
       )}
-    </Stack>
+    </PageFrame>
   );
 }

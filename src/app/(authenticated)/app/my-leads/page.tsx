@@ -1,6 +1,7 @@
-import { Heading, Stack, Text } from "@chakra-ui/react";
 import { redirect } from "next/navigation";
 
+import { PageFrame } from "@/components/layout/page-frame";
+import { PageHeading } from "@/components/layout/page-heading";
 import { ContextualNav } from "@/components/navigation";
 import { MyQueueFilters } from "@/features/leads/components/my-queue-filters";
 import { MyQueueList } from "@/features/leads/components/my-queue-list";
@@ -34,20 +35,16 @@ export default async function MyLeadsPage({ searchParams }: MyLeadsPageProps) {
   const view = await getMyQueueForOwner(user.id, filter);
 
   return (
-    <Stack as="main" gap="6">
+    <PageFrame width="list" gap="6">
       <ContextualNav items={[{ label: "Minha fila" }]} />
-      <Stack gap="1">
-        <Heading as="h1" size="lg" fontWeight="semibold">
-          Minha operação
-        </Heading>
-        <Text fontSize="sm" color="fg.muted">
-          Abra a fila e ataque o próximo passo — atrasados e follow-ups primeiro.
-        </Text>
-      </Stack>
+      <PageHeading
+        title="Minha operação"
+        meta="Abra a fila e ataque o próximo passo — atrasados e follow-ups primeiro."
+      />
 
       <MyQueueSummaryCards summary={view.summary} activeFilter={filter} />
       <MyQueueFilters active={filter} summary={view.summary} />
       <MyQueueList view={view} />
-    </Stack>
+    </PageFrame>
   );
 }

@@ -1,12 +1,15 @@
-import { Heading, Stack, Text } from "@chakra-ui/react";
+import { Stack, Text } from "@chakra-ui/react";
 import { redirect } from "next/navigation";
 
+import { PageFrame } from "@/components/layout/page-frame";
+import { PageHeading } from "@/components/layout/page-heading";
 import { ContextualNav } from "@/components/navigation";
 import {
   IntelligenceFilters,
   LeadScoreCard,
 } from "@/features/leads/components/intelligence";
 import { parseInboxFilters } from "@/features/leads/intelligence/inbox";
+import { qualificationLabels } from "@/features/leads/lead.labels";
 import { AuthenticationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
@@ -35,23 +38,19 @@ export default async function IntelligenceInboxPage({ searchParams }: PageProps)
   const { items, counts } = await getIntelligenceInbox(filters);
 
   return (
-    <Stack as="main" gap="6">
+    <PageFrame width="list" gap="6">
       <ContextualNav items={[{ label: "Inteligência" }]} />
-      <Stack gap="2">
-        <Heading as="h1" size="lg">
-          Oportunidades prioritárias
-        </Heading>
-        <Text fontSize="sm" color="fg.muted">
-          Fila operacional por score — abra, contate e registre o resultado no
-          lead.
-        </Text>
-        <Text fontSize="sm" data-testid="intelligence-inbox-counts">
-          {counts.HIGH} HIGH · {counts.MEDIUM} MEDIUM · {counts.LOW} LOW
-          {filters.qualification !== "ALL" || filters.source !== "ALL"
-            ? " (filtro ativo)"
-            : ""}
-        </Text>
-      </Stack>
+      <PageHeading
+        title="Oportunidades prioritárias"
+        meta="Fila operacional por score — abra, contate e registre o resultado no lead."
+      />
+      <Text fontSize="sm" data-testid="intelligence-inbox-counts">
+        {counts.HIGH} {qualificationLabels.HIGH} · {counts.MEDIUM}{" "}
+        {qualificationLabels.MEDIUM} · {counts.LOW} {qualificationLabels.LOW}
+        {filters.qualification !== "ALL" || filters.source !== "ALL"
+          ? " (filtro ativo)"
+          : ""}
+      </Text>
 
       <IntelligenceFilters filters={filters} />
 
@@ -70,6 +69,6 @@ export default async function IntelligenceInboxPage({ searchParams }: PageProps)
           ))}
         </Stack>
       )}
-    </Stack>
+    </PageFrame>
   );
 }

@@ -18,7 +18,7 @@ test.describe("auth + ACL", () => {
     context,
   }) => {
     await login(page, adminEmail, adminPassword);
-    await expect(page.getByRole("heading", { name: "Área autenticada" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /^Olá,/ })).toBeVisible();
 
     const cookies = await context.cookies();
     const sessionCookie = cookies.find(

@@ -17,7 +17,7 @@ test.describe("auth recovery UI (Fatia 1)", () => {
 
     await login(page, adminEmail, adminPassword);
     await expect(
-      page.getByRole("heading", { name: "Área autenticada" }),
+      page.getByRole("heading", { name: /^Olá,/ }),
     ).toBeVisible();
   });
 
