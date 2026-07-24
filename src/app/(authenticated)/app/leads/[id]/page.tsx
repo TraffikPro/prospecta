@@ -140,7 +140,11 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
       </Stack>
 
       <section aria-labelledby="move-stage-heading">
-        <MoveStageForm leadId={lead.id} currentStage={lead.stage} />
+        <MoveStageForm
+          key={lead.stage}
+          leadId={lead.id}
+          currentStage={lead.stage}
+        />
       </section>
     </PageFrame>
   );

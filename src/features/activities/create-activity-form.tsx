@@ -17,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 
 import { Button } from "@/components/ui/button";
+import { notifySuccess } from "@/components/ui/toaster";
 import { activityOutcomeLabels } from "@/features/activities/activity.labels";
 import { shouldRequireNextFollowUp } from "@/features/activities/activity.rules";
 import {
@@ -39,14 +40,21 @@ export function CreateActivityForm({
   returnHref = "/app/my-leads",
 }: Props) {
   const router = useRouter();
-  const [state, formAction, pending] = useActionState(
-    createActivityAction,
-    initialState,
-  );
   const [type, setType] = useState<"WHATSAPP" | "EMAIL" | "NOTE">("WHATSAPP");
   const [outcome, setOutcome] = useState<ActivityOutcome>("SENT_NO_REPLY");
   const [body, setBody] = useState("");
   const [nextFollowUpAt, setNextFollowUpAt] = useState("");
+  const [state, formAction, pending] = useActionState(
+    async (prev: CreateActivityState, formData: FormData) => {
+      const next = await createActivityAction(prev, formData);
+      if (next.ok) {
+        notifySuccess("Contato registrado");
+        setBody("");
+      }
+      return next;
+    },
+    initialState,
+  );
 
   const requiresFollowUp = useMemo(
     () =>
@@ -155,22 +163,15 @@ export function CreateActivityForm({
               </Alert.Root>
             ) : null}
             {state.ok ? (
-              <Stack gap="3">
-                <Alert.Root status="success" variant="subtle" role="status">
-                  <Alert.Indicator />
-                  <Alert.Content>
-                    <Alert.Description>Atividade registrada.</Alert.Description>
-                  </Alert.Content>
-                </Alert.Root>
-                <Button
-                  asChild
-                  variant="outline"
-                  minH="11"
-                  width={{ base: "full", md: "fit-content" }}
-                >
-                  <NextLink href={returnHref}>Voltar</NextLink>
-                </Button>
-              </Stack>
+              <Button
+                asChild
+                variant="outline"
+                minH="11"
+                width={{ base: "full", md: "fit-content" }}
+                data-testid="activity-success-back"
+              >
+                <NextLink href={returnHref}>Voltar</NextLink>
+              </Button>
             ) : null}
 
             <Stack

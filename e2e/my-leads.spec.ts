@@ -56,7 +56,11 @@ test.describe("my leads queue", () => {
     await form.getByLabel(/Próximo passo/).fill("2026-08-01T10:00");
     await form.getByRole("button", { name: "Salvar atividade" }).click();
 
-    await expect(page.getByText("Atividade registrada.")).toBeVisible();
-    await expect(page.getByText("Contato via Minha fila E2E")).toBeVisible();
+    await expect(
+      page.getByRole("status").filter({ hasText: "Contato registrado" }),
+    ).toBeVisible({ timeout: 10_000 });
+    await expect(
+      page.getByLabel("Histórico").getByText("Contato via Minha fila E2E"),
+    ).toBeVisible();
   });
 });

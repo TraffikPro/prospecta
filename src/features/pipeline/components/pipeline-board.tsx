@@ -1,9 +1,10 @@
 "use client";
 
 import type { LeadStage } from "@prisma/client";
-import { Accordion, Box, Stack, Text } from "@chakra-ui/react";
+import { Accordion, Box, Stack } from "@chakra-ui/react";
 import { useMemo } from "react";
 
+import { AppEmptyState } from "@/components/ui/app-empty-state";
 import { LEAD_STAGE_ORDER } from "@/features/leads/lead.labels";
 
 import type { LeadStageCardData } from "./lead-stage-card";
@@ -104,9 +105,11 @@ export function PipelineBoard({ grouped }: PipelineBoardProps) {
                 <Accordion.ItemContent>
                   <Accordion.ItemBody pb="4">
                     {leads.length === 0 ? (
-                      <Text fontSize="sm" color="fg.muted">
-                        Nenhum lead nesta etapa
-                      </Text>
+                      <AppEmptyState
+                        variant="compact"
+                        title="Nenhum lead nesta etapa."
+                        data-testid={`pipeline-mobile-stage-empty-${stage}`}
+                      />
                     ) : (
                       <Stack gap="3">
                         {leads.map((lead) => (

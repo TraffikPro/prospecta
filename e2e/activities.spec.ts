@@ -36,13 +36,19 @@ test.describe("activity foundation", () => {
     await page.getByLabel(/Próximo passo/).fill("2026-07-28T10:30");
     await page.getByRole("button", { name: "Salvar atividade" }).click();
 
-    await expect(page.getByText("Atividade registrada.")).toBeVisible();
+    await expect(
+      page.getByRole("status").filter({ hasText: "Contato registrado" }),
+    ).toBeVisible({ timeout: 10_000 });
     await expect(page.getByTestId("lead-stage")).toHaveAttribute(
       "data-stage",
       "CONTACTED",
     );
-    await expect(page.getByText("Falou com responsável financeiro")).toBeVisible();
-    await expect(page.getByText("Resultado: Interessado")).toBeVisible();
+    await expect(
+      page.getByLabel("Histórico").getByText("Falou com responsável financeiro"),
+    ).toBeVisible();
+    await expect(
+      page.getByLabel("Histórico").getByText("Resultado: Interessado"),
+    ).toBeVisible();
     await expect(
       page.getByRole("listitem").filter({ hasText: "WhatsApp" }).first(),
     ).toBeVisible();

@@ -3,8 +3,9 @@
 import { useState } from "react";
 
 import type { LeadStage } from "@prisma/client";
-import { Box, SimpleGrid, Stack, Text } from "@chakra-ui/react";
+import { Box, SimpleGrid, Stack } from "@chakra-ui/react";
 
+import { AppEmptyState } from "@/components/ui/app-empty-state";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -35,9 +36,11 @@ export function StageColumn({
     <Box data-testid={`pipeline-stage-${stage}`}>
       <Stack gap="3">
         {leads.length === 0 ? (
-          <Text fontSize="sm" color="fg.muted">
-            Nenhum lead nesta etapa
-          </Text>
+          <AppEmptyState
+            variant="compact"
+            title="Nenhum lead nesta etapa."
+            data-testid={`pipeline-stage-empty-${stage}`}
+          />
         ) : (
           <>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap="3">

@@ -73,7 +73,9 @@ test.describe("mobile experience v1", () => {
     await form.getByLabel(/Próximo passo/).fill("2026-08-15T10:00");
     await form.getByRole("button", { name: "Salvar atividade" }).click();
 
-    await expect(page.getByText("Atividade registrada.")).toBeVisible();
+    await expect(
+      page.getByRole("status").filter({ hasText: "Contato registrado" }),
+    ).toBeVisible({ timeout: 10_000 });
     await expect(page.getByTestId("next-action-recommended")).toBeVisible();
 
     await page.getByRole("link", { name: "Voltar", exact: true }).click();
