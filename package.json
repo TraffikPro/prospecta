@@ -18,6 +18,7 @@
     "prisma:seed": "tsx prisma/seed.ts",
     "db:up": "docker compose up -d postgres",
     "db:down": "docker compose down",
+    "db:reset-pilot": "tsx scripts/reset-pilot-data.ts",
     "postinstall": "prisma generate"
   },
   "prisma": {
