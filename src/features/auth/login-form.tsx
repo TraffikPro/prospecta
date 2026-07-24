@@ -2,7 +2,13 @@
 
 import { useActionState } from "react";
 
-import { Alert, Field, Fieldset, Stack, Text } from "@chakra-ui/react";
+import {
+  Alert,
+  Field,
+  Fieldset,
+  Link as ChakraLink,
+  Stack,
+} from "@chakra-ui/react";
 import NextLink from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -27,6 +33,7 @@ export function LoginForm() {
                 type="email"
                 autoComplete="username"
                 required
+                minH="touch"
               />
             </Field.Root>
 
@@ -36,6 +43,7 @@ export function LoginForm() {
                 name="password"
                 autoComplete="current-password"
                 required
+                minH="touch"
               />
             </Field.Root>
 
@@ -48,18 +56,27 @@ export function LoginForm() {
               </Alert.Root>
             ) : null}
 
+            <Stack align="flex-end">
+              <ChakraLink
+                asChild
+                fontSize="sm"
+                fontWeight="medium"
+                color="brand.fg"
+                _hover={{ opacity: 0.8 }}
+              >
+                <NextLink href="/forgot-password">Esqueci minha senha</NextLink>
+              </ChakraLink>
+            </Stack>
+
             <Button
               type="submit"
               width="full"
+              minH="touch"
               loading={pending}
               disabled={pending}
             >
               {pending ? "Entrando…" : "Entrar"}
             </Button>
-
-            <Text fontSize="sm" textAlign="center">
-              <NextLink href="/forgot-password">Esqueci minha senha</NextLink>
-            </Text>
           </Stack>
         </Fieldset.Content>
       </Fieldset.Root>

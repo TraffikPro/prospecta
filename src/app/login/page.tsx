@@ -1,6 +1,7 @@
-import { Alert, Box, Card, Heading, Stack, Text } from "@chakra-ui/react";
+import { Alert, Heading, Stack, Text } from "@chakra-ui/react";
 import { redirect } from "next/navigation";
 
+import { AuthShell } from "@/features/auth/components/auth-shell";
 import { LoginForm } from "@/features/auth/login-form";
 import {
   isSessionExpiredReason,
@@ -27,51 +28,31 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const showSessionExpired = isSessionExpiredReason(params.reason);
 
   return (
-    <Box
-      as="main"
-      minH="100vh"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      px="6"
-      py="10"
-      bg="bg.subtle"
-    >
-      <Card.Root
-        width="full"
-        maxW="sm"
-        variant="outline"
-        borderRadius="card"
-      >
-        <Card.Header>
-          <Stack gap="2">
-            <Heading as="h1" size="xl">
-              Prospecta
-            </Heading>
-            <Text fontSize="sm" color="fg.muted">
-              Entre com sua conta para continuar.
-            </Text>
-          </Stack>
-        </Card.Header>
-        <Card.Body>
-          <Stack gap="4">
-            {showSessionExpired ? (
-              <Alert.Root
-                status="warning"
-                variant="subtle"
-                role="status"
-                data-testid="session-expired-alert"
-              >
-                <Alert.Indicator />
-                <Alert.Content>
-                  <Alert.Description>{SESSION_EXPIRED_MESSAGE}</Alert.Description>
-                </Alert.Content>
-              </Alert.Root>
-            ) : null}
-            <LoginForm />
-          </Stack>
-        </Card.Body>
-      </Card.Root>
-    </Box>
+    <AuthShell>
+      <Stack gap="6">
+        <Stack gap="1">
+          <Heading as="h1" textStyle="pageTitle">
+            Bem-vindo de volta
+          </Heading>
+          <Text textStyle="meta">Entre com sua conta para continuar.</Text>
+        </Stack>
+
+        {showSessionExpired ? (
+          <Alert.Root
+            status="warning"
+            variant="subtle"
+            role="status"
+            data-testid="session-expired-alert"
+          >
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Description>{SESSION_EXPIRED_MESSAGE}</Alert.Description>
+            </Alert.Content>
+          </Alert.Root>
+        ) : null}
+
+        <LoginForm />
+      </Stack>
+    </AuthShell>
   );
 }
