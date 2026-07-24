@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Heading, Link as ChakraLink, List, Stack, Text } from "@chakra-ui/react";
 
+import { ContextualNav } from "@/components/navigation";
 import { getSessionUser } from "@/server/auth/session";
 
 export default async function AppHomePage() {
@@ -12,6 +13,7 @@ export default async function AppHomePage() {
 
   return (
     <Stack as="main" gap="4">
+      <ContextualNav items={[{ label: "Início" }]} />
       <Heading as="h1" size="lg" fontWeight="semibold">
         Área autenticada
       </Heading>

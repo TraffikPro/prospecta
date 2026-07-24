@@ -1,7 +1,7 @@
-import { Heading, Link as ChakraLink, Stack, Text } from "@chakra-ui/react";
-import Link from "next/link";
+import { Heading, Stack, Text } from "@chakra-ui/react";
 import { redirect } from "next/navigation";
 
+import { ContextualNav } from "@/components/navigation";
 import {
   IntelligenceFilters,
   LeadScoreCard,
@@ -35,43 +35,41 @@ export default async function IntelligenceInboxPage({ searchParams }: PageProps)
   const { items, counts } = await getIntelligenceInbox(filters);
 
   return (
-    <main>
-      <Stack gap="6">
-        <Stack gap="2">
-          <Text fontSize="sm">
-            <ChakraLink asChild textDecoration="underline">
-              <Link href="/app">← Área autenticada</Link>
-            </ChakraLink>
-          </Text>
-          <Heading as="h1" size="lg">
-            Oportunidades prioritárias
-          </Heading>
-          <Text fontSize="sm" color="fg.muted">
-            Fila operacional por score — abra, contate e registre o resultado no
-            lead.
-          </Text>
-          <Text fontSize="sm" data-testid="intelligence-inbox-counts">
-            {counts.HIGH} HIGH · {counts.MEDIUM} MEDIUM · {counts.LOW} LOW
-            {filters.qualification !== "ALL" || filters.source !== "ALL"
-              ? " (filtro ativo)"
-              : ""}
-          </Text>
-        </Stack>
-
-        <IntelligenceFilters filters={filters} />
-
-        {items.length === 0 ? (
-          <Text fontSize="sm" color="fg.muted" data-testid="intelligence-inbox-empty">
-            Nenhuma oportunidade com inteligência para este filtro.
-          </Text>
-        ) : (
-          <Stack gap="3" data-testid="intelligence-inbox-list">
-            {items.map((item) => (
-              <LeadScoreCard key={item.id} item={item} />
-            ))}
-          </Stack>
-        )}
+    <Stack as="main" gap="6">
+      <ContextualNav items={[{ label: "Inteligência" }]} />
+      <Stack gap="2">
+        <Heading as="h1" size="lg">
+          Oportunidades prioritárias
+        </Heading>
+        <Text fontSize="sm" color="fg.muted">
+          Fila operacional por score — abra, contate e registre o resultado no
+          lead.
+        </Text>
+        <Text fontSize="sm" data-testid="intelligence-inbox-counts">
+          {counts.HIGH} HIGH · {counts.MEDIUM} MEDIUM · {counts.LOW} LOW
+          {filters.qualification !== "ALL" || filters.source !== "ALL"
+            ? " (filtro ativo)"
+            : ""}
+        </Text>
       </Stack>
-    </main>
+
+      <IntelligenceFilters filters={filters} />
+
+      {items.length === 0 ? (
+        <Text
+          fontSize="sm"
+          color="fg.muted"
+          data-testid="intelligence-inbox-empty"
+        >
+          Nenhuma oportunidade com inteligência para este filtro.
+        </Text>
+      ) : (
+        <Stack gap="3" data-testid="intelligence-inbox-list">
+          {items.map((item) => (
+            <LeadScoreCard key={item.id} item={item} />
+          ))}
+        </Stack>
+      )}
+    </Stack>
   );
 }

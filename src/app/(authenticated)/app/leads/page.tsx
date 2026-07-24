@@ -2,6 +2,7 @@ import { Heading, HStack, Stack, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { redirect } from "next/navigation";
 
+import { ContextualNav } from "@/components/navigation";
 import { Button } from "@/components/ui/button";
 import { LeadTable } from "@/features/leads/components/lead-table";
 import { AuthenticationError } from "@/server/auth/errors";
@@ -24,6 +25,7 @@ export default async function LeadsPage() {
 
   return (
     <Stack as="main" gap="6">
+      <ContextualNav items={[{ label: "Leads" }]} />
       <HStack justify="space-between" align="center" gap="4">
         <Heading as="h1" size="lg">
           Leads

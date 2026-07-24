@@ -76,7 +76,7 @@ test.describe("mobile experience v1", () => {
     await expect(page.getByText("Atividade registrada.")).toBeVisible();
     await expect(page.getByTestId("next-action-recommended")).toBeVisible();
 
-    await page.getByRole("link", { name: "Voltar à fila" }).click();
+    await page.getByRole("link", { name: "Voltar", exact: true }).click();
     await expect(page).toHaveURL(/\/app\/my-leads\?filter=new/);
   });
 
