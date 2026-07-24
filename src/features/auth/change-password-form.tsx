@@ -2,10 +2,10 @@
 
 import { useActionState } from "react";
 
-import { Alert, Field, Stack } from "@chakra-ui/react";
+import { Alert, Field, Fieldset, Stack } from "@chakra-ui/react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import {
   changePasswordAction,
   type ChangePasswordState,
@@ -23,57 +23,58 @@ export function ChangePasswordForm() {
   return (
     <Stack gap="4" width="full">
       <form action={formAction}>
-        <Stack gap="4" width="full">
-          <Field.Root required>
-            <Field.Label>Senha atual</Field.Label>
-            <Input
-              name="currentPassword"
-              type="password"
-              autoComplete="current-password"
-              required
-            />
-          </Field.Root>
+        <Fieldset.Root disabled={pending}>
+          <Fieldset.Content>
+            <Stack gap="4" width="full">
+              <Field.Root required>
+                <Field.Label>Senha atual</Field.Label>
+                <PasswordInput
+                  name="currentPassword"
+                  autoComplete="current-password"
+                  required
+                />
+              </Field.Root>
 
-          <Field.Root required>
-            <Field.Label>Nova senha</Field.Label>
-            <Input
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              required
-              minLength={8}
-            />
-          </Field.Root>
+              <Field.Root required>
+                <Field.Label>Nova senha</Field.Label>
+                <PasswordInput
+                  name="password"
+                  autoComplete="new-password"
+                  required
+                  minLength={8}
+                />
+              </Field.Root>
 
-          <Field.Root required>
-            <Field.Label>Confirmar nova senha</Field.Label>
-            <Input
-              name="confirmPassword"
-              type="password"
-              autoComplete="new-password"
-              required
-              minLength={8}
-            />
-          </Field.Root>
+              <Field.Root required>
+                <Field.Label>Confirmar nova senha</Field.Label>
+                <PasswordInput
+                  name="confirmPassword"
+                  autoComplete="new-password"
+                  required
+                  minLength={8}
+                />
+              </Field.Root>
 
-          {state.error ? (
-            <Alert.Root status="error" variant="subtle" role="alert">
-              <Alert.Indicator />
-              <Alert.Content>
-                <Alert.Description>{state.error}</Alert.Description>
-              </Alert.Content>
-            </Alert.Root>
-          ) : null}
+              {state.error ? (
+                <Alert.Root status="error" variant="subtle" role="alert">
+                  <Alert.Indicator />
+                  <Alert.Content>
+                    <Alert.Description>{state.error}</Alert.Description>
+                  </Alert.Content>
+                </Alert.Root>
+              ) : null}
 
-          <Button
-            type="submit"
-            width="full"
-            loading={pending}
-            disabled={pending}
-          >
-            {pending ? "Alterando…" : "Alterar senha"}
-          </Button>
-        </Stack>
+              <Button
+                type="submit"
+                width="full"
+                loading={pending}
+                disabled={pending}
+              >
+                {pending ? "Alterando…" : "Alterar senha"}
+              </Button>
+            </Stack>
+          </Fieldset.Content>
+        </Fieldset.Root>
       </form>
 
       <form action={logoutAction}>

@@ -2,11 +2,11 @@
 
 import { useActionState } from "react";
 
-import { Alert, Field, Stack, Text } from "@chakra-ui/react";
+import { Alert, Field, Fieldset, Stack, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import {
   resetPasswordAction,
   type ResetPasswordState,
@@ -49,46 +49,53 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   return (
     <form action={formAction}>
       <input type="hidden" name="token" value={token} />
-      <Stack gap="4" width="full">
-        <Field.Root required>
-          <Field.Label>Nova senha</Field.Label>
-          <Input
-            name="password"
-            type="password"
-            autoComplete="new-password"
-            required
-            minLength={8}
-          />
-        </Field.Root>
+      <Fieldset.Root disabled={pending}>
+        <Fieldset.Content>
+          <Stack gap="4" width="full">
+            <Field.Root required>
+              <Field.Label>Nova senha</Field.Label>
+              <PasswordInput
+                name="password"
+                autoComplete="new-password"
+                required
+                minLength={8}
+              />
+            </Field.Root>
 
-        <Field.Root required>
-          <Field.Label>Confirmar senha</Field.Label>
-          <Input
-            name="confirmPassword"
-            type="password"
-            autoComplete="new-password"
-            required
-            minLength={8}
-          />
-        </Field.Root>
+            <Field.Root required>
+              <Field.Label>Confirmar senha</Field.Label>
+              <PasswordInput
+                name="confirmPassword"
+                autoComplete="new-password"
+                required
+                minLength={8}
+              />
+            </Field.Root>
 
-        {state.error ? (
-          <Alert.Root status="error" variant="subtle" role="alert">
-            <Alert.Indicator />
-            <Alert.Content>
-              <Alert.Description>{state.error}</Alert.Description>
-            </Alert.Content>
-          </Alert.Root>
-        ) : null}
+            {state.error ? (
+              <Alert.Root status="error" variant="subtle" role="alert">
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Description>{state.error}</Alert.Description>
+                </Alert.Content>
+              </Alert.Root>
+            ) : null}
 
-        <Button type="submit" width="full" loading={pending} disabled={pending}>
-          {pending ? "Alterando…" : "Alterar senha"}
-        </Button>
+            <Button
+              type="submit"
+              width="full"
+              loading={pending}
+              disabled={pending}
+            >
+              {pending ? "Alterando…" : "Alterar senha"}
+            </Button>
 
-        <Text fontSize="sm" color="fg.muted">
-          <NextLink href="/login">Voltar ao login</NextLink>
-        </Text>
-      </Stack>
+            <Text fontSize="sm" color="fg.muted">
+              <NextLink href="/login">Voltar ao login</NextLink>
+            </Text>
+          </Stack>
+        </Fieldset.Content>
+      </Fieldset.Root>
     </form>
   );
 }
