@@ -1,5 +1,6 @@
 export {
   createLeadForOwner,
+  getIntelligenceInbox,
   getLeadById,
   getLeads,
   getLeadsGroupedByStage,

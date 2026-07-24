@@ -49,6 +49,12 @@ export default async function LeadDetailPage({ params }: PageProps) {
           <Link href="/app/leads" className="underline underline-offset-2">
             ← Leads
           </Link>
+          <Link
+            href="/app/intelligence"
+            className="underline underline-offset-2"
+          >
+            Inteligência
+          </Link>
           <Link href="/app/pipeline" className="underline underline-offset-2">
             Pipeline
           </Link>

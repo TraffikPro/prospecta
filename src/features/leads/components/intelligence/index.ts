@@ -1,4 +1,9 @@
 export { IntelligenceCard } from "./intelligence-card";
+export { IntelligenceFilters } from "./intelligence-filters";
+export { LeadScoreCard } from "./lead-score-card";
 export { PitchBox } from "./pitch-box";
+export { PitchPreview } from "./pitch-preview";
+export { QualificationBadge } from "./qualification-badge";
 export { ScoreDisplay } from "./score-display";
 export { SignalList } from "./signal-list";
+export { SignalTag } from "./signal-tag";

@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, Progress, Stack, Text } from "@chakra-ui/react";
+import { Progress, Stack, Text } from "@chakra-ui/react";
 
 import {
   qualificationColorPalette,
@@ -8,6 +8,8 @@ import {
   resolveQualification,
 } from "@/features/leads/intelligence/qualification";
 import type { LeadIntelligence } from "@/features/leads/intelligence/types";
+
+import { QualificationBadge } from "./qualification-badge";
 
 type ScoreDisplayProps = {
   intelligence: LeadIntelligence;
@@ -37,13 +39,7 @@ export function ScoreDisplay({ intelligence }: ScoreDisplayProps) {
           </Text>
         )}
         {qualification ? (
-          <Badge
-            colorPalette={palette}
-            size="lg"
-            data-testid="intelligence-qualification"
-          >
-            {qualification}
-          </Badge>
+          <QualificationBadge qualification={qualification} size="lg" />
         ) : null}
       </Stack>
 

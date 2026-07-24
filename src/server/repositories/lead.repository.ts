@@ -1,9 +1,4 @@
-import type {
-  Lead,
-  LeadSource,
-  LeadStage,
-  Prisma,
-} from "@prisma/client";
+import { Prisma, type Lead, type LeadSource, type LeadStage } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export type LeadWithOwner = Lead & {
@@ -101,6 +96,21 @@ export async function findLeadById(
 
 export async function listLeads(): Promise<LeadWithOwner[]> {
   return prisma.lead.findMany({
+    include: {
+      owner: {
+        select: { id: true, name: true, email: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+/** Leads that may carry Lead Intelligence JSON (inbox candidates). */
+export async function listLeadsWithIntelligence(): Promise<LeadWithOwner[]> {
+  return prisma.lead.findMany({
+    where: {
+      intelligence: { not: Prisma.DbNull },
+    },
     include: {
       owner: {
         select: { id: true, name: true, email: true },

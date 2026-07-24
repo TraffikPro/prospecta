@@ -18,11 +18,18 @@ import {
 import { buildStageChangeBody } from "@/features/leads/stage-change";
 import { createActivity } from "@/server/repositories/activity.repository";
 import {
+  buildIntelligenceInbox,
+  countByQualification,
+  type IntelligenceInboxFilters,
+  type IntelligenceInboxLead,
+} from "@/features/leads/intelligence/inbox";
+import {
   createLead as createLeadRecord,
   findDuplicate,
   findLeadById,
   findLeadBySourceExternalId,
   listLeads,
+  listLeadsWithIntelligence,
   type LeadWithOwner,
 } from "@/server/repositories/lead.repository";
 
@@ -96,6 +103,26 @@ export async function getLeadById(id: string): Promise<LeadWithOwner | null> {
 
 export async function getLeads(): Promise<LeadWithOwner[]> {
   return listLeads();
+}
+
+export type IntelligenceInboxResult = {
+  items: IntelligenceInboxLead[];
+  counts: ReturnType<typeof countByQualification>;
+};
+
+export async function getIntelligenceInbox(
+  filters: IntelligenceInboxFilters,
+): Promise<IntelligenceInboxResult> {
+  const leads = await listLeadsWithIntelligence();
+  const allItems = buildIntelligenceInbox(leads, {
+    qualification: "ALL",
+    source: "ALL",
+  });
+  const items = buildIntelligenceInbox(leads, filters);
+  return {
+    items,
+    counts: countByQualification(allItems),
+  };
 }
 
 export type LeadsByStage = Record<LeadStage, LeadWithOwner[]>;

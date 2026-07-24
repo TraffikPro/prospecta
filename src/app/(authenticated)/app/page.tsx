@@ -17,6 +17,14 @@ export default async function AppHomePage() {
       <ul className="space-y-2 text-sm">
         <li>
           <Link
+            href="/app/intelligence"
+            className="underline underline-offset-2 hover:text-neutral-950"
+          >
+            Inteligência
+          </Link>
+        </li>
+        <li>
+          <Link
             href="/app/leads"
             className="underline underline-offset-2 hover:text-neutral-950"
           >
