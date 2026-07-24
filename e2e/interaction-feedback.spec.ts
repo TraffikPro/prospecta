@@ -14,7 +14,15 @@ test.describe("chakra interaction feedback v1", () => {
     await page.goto("/app/my-leads");
     const skip = page.getByTestId("skip-nav-link");
     await expect(skip).toBeAttached();
+    await expect(skip).toHaveAttribute("href", "#main-content");
     await expect(page.locator("main#main-content")).toBeVisible();
+    await skip.focus();
+    await skip.press("Enter");
+    await expect
+      .poll(async () =>
+        page.evaluate(() => document.activeElement?.id ?? null),
+      )
+      .toBe("main-content");
   });
 
   test("empty queue filter exposes next action", async ({ page }) => {
