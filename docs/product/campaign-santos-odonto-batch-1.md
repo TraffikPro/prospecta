@@ -133,4 +133,5 @@ Não alterar score, pesos, sinais, pitch por lead, IA de mensagem, dashboard, we
 ## Referências
 
 BUILD Inbox: [product-decision-intelligence-inbox.md](product-decision-intelligence-inbox.md)  
+Dashboard (DEFER): [product-decision-dashboard-defer.md](product-decision-dashboard-defer.md)  
 Execução geral: [founder-pilot-execution.md](founder-pilot-execution.md)
