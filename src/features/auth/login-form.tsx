@@ -2,7 +2,8 @@
 
 import { useActionState } from "react";
 
-import { Alert, Field, Stack } from "@chakra-ui/react";
+import { Alert, Field, Stack, Text } from "@chakra-ui/react";
+import NextLink from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,6 +49,10 @@ export function LoginForm() {
         <Button type="submit" width="full" loading={pending} disabled={pending}>
           {pending ? "Entrando…" : "Entrar"}
         </Button>
+
+        <Text fontSize="sm" textAlign="center">
+          <NextLink href="/forgot-password">Esqueci minha senha</NextLink>
+        </Text>
       </Stack>
     </form>
   );

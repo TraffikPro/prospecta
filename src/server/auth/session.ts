@@ -12,6 +12,11 @@ import type { SessionUser } from "./types";
 
 export { isSessionExpired } from "./session-expiry";
 
+export type ResolvedSession =
+  | { status: "authenticated"; user: SessionUser }
+  | { status: "unauthenticated" }
+  | { status: "invalid" };
+
 function toSessionUser(user: {
   id: string;
   name: string;
@@ -46,10 +51,16 @@ export async function destroySession(): Promise<void> {
   await clearSessionCookie();
 }
 
-export async function getSessionUser(): Promise<SessionUser | null> {
+/**
+ * Resolves the current session for Server Components / layouts.
+ * Does not mutate cookies here — Next.js only allows cookie writes in
+ * Server Actions or Route Handlers. Dead cookies are overwritten on login
+ * or cleared by logout (`destroySession`).
+ */
+export async function resolveSession(): Promise<ResolvedSession> {
   const sessionId = await readSessionCookie();
   if (!sessionId) {
-    return null;
+    return { status: "unauthenticated" };
   }
 
   const session = await prisma.session.findUnique({
@@ -68,21 +79,26 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   });
 
   if (!session) {
-    await clearSessionCookie();
-    return null;
+    return { status: "invalid" };
   }
 
   if (isSessionExpired(session.expiresAt)) {
     await prisma.session.deleteMany({ where: { id: session.id } });
-    await clearSessionCookie();
-    return null;
+    return { status: "invalid" };
   }
 
   if (!session.user.isActive) {
     await prisma.session.deleteMany({ where: { id: session.id } });
-    await clearSessionCookie();
-    return null;
+    return { status: "invalid" };
   }
 
-  return toSessionUser(session.user);
+  return {
+    status: "authenticated",
+    user: toSessionUser(session.user),
+  };
+}
+
+export async function getSessionUser(): Promise<SessionUser | null> {
+  const resolved = await resolveSession();
+  return resolved.status === "authenticated" ? resolved.user : null;
 }
