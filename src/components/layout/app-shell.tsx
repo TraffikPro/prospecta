@@ -27,6 +27,7 @@ const DESKTOP_NAV = [
   { href: "/app/intelligence", label: "Inteligência" },
   { href: "/app/leads", label: "Leads" },
   { href: "/app/pipeline", label: "Pipeline" },
+  { href: "/app/portfolio", label: "Portfólio" },
 ] as const;
 
 function isActivePath(pathname: string, href: string): boolean {
