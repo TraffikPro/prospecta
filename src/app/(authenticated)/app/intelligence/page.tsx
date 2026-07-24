@@ -1,4 +1,4 @@
-import { Heading, Stack, Text } from "@chakra-ui/react";
+import { Heading, Link as ChakraLink, Stack, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -39,9 +39,9 @@ export default async function IntelligenceInboxPage({ searchParams }: PageProps)
       <Stack gap="6">
         <Stack gap="2">
           <Text fontSize="sm">
-            <Link href="/app" className="underline underline-offset-2">
-              ← Área autenticada
-            </Link>
+            <ChakraLink asChild textDecoration="underline">
+              <Link href="/app">← Área autenticada</Link>
+            </ChakraLink>
           </Text>
           <Heading as="h1" size="lg">
             Oportunidades prioritárias

@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Heading, Link as ChakraLink, List, Stack, Text } from "@chakra-ui/react";
+
 import { getSessionUser } from "@/server/auth/session";
 
 export default async function AppHomePage() {
@@ -9,47 +11,37 @@ export default async function AppHomePage() {
   }
 
   return (
-    <main className="space-y-4">
-      <h1 className="text-xl font-semibold tracking-tight">Área autenticada</h1>
-      <p className="text-sm text-neutral-600">
+    <Stack as="main" gap="4">
+      <Heading as="h1" size="lg" fontWeight="semibold">
+        Área autenticada
+      </Heading>
+      <Text fontSize="sm" color="fg.muted">
         Sessão ativa para {user.email}.
-      </p>
-      <ul className="space-y-2 text-sm">
-        <li>
-          <Link
-            href="/app/intelligence"
-            className="underline underline-offset-2 hover:text-neutral-950"
-          >
-            Inteligência
-          </Link>
-        </li>
-        <li>
-          <Link
-            href="/app/leads"
-            className="underline underline-offset-2 hover:text-neutral-950"
-          >
-            Leads
-          </Link>
-        </li>
-        <li>
-          <Link
-            href="/app/pipeline"
-            className="underline underline-offset-2 hover:text-neutral-950"
-          >
-            Pipeline
-          </Link>
-        </li>
+      </Text>
+      <List.Root gap="2" fontSize="sm" variant="plain">
+        <List.Item>
+          <ChakraLink asChild textDecoration="underline">
+            <Link href="/app/intelligence">Inteligência</Link>
+          </ChakraLink>
+        </List.Item>
+        <List.Item>
+          <ChakraLink asChild textDecoration="underline">
+            <Link href="/app/leads">Leads</Link>
+          </ChakraLink>
+        </List.Item>
+        <List.Item>
+          <ChakraLink asChild textDecoration="underline">
+            <Link href="/app/pipeline">Pipeline</Link>
+          </ChakraLink>
+        </List.Item>
         {user.role === "ADMIN" ? (
-          <li>
-            <Link
-              href="/admin/users"
-              className="underline underline-offset-2 hover:text-neutral-950"
-            >
-              Rota de prova ACL (ADMIN)
-            </Link>
-          </li>
+          <List.Item>
+            <ChakraLink asChild textDecoration="underline">
+              <Link href="/admin/users">Usuários (ADMIN)</Link>
+            </ChakraLink>
+          </List.Item>
         ) : null}
-      </ul>
-    </main>
+      </List.Root>
+    </Stack>
   );
 }

@@ -1,7 +1,7 @@
 # Product Decision — ADOPT CHAKRA UI ONLY
 
-- **Data:** 2026-07-23 (reaberta)
-- **Decisão:** **ADOPT CHAKRA UI ONLY**
+- **Data:** 2026-07-23 (reaberta) · **Concluída:** 2026-07-23
+- **Decisão:** **ADOPT CHAKRA UI ONLY** (migração completa; Tailwind removido)
 - **Classificação:** PLATFORM
 - **ADR:** [0011-ui-stack-keep-tailwind.md](../adr/0011-ui-stack-keep-tailwind.md)
 - **Plano:** [chakra-only-migration-plan.md](./chakra-only-migration-plan.md)
@@ -20,25 +20,19 @@ bloquear o lote comercial (migração por fases, poucas telas).
 
 ```text
 Decision:
-ADOPT CHAKRA UI ONLY
+ADOPT CHAKRA UI ONLY — complete
 
-Tailwind:
-migrate until removed — not indefinite legacy.
+Stack:
+Next.js + Chakra UI v3 + design tokens + UI wrappers
 ```
 
-## Escopo imediato (BUILD)
+## Resultado
 
-1. Atualizar ADR 0011  
-2. Plano de migração  
-3. Migrar **Login + Layout autenticado** (shell)  
+- Fases 0–7 do plano concluídas
+- Pacotes `tailwindcss` / `@tailwindcss/postcss` removidos
+- Sem classes Tailwind em `src/`
 
-## Fora agora
+## Fora deste decision
 
-- Remoção do pacote Tailwind nesta fatia (só após zero usos)
 - Dashboard / analytics
-- Big-bang de todas as telas numa única PR
-
-## Relação com o freeze comercial
-
-O lote Santos Odontologia continua prioridade operacional. Migração de UI do
-shell não bloqueia `/app/intelligence` nem Activity.
+- Redesign de marca além dos tokens existentes

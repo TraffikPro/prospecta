@@ -42,11 +42,11 @@ Use o agente certo no prompt (“atue como Frontend Engineer…”) ou combine: 
 
 ## Skills de UI (Chakra UI v3) — padrão
 
-**Product Decision:** [ADOPT CHAKRA v3](../docs/product/product-decision-ui-stack-keep-tailwind.md) · [ADR 0011](../docs/adr/0011-ui-stack-keep-tailwind.md)
+**Product Decision:** [ADOPT CHAKRA v3](../docs/product/product-decision-ui-stack-keep-tailwind.md) · [ADR 0011](../docs/adr/0011-ui-stack-keep-tailwind.md) (migração concluída)
 
 ```text
-Chakra UI v3 = único sistema visual oficial (Chakra-only).
-Tailwind: migrar até remoção (plano em docs/product/chakra-only-migration-plan.md).
+Prospecta UI Stack = Next.js + Chakra UI v3 + design tokens + UI wrappers
+Tailwind removido do repositório.
 ```
 
 Fonte: [chakra-ui.com/docs/get-started/ai/skills](https://chakra-ui.com/docs/get-started/ai/skills).
@@ -55,6 +55,6 @@ Fonte: [chakra-ui.com/docs/get-started/ai/skills](https://chakra-ui.com/docs/get
 | --- | --- | --- |
 | Builder | [`skills/chakra-ui-builder/SKILL.md`](skills/chakra-ui-builder/SKILL.md) | Setup, theme, componentes Chakra v3 |
 | Migrate | [`skills/chakra-ui-migrate/SKILL.md`](skills/chakra-ui-migrate/SKILL.md) | Só se houver padrões v2 (não é o caso) |
-| Refactor | [`skills/chakra-ui-refactor/SKILL.md`](skills/chakra-ui-refactor/SKILL.md) | Review e conversão Tailwind→Chakra **quando a tela for tocada** |
+| Refactor | [`skills/chakra-ui-refactor/SKILL.md`](skills/chakra-ui-refactor/SKILL.md) | Review e polish Chakra |
 
-Regra: migrar por fases (Login → Layout → Leads → Pipeline → Activity → Admin → remover Tailwind). Sem híbridos em telas migradas.
+Regra: UI nova só com Chakra. Sem classes Tailwind nem híbridos.

@@ -11,7 +11,7 @@ Entregar UI clara do pipeline, detalhe do lead, formulários e handoff de canais
 - Formulários curtos; acessibilidade básica.
 - Chakra UI v3 only (ADR 0011); seguir `chakra-only-migration-plan.md`.
 - Theme/tokens em `src/theme/`; primitives em `src/components/ui/`; shell em `src/components/layout/`.
-- Sem Tailwind novo / híbridos; sem estado global prematuro.
+- Só Chakra UI v3; sem Tailwind / híbridos; sem estado global prematuro.
 
 ## Foco de telas (V1)
 
