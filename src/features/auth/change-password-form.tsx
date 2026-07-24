@@ -32,6 +32,7 @@ export function ChangePasswordForm() {
                   name="currentPassword"
                   autoComplete="current-password"
                   required
+                  minH="touch"
                 />
               </Field.Root>
 
@@ -42,6 +43,7 @@ export function ChangePasswordForm() {
                   autoComplete="new-password"
                   required
                   minLength={8}
+                  minH="touch"
                 />
               </Field.Root>
 
@@ -52,6 +54,7 @@ export function ChangePasswordForm() {
                   autoComplete="new-password"
                   required
                   minLength={8}
+                  minH="touch"
                 />
               </Field.Root>
 
@@ -67,6 +70,7 @@ export function ChangePasswordForm() {
               <Button
                 type="submit"
                 width="full"
+                minH="touch"
                 loading={pending}
                 disabled={pending}
               >
@@ -78,7 +82,7 @@ export function ChangePasswordForm() {
       </form>
 
       <form action={logoutAction}>
-        <Button type="submit" variant="ghost" width="full">
+        <Button type="submit" variant="ghost" width="full" minH="touch">
           Sair
         </Button>
       </form>
