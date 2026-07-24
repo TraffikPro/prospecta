@@ -1,3 +1,7 @@
+"use client";
+
+import { Card, Stack, Text } from "@chakra-ui/react";
+
 import {
   activityOutcomeLabels,
   activityTypeLabels,
@@ -20,12 +24,14 @@ type Props = {
 export function ActivityTimeline({ activities, nextFollowUpAt }: Props) {
   if (activities.length === 0) {
     return (
-      <p className="text-sm text-neutral-600">Nenhuma atividade registrada.</p>
+      <Text fontSize="sm" color="fg.muted">
+        Nenhuma atividade registrada.
+      </Text>
     );
   }
 
   return (
-    <ol className="space-y-4">
+    <Stack as="ol" gap="3" listStyleType="none">
       {activities.map((activity) => {
         const typeLabel =
           activity.type === "STAGE_CHANGE"
@@ -33,39 +39,50 @@ export function ActivityTimeline({ activities, nextFollowUpAt }: Props) {
             : activityTypeLabels[activity.type];
 
         return (
-          <li
+          <Card.Root
+            as="li"
             key={activity.id}
-            className="rounded-md border border-neutral-200 bg-white px-4 py-3 text-sm"
+            variant="outline"
+            borderRadius="card"
+            size="sm"
           >
-            <p className="text-xs text-neutral-500">
-              {formatDateTime(activity.createdAt)}
-            </p>
-            <p className="mt-1 font-medium text-neutral-900">
-              {activity.author.name}
-            </p>
-            <p className="text-neutral-700">{typeLabel}</p>
-            {activity.outcome ? (
-              <p className="mt-2 text-neutral-700">
-                <span className="text-neutral-500">Resultado: </span>
-                {activityOutcomeLabels[activity.outcome]}
-              </p>
-            ) : null}
-            {activity.body ? (
-              <p className="mt-2 whitespace-pre-wrap text-neutral-800">
-                {activity.type === "STAGE_CHANGE"
-                  ? formatStageChangeSummary(activity.body)
-                  : activity.body}
-              </p>
-            ) : null}
-          </li>
+            <Card.Body py="3" px="4">
+              <Stack gap="1">
+                <Text fontSize="xs" color="fg.muted">
+                  {formatDateTime(activity.createdAt)}
+                </Text>
+                <Text fontSize="sm" fontWeight="medium">
+                  {activity.author.name}
+                </Text>
+                <Text fontSize="sm">{typeLabel}</Text>
+                {activity.outcome ? (
+                  <Text fontSize="sm">
+                    <Text as="span" color="fg.muted">
+                      Resultado:{" "}
+                    </Text>
+                    {activityOutcomeLabels[activity.outcome]}
+                  </Text>
+                ) : null}
+                {activity.body ? (
+                  <Text fontSize="sm" whiteSpace="pre-wrap">
+                    {activity.type === "STAGE_CHANGE"
+                      ? formatStageChangeSummary(activity.body)
+                      : activity.body}
+                  </Text>
+                ) : null}
+              </Stack>
+            </Card.Body>
+          </Card.Root>
         );
       })}
       {nextFollowUpAt ? (
-        <li className="text-sm text-neutral-700">
-          <span className="text-neutral-500">Próximo contato: </span>
+        <Text as="li" fontSize="sm">
+          <Text as="span" color="fg.muted">
+            Próximo contato:{" "}
+          </Text>
           {formatDateTime(nextFollowUpAt)}
-        </li>
+        </Text>
       ) : null}
-    </ol>
+    </Stack>
   );
 }

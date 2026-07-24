@@ -45,8 +45,8 @@ Use o agente certo no prompt (“atue como Frontend Engineer…”) ou combine: 
 **Product Decision:** [ADOPT CHAKRA v3](../docs/product/product-decision-ui-stack-keep-tailwind.md) · [ADR 0011](../docs/adr/0011-ui-stack-keep-tailwind.md)
 
 ```text
-Chakra: design system padrão (novas telas / telas tocadas).
-Tailwind: legado até migração gradual.
+Chakra UI v3 = único sistema visual oficial (Chakra-only).
+Tailwind: migrar até remoção (plano em docs/product/chakra-only-migration-plan.md).
 ```
 
 Fonte: [chakra-ui.com/docs/get-started/ai/skills](https://chakra-ui.com/docs/get-started/ai/skills).
@@ -57,4 +57,4 @@ Fonte: [chakra-ui.com/docs/get-started/ai/skills](https://chakra-ui.com/docs/get
 | Migrate | [`skills/chakra-ui-migrate/SKILL.md`](skills/chakra-ui-migrate/SKILL.md) | Só se houver padrões v2 (não é o caso) |
 | Refactor | [`skills/chakra-ui-refactor/SKILL.md`](skills/chakra-ui-refactor/SKILL.md) | Review e conversão Tailwind→Chakra **quando a tela for tocada** |
 
-Regra: não big-bang. Não apagar Tailwind de uma vez. Priorizar Lead Intelligence View e fluxo comercial.
+Regra: migrar por fases (Login → Layout → Leads → Pipeline → Activity → Admin → remover Tailwind). Sem híbridos em telas migradas.

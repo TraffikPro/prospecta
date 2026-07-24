@@ -20,7 +20,10 @@ test.describe("pipeline foundation", () => {
     await page.getByLabel("E-mail").fill(email);
     await page.getByRole("button", { name: "Salvar lead" }).click();
     await page.waitForURL(/\/app\/leads\/.+/);
-    await expect(page.getByTestId("lead-stage")).toHaveText("NEW");
+    await expect(page.getByTestId("lead-stage")).toHaveAttribute(
+      "data-stage",
+      "NEW",
+    );
 
     await page.goto("/app/pipeline");
     await expect(page.getByRole("heading", { name: "Pipeline" })).toBeVisible();
@@ -31,9 +34,11 @@ test.describe("pipeline foundation", () => {
     await page.getByTestId("move-stage-select").selectOption("MEETING");
     await page.getByTestId("move-stage-submit").click();
 
-    await expect(page.getByTestId("lead-stage")).toHaveText("MEETING", {
-      timeout: 15_000,
-    });
+    await expect(page.getByTestId("lead-stage")).toHaveAttribute(
+      "data-stage",
+      "MEETING",
+      { timeout: 15_000 },
+    );
     await expect(page.getByText("Mudança de stage")).toBeVisible();
     await expect(page.getByText("Novo → Reunião")).toBeVisible();
   });
@@ -56,14 +61,19 @@ test.describe("pipeline foundation", () => {
     await expect(
       page.getByText("Motivo é obrigatório ao marcar como perdido"),
     ).toBeVisible();
-    await expect(page.getByTestId("lead-stage")).toHaveText("NEW");
+    await expect(page.getByTestId("lead-stage")).toHaveAttribute(
+      "data-stage",
+      "NEW",
+    );
 
     await page.reload();
     await page.getByTestId("move-stage-select").selectOption("LOST");
     await page.getByTestId("lost-reason").fill("Sem orçamento no trimestre");
     await page.getByTestId("move-stage-submit").click();
-    await expect(page.getByTestId("lead-stage")).toHaveText("LOST", {
-      timeout: 15_000,
-    });
+    await expect(page.getByTestId("lead-stage")).toHaveAttribute(
+      "data-stage",
+      "LOST",
+      { timeout: 15_000 },
+    );
   });
 });

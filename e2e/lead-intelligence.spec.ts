@@ -34,7 +34,10 @@ test.describe("lead intelligence view", () => {
     await page.goto(`/app/leads/${lead.id}`);
 
     await expect(page.getByRole("heading", { name: company })).toBeVisible();
-    await expect(page.getByTestId("lead-source")).toHaveText("GOOGLE_PLACES");
+    await expect(page.getByTestId("lead-source")).toHaveAttribute(
+      "data-source",
+      "GOOGLE_PLACES",
+    );
     await expect(page.getByTestId("lead-intelligence-card")).toBeVisible();
     await expect(page.getByTestId("intelligence-score")).toContainText("90");
     await expect(page.getByTestId("intelligence-qualification")).toHaveText(

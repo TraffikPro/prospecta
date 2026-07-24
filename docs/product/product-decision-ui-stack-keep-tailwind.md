@@ -1,52 +1,44 @@
-# Product Decision — ADOPT CHAKRA UI v3 (incremental)
+# Product Decision — ADOPT CHAKRA UI ONLY
 
-- **Data:** 2026-07-23 (reaberta; supersede KEEP TAILWIND do mesmo dia)
-- **Decisão:** **ADOPT CHAKRA v3** — design system daqui para frente; migração gradual
+- **Data:** 2026-07-23 (reaberta)
+- **Decisão:** **ADOPT CHAKRA UI ONLY**
 - **Classificação:** PLATFORM
-- **ADR:** [0011-ui-stack-keep-tailwind.md](../adr/0011-ui-stack-keep-tailwind.md) (título histórico; conteúdo = adopt)
+- **ADR:** [0011-ui-stack-keep-tailwind.md](../adr/0011-ui-stack-keep-tailwind.md)
+- **Plano:** [chakra-only-migration-plan.md](./chakra-only-migration-plan.md)
 
 ## Problema
 
-KEEP TAILWIND evitava migração sem ganho. O produto passou a exigir telas mais
-ricas (Lead Intelligence, score, pipeline, estados, componentes reutilizáveis) e
-caminho a SaaS. Precisamos de design system consistente sem reescrever tudo.
+Dual stack (Chakra + Tailwind) cria inconsistência e dívida enquanto o Prospecta
+vira plataforma operacional (Inbox + CRM + pipeline).
 
 ## Hipótese
 
-Adotar Chakra v3 como padrão UI + migrar telas críticas quando tocadas →
-componentes acessíveis e tokens estáveis → velocidade e consistência no Lead
-Intelligence e operação comercial, sem big-bang.
+Um único design system (Chakra v3) → telas mais rápidas e consistentes sem
+bloquear o lote comercial (migração por fases, poucas telas).
 
 ## Decisão
 
 ```text
 Decision:
-ADOPT CHAKRA UI v3
+ADOPT CHAKRA UI ONLY
 
-Strategy:
-Incremental — new screens in Chakra; legacy Tailwind until touched.
-
-Chakra skills:
-ADOPTED AS PRIMARY UI TOOLING.
+Tailwind:
+migrate until removed — not indefinite legacy.
 ```
 
-- **Padrão UI:** Chakra UI v3 (`@chakra-ui/react`)
-- **Legado:** Tailwind permanece até migração tela a tela
-- **Não fazer agora:** apagar Tailwind, reescrever 100% das telas, dashboard vanity
+## Escopo imediato (BUILD)
 
-## Fases
+1. Atualizar ADR 0011  
+2. Plano de migração  
+3. Migrar **Login + Layout autenticado** (shell)  
 
-1. **Foundation** — deps, Provider App Router, theme/tokens, Button/Card/Input base
-2. **Lead Intelligence View** — primeira tela de alto valor em Chakra
-3. **Tokens / receitas** — evoluir brand, success/warning/danger conforme uso real
-4. **Migração gradual** — pipeline, lead detail, forms quando forem tocados
+## Fora agora
 
-## Métrica / validação
+- Remoção do pacote Tailwind nesta fatia (só após zero usos)
+- Dashboard / analytics
+- Big-bang de todas as telas numa única PR
 
-- Foundation: `pnpm lint`, `pnpm typecheck`, `pnpm build` verdes
-- Próxima fatia de produto: Lead Intelligence View usável pelos sócios no piloto
+## Relação com o freeze comercial
 
-## Fora desta decisão
-
-- Multi-tenant / billing
-- Charts/dashboard complexo antes do fluxo vertical + intelligence view
+O lote Santos Odontologia continua prioridade operacional. Migração de UI do
+shell não bloqueia `/app/intelligence` nem Activity.

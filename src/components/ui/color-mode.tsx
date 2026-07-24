@@ -11,6 +11,7 @@ export function ColorModeProvider(props: ColorModeProviderProps) {
       disableTransitionOnChange
       defaultTheme="light"
       enableSystem={false}
+      forcedTheme="light"
       {...props}
     />
   );

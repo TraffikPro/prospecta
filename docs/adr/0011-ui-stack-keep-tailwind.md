@@ -1,63 +1,70 @@
-# ADR 0011 — ADOPT Chakra UI v3 (incremental; Tailwind legado)
+# ADR 0011 — ADOPT CHAKRA UI ONLY (v3)
 
-> Nome do arquivo mantido por estabilidade de links. Conteúdo supersede
-> KEEP TAILWIND.
+> Nome do arquivo mantido por estabilidade de links.
 
 - **Status:** accepted
-- **Data:** 2026-07-23 (reaberta no mesmo dia)
+- **Data:** 2026-07-23 (reaberta: Chakra-only)
 - **Relacionado:** [0001-stack-v1.md](./0001-stack-v1.md), [0004-technical-scaffold.md](./0004-technical-scaffold.md)
 - **Product Decision:** [product-decision-ui-stack-keep-tailwind.md](../product/product-decision-ui-stack-keep-tailwind.md)
+- **Plano:** [chakra-only-migration-plan.md](../product/chakra-only-migration-plan.md)
 
 ## Contexto
 
-A decisão anterior (KEEP TAILWIND) evitava abrir migração sem ganho comercial.
-O Prospecta evoluiu para Lead Intelligence + CRM + qualificação + pipeline, com
-caminho a SaaS. Telas mais complexas (score, cards de oportunidade, filtros,
-estados) justificam um design system. Skills Chakra já estão no repo.
+Dual stack (Chakra para Intelligence + Tailwind legado) reduziu risco no piloto.
+Com Inbox + View em Chakra, o produto virou plataforma operacional: dois sistemas
+visuais aumentam dívida e reduzem velocidade. Ainda há poucas telas — migração
+completa controlada é barata agora.
 
 ## Decisão
 
-**ADOPT Chakra UI v3** como padrão UI daqui para frente, com **migração
-incremental**.
+**ADOPT CHAKRA UI ONLY** — Chakra UI v3 é o único design system oficial.
 
 ```text
-Novas telas / telas tocadas → Chakra
-Telas antigas (Tailwind) → legado até serem tocadas
-Não apagar Tailwind de uma vez
-Não reescrever 100% agora
+Chakra UI v3 = único sistema visual oficial
+
+Tailwind:
+migração incremental até remoção completa
+(não legado indefinido)
 ```
 
-### Foundation (fatia atual)
+### Permitido
 
-- `pnpm add @chakra-ui/react @emotion/react` (+ `next-themes` para color mode)
-- `src/theme/` — `defineConfig` / `createSystem` + tokens (brand, success, warning, danger, radii)
-- `src/components/ui/provider.tsx` — `ChakraProvider` + ThemeProvider
-- Componentes base: Button, Card, Input (wrappers finos)
-- Root layout App Router com `<Provider>` e `suppressHydrationWarning`
+- Componentes / tokens / hooks Chakra
+- Extensões de theme (`src/theme/`)
+- Wrappers em `src/components/ui/`
 
-### Próximas fatias (não nesta foundation)
+### Proibido em telas novas ou migradas
 
-- Lead Intelligence View em Chakra
-- Migrar pipeline / lead detail / forms quando tocados
-- Evoluir tokens/recipes com uso real
+- Classes Tailwind novas
+- CSS Modules novos
+- Componentes híbridos (Tailwind + Chakra na mesma superfície)
+
+### Ordem de migração (controlada)
+
+1. Login  
+2. Layout autenticado (shell)  
+3. Leads (lista / new / detail shell)  
+4. Pipeline  
+5. Activity  
+6. Admin  
+7. Remover Tailwind (`package.json`, `globals.css`, PostCSS) quando uso = 0  
 
 ## Alternativas consideradas
 
 | Opção | Resultado |
 | --- | --- |
-| KEEP TAILWIND indefinidamente | **Superseded** — insuficiente para design system do estágio atual |
-| Big-bang: remover Tailwind e reescrever tudo | **Rejeitada** — risco alto, sem ganho imediato no piloto |
-| Tailwind + shadcn agora | **Adiada** — Chakra escolhido; skills e a11y alinhados |
+| Dual stack indefinido | **Rejeitada** — dívida visual; Chakra já prova valor |
+| Big-bang reescrever tudo numa PR | **Rejeitada** — risco alto; preferir fases |
+| Tailwind + shadcn | **Rejeitada** — Chakra já adotado + skills |
 
 ## Consequências
 
-- `frontend.mdc` e agentes: Chakra = padrão; Tailwind = legado
-- Skills `chakra-ui-*` passam a ser tooling primário de UI
-- Dual stack temporário (Tailwind + Chakra) até migração gradual
-- ADR 0004 atualizado: scaffold ainda menciona Tailwind histórico; UI padrão = Chakra
+- `frontend.mdc`: Chakra-only; Tailwind só em telas ainda não migradas
+- Skills `chakra-ui-*` = tooling primário
+- Comercial continua operando Inbox durante a migração (sem bloquear lote)
+- Remoção do Tailwind só após fases 1–6 sem classes restantes
 
 ## Fora deste ADR
 
-- Implementação completa da Lead Intelligence View
-- Remoção definitiva do Tailwind
-- Dashboard/analytics complexo
+- Dashboard / analytics
+- Redesign visual de marca além dos tokens existentes

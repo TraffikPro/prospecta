@@ -1,8 +1,11 @@
-import Link from "next/link";
+import { Heading, Link as ChakraLink, Stack, Text } from "@chakra-ui/react";
+import NextLink from "next/link";
 import { notFound, redirect } from "next/navigation";
+
 import { ActivityTimeline } from "@/features/activities/activity-timeline";
 import { CreateActivityForm } from "@/features/activities/create-activity-form";
 import { IntelligenceCard } from "@/features/leads/components/intelligence";
+import { LeadInfoCard } from "@/features/leads/components/lead-info-card";
 import { parseLeadIntelligence } from "@/features/leads/intelligence/parse-intelligence";
 import { MoveStageForm } from "@/features/leads/move-stage-form";
 import { AuthenticationError } from "@/server/auth/errors";
@@ -43,99 +46,77 @@ export default async function LeadDetailPage({ params }: PageProps) {
   const intelligence = parseLeadIntelligence(lead.intelligence);
 
   return (
-    <main className="space-y-8">
-      <div className="space-y-1">
-        <p className="flex flex-wrap gap-3 text-sm">
-          <Link href="/app/leads" className="underline underline-offset-2">
-            ← Leads
-          </Link>
-          <Link
-            href="/app/intelligence"
-            className="underline underline-offset-2"
-          >
-            Inteligência
-          </Link>
-          <Link href="/app/pipeline" className="underline underline-offset-2">
-            Pipeline
-          </Link>
-        </p>
-        <h1 className="text-xl font-semibold tracking-tight">
-          {lead.companyName}
-        </h1>
-      </div>
+    <Stack as="main" gap="8">
+      <Stack gap="2">
+        <Stack direction="row" gap="4" flexWrap="wrap" fontSize="sm">
+          <ChakraLink asChild>
+            <NextLink href="/app/leads">← Leads</NextLink>
+          </ChakraLink>
+          <ChakraLink asChild>
+            <NextLink href="/app/intelligence">Inteligência</NextLink>
+          </ChakraLink>
+          <ChakraLink asChild>
+            <NextLink href="/app/pipeline">Pipeline</NextLink>
+          </ChakraLink>
+        </Stack>
+      </Stack>
 
-      <dl className="grid gap-3 text-sm sm:grid-cols-2">
-        <div>
-          <dt className="text-neutral-500">Contato</dt>
-          <dd className="font-medium">{lead.contactName || "—"}</dd>
-        </div>
-        <div>
-          <dt className="text-neutral-500">Stage</dt>
-          <dd className="font-medium" data-testid="lead-stage">
-            {lead.stage}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-neutral-500">E-mail</dt>
-          <dd className="font-medium">{lead.email || "—"}</dd>
-        </div>
-        <div>
-          <dt className="text-neutral-500">Telefone</dt>
-          <dd className="font-medium">{lead.phone || "—"}</dd>
-        </div>
-        <div>
-          <dt className="text-neutral-500">Website</dt>
-          <dd className="font-medium">{lead.website || "—"}</dd>
-        </div>
-        <div>
-          <dt className="text-neutral-500">Origem</dt>
-          <dd className="font-medium" data-testid="lead-source">
-            {lead.source}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-neutral-500">Owner</dt>
-          <dd className="font-medium">
-            {lead.owner.name} ({lead.owner.email})
-          </dd>
-        </div>
-        <div>
-          <dt className="text-neutral-500">Próximo contato</dt>
-          <dd className="font-medium" data-testid="lead-next-follow-up">
-            {lead.nextFollowUpAt ? formatDateTime(lead.nextFollowUpAt) : "—"}
-          </dd>
-        </div>
-      </dl>
+      <LeadInfoCard
+        companyName={lead.companyName}
+        contactName={lead.contactName}
+        email={lead.email}
+        phone={lead.phone}
+        website={lead.website}
+        stage={lead.stage}
+        source={lead.source}
+        ownerName={lead.owner.name}
+        ownerEmail={lead.owner.email}
+        nextFollowUpLabel={
+          lead.nextFollowUpAt ? formatDateTime(lead.nextFollowUpAt) : "—"
+        }
+      />
 
       {intelligence ? (
         <section aria-labelledby="intelligence-heading">
-          <h2 id="intelligence-heading" className="sr-only">
+          <Heading
+            as="h2"
+            id="intelligence-heading"
+            position="absolute"
+            width="1px"
+            height="1px"
+            padding="0"
+            margin="-1px"
+            overflow="hidden"
+            clipPath="inset(50%)"
+            whiteSpace="nowrap"
+            borderWidth="0"
+          >
             Lead Intelligence
-          </h2>
+          </Heading>
           <IntelligenceCard intelligence={intelligence} />
         </section>
       ) : null}
 
       {lead.notes ? (
-        <section className="space-y-2" aria-labelledby="notes-heading">
-          <h2 id="notes-heading" className="text-base font-semibold">
+        <Stack as="section" gap="2" aria-labelledby="notes-heading">
+          <Heading as="h2" id="notes-heading" size="md">
             Notas
-          </h2>
-          <p className="whitespace-pre-wrap text-sm text-neutral-800">
+          </Heading>
+          <Text fontSize="sm" whiteSpace="pre-wrap">
             {lead.notes}
-          </p>
-        </section>
+          </Text>
+        </Stack>
       ) : null}
 
-      <section className="space-y-3" aria-labelledby="history-heading">
-        <h2 id="history-heading" className="text-base font-semibold">
+      <Stack as="section" gap="3" aria-labelledby="history-heading">
+        <Heading as="h2" id="history-heading" size="md">
           Histórico
-        </h2>
+        </Heading>
         <ActivityTimeline
           activities={activities}
           nextFollowUpAt={lead.nextFollowUpAt}
         />
-      </section>
+      </Stack>
 
       <section aria-labelledby="move-stage-heading">
         <MoveStageForm leadId={lead.id} currentStage={lead.stage} />
@@ -147,6 +128,6 @@ export default async function LeadDetailPage({ params }: PageProps) {
           leadId={lead.id}
         />
       </section>
-    </main>
+    </Stack>
   );
 }

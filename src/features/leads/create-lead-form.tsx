@@ -1,7 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { useActionState } from "react";
+
+import { Alert, Field, HStack, Link as ChakraLink, Stack } from "@chakra-ui/react";
+import NextLink from "next/link";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   createLeadAction,
   type CreateLeadState,
@@ -16,78 +21,60 @@ export function CreateLeadForm() {
   );
 
   return (
-    <form action={formAction} className="flex max-w-md flex-col gap-4">
-      <label className="flex flex-col gap-1 text-sm">
-        <span className="font-medium">Empresa</span>
-        <input
-          name="companyName"
-          required
-          className="rounded-md border border-neutral-300 px-3 py-2"
-        />
-      </label>
-      <label className="flex flex-col gap-1 text-sm">
-        <span className="font-medium">Contato</span>
-        <input
-          name="contactName"
-          className="rounded-md border border-neutral-300 px-3 py-2"
-        />
-      </label>
-      <label className="flex flex-col gap-1 text-sm">
-        <span className="font-medium">E-mail</span>
-        <input
-          name="email"
-          type="email"
-          className="rounded-md border border-neutral-300 px-3 py-2"
-        />
-      </label>
-      <label className="flex flex-col gap-1 text-sm">
-        <span className="font-medium">Telefone</span>
-        <input
-          name="phone"
-          className="rounded-md border border-neutral-300 px-3 py-2"
-        />
-      </label>
-      <label className="flex flex-col gap-1 text-sm">
-        <span className="font-medium">Website</span>
-        <input
-          name="website"
-          type="url"
-          placeholder="https://"
-          className="rounded-md border border-neutral-300 px-3 py-2"
-        />
-      </label>
+    <form action={formAction}>
+      <Stack gap="4" maxW="md">
+        <Field.Root required>
+          <Field.Label>Empresa</Field.Label>
+          <Input name="companyName" required />
+        </Field.Root>
 
-      {state.error ? (
-        <div className="space-y-1 text-sm text-red-700" role="alert">
-          <p>{state.error}</p>
-          {state.code === "DUPLICATE_LEAD" && state.existingLeadId ? (
-            <p>
-              <Link
-                href={`/app/leads/${state.existingLeadId}`}
-                className="underline underline-offset-2"
-              >
-                Ver lead existente
-              </Link>
-            </p>
-          ) : null}
-        </div>
-      ) : null}
+        <Field.Root>
+          <Field.Label>Contato</Field.Label>
+          <Input name="contactName" />
+        </Field.Root>
 
-      <div className="flex gap-3">
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
-        >
-          {pending ? "Salvando…" : "Salvar lead"}
-        </button>
-        <Link
-          href="/app/leads"
-          className="rounded-md border border-neutral-300 px-4 py-2 text-sm"
-        >
-          Cancelar
-        </Link>
-      </div>
+        <Field.Root>
+          <Field.Label>E-mail</Field.Label>
+          <Input name="email" type="email" />
+        </Field.Root>
+
+        <Field.Root>
+          <Field.Label>Telefone</Field.Label>
+          <Input name="phone" />
+        </Field.Root>
+
+        <Field.Root>
+          <Field.Label>Website</Field.Label>
+          <Input name="website" type="url" placeholder="https://" />
+        </Field.Root>
+
+        {state.error ? (
+          <Alert.Root status="error" variant="subtle" role="alert">
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Description>{state.error}</Alert.Description>
+              {state.code === "DUPLICATE_LEAD" && state.existingLeadId ? (
+                <Alert.Description mt="2">
+                  <ChakraLink asChild>
+                    <NextLink href={`/app/leads/${state.existingLeadId}`}>
+                      Ver lead existente
+                    </NextLink>
+                  </ChakraLink>
+                </Alert.Description>
+              ) : null}
+            </Alert.Content>
+          </Alert.Root>
+        ) : null}
+
+        <HStack gap="3">
+          <Button type="submit" loading={pending} disabled={pending}>
+            {pending ? "Salvando…" : "Salvar lead"}
+          </Button>
+          <Button asChild variant="outline" colorPalette="gray">
+            <NextLink href="/app/leads">Cancelar</NextLink>
+          </Button>
+        </HStack>
+      </Stack>
     </form>
   );
 }

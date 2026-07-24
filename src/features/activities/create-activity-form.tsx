@@ -3,6 +3,19 @@
 import type { ActivityOutcome } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useMemo, useState } from "react";
+
+import {
+  Alert,
+  Card,
+  Field,
+  Heading,
+  Input,
+  NativeSelect,
+  Stack,
+  Textarea,
+} from "@chakra-ui/react";
+
+import { Button } from "@/components/ui/button";
 import { activityOutcomeLabels } from "@/features/activities/activity.labels";
 import { shouldRequireNextFollowUp } from "@/features/activities/activity.rules";
 import {
@@ -43,89 +56,106 @@ export function CreateActivityForm({ leadId }: Props) {
   }, [state.ok, router]);
 
   return (
-    <form action={formAction} className="flex max-w-lg flex-col gap-3">
-      <input type="hidden" name="leadId" value={leadId} />
+    <Card.Root variant="outline" borderRadius="card">
+      <Card.Body>
+        <form action={formAction}>
+          <Stack gap="4" maxW="lg">
+            <input type="hidden" name="leadId" value={leadId} />
 
-      <h2 className="text-base font-semibold">Registrar atividade</h2>
+            <Heading as="h2" size="md" id="register-activity-heading">
+              Registrar atividade
+            </Heading>
 
-      <label className="flex flex-col gap-1 text-sm">
-        <span className="font-medium">Tipo</span>
-        <select
-          name="type"
-          value={type}
-          onChange={(event) =>
-            setType(event.target.value as "WHATSAPP" | "EMAIL" | "NOTE")
-          }
-          className="rounded-md border border-neutral-300 px-3 py-2"
-        >
-          <option value="WHATSAPP">WhatsApp</option>
-          <option value="EMAIL">E-mail</option>
-          <option value="NOTE">Nota</option>
-        </select>
-      </label>
+            <Field.Root>
+              <Field.Label>Tipo</Field.Label>
+              <NativeSelect.Root>
+                <NativeSelect.Field
+                  name="type"
+                  value={type}
+                  onChange={(event) =>
+                    setType(event.target.value as "WHATSAPP" | "EMAIL" | "NOTE")
+                  }
+                >
+                  <option value="WHATSAPP">WhatsApp</option>
+                  <option value="EMAIL">E-mail</option>
+                  <option value="NOTE">Nota</option>
+                </NativeSelect.Field>
+                <NativeSelect.Indicator />
+              </NativeSelect.Root>
+            </Field.Root>
 
-      {type !== "NOTE" ? (
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium">Resultado</span>
-          <select
-            name="outcome"
-            value={outcome}
-            onChange={(event) =>
-              setOutcome(event.target.value as ActivityOutcome)
-            }
-            className="rounded-md border border-neutral-300 px-3 py-2"
-          >
-            {outcomes.map((value) => (
-              <option key={value} value={value}>
-                {activityOutcomeLabels[value]}
-              </option>
-            ))}
-          </select>
-        </label>
-      ) : null}
+            {type !== "NOTE" ? (
+              <Field.Root>
+                <Field.Label>Resultado</Field.Label>
+                <NativeSelect.Root>
+                  <NativeSelect.Field
+                    name="outcome"
+                    value={outcome}
+                    onChange={(event) =>
+                      setOutcome(event.target.value as ActivityOutcome)
+                    }
+                  >
+                    {outcomes.map((value) => (
+                      <option key={value} value={value}>
+                        {activityOutcomeLabels[value]}
+                      </option>
+                    ))}
+                  </NativeSelect.Field>
+                  <NativeSelect.Indicator />
+                </NativeSelect.Root>
+              </Field.Root>
+            ) : null}
 
-      <label className="flex flex-col gap-1 text-sm">
-        <span className="font-medium">Descrição</span>
-        <textarea
-          name="body"
-          required
-          rows={3}
-          className="rounded-md border border-neutral-300 px-3 py-2"
-          placeholder="O que aconteceu no contato?"
-        />
-      </label>
+            <Field.Root required>
+              <Field.Label>Descrição</Field.Label>
+              <Textarea
+                name="body"
+                required
+                rows={3}
+                placeholder="O que aconteceu no contato?"
+              />
+            </Field.Root>
 
-      <label className="flex flex-col gap-1 text-sm">
-        <span className="font-medium">
-          Próximo passo (data)
-          {requiresFollowUp ? " *" : " (opcional)"}
-        </span>
-        <input
-          name="nextFollowUpAt"
-          type="datetime-local"
-          required={requiresFollowUp}
-          className="rounded-md border border-neutral-300 px-3 py-2"
-        />
-      </label>
+            <Field.Root required={requiresFollowUp}>
+              <Field.Label>
+                Próximo passo (data)
+                {requiresFollowUp ? "" : " (opcional)"}
+              </Field.Label>
+              <Input
+                name="nextFollowUpAt"
+                type="datetime-local"
+                required={requiresFollowUp}
+              />
+            </Field.Root>
 
-      {state.error ? (
-        <p className="text-sm text-red-700" role="alert">
-          {state.error}
-        </p>
-      ) : null}
-      {state.ok ? (
-        <p className="text-sm text-green-700" role="status">
-          Atividade registrada.
-        </p>
-      ) : null}
+            {state.error ? (
+              <Alert.Root status="error" variant="subtle" role="alert">
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Description>{state.error}</Alert.Description>
+                </Alert.Content>
+              </Alert.Root>
+            ) : null}
+            {state.ok ? (
+              <Alert.Root status="success" variant="subtle" role="status">
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Description>Atividade registrada.</Alert.Description>
+                </Alert.Content>
+              </Alert.Root>
+            ) : null}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="w-fit rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
-      >
-        {pending ? "Salvando…" : "Salvar atividade"}
-      </button>
-    </form>
+            <Button
+              type="submit"
+              width="fit-content"
+              loading={pending}
+              disabled={pending}
+            >
+              {pending ? "Salvando…" : "Salvar atividade"}
+            </Button>
+          </Stack>
+        </form>
+      </Card.Body>
+    </Card.Root>
   );
 }
