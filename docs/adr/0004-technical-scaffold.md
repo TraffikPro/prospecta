@@ -11,7 +11,9 @@ criar a fundação executável sem implementar o CRM completo nem telas finais.
 
 ## Decisão
 
-- Next.js 16 App Router + TypeScript + Tailwind + ESLint + `src/`
+- Next.js 16 App Router + TypeScript + ESLint + `src/`
+  - Scaffold inicial usou Tailwind; **UI padrão atual = Chakra UI v3**
+    ([0011](./0011-ui-stack-keep-tailwind.md)) — Tailwind permanece legado até migração gradual
 - pnpm
 - Prisma 6 + PostgreSQL; schema inicial `User` / `Lead` / `Activity` + enums V1
 - Estrutura `features/` + `server/{actions,services,repositories}` + `lib/prisma`

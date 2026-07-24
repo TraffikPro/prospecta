@@ -44,11 +44,16 @@ Papéis lógicos para planejar, implementar ou revisar. Não são automações m
 | `product-grill` | Gate BUILD / VALIDATE / REDUCE SCOPE / DEFER / REJECT antes de planejar |
 | `revenue-centric-design` | Hipótese + métrica para mudanças de UI/UX/operação (somente após BUILD) |
 | `prospect-quality` | Qualidade de lista/lead, dedupe leve, campos mínimos, anti-lixo no CSV |
+| `chakra-ui-builder` | Design system Chakra v3 (padrão UI) |
+| `chakra-ui-migrate` | Migração Chakra v2→v3 |
+| `chakra-ui-refactor` | Review / Tailwind→Chakra (incremental) |
 
 Nenhuma feature relevante deve começar sem `product-grill`.
 `REDUCE SCOPE` → cortar → re-grill → só seguir com **BUILD**.
 Registrar decisão em `## Product Decision` (plano + corpo da PR).
 Ver `workflows/feature-development.md`.
+
+**UI stack:** ADOPT CHAKRA v3 ([ADR 0011](../docs/adr/0011-ui-stack-keep-tailwind.md)). Tailwind = legado até migração gradual.
 
 ### Workflows (`.cursor/workflows/`)
 

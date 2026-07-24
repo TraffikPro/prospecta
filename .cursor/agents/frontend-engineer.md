@@ -9,7 +9,9 @@ Entregar UI clara do pipeline, detalhe do lead, formulários e handoff de canais
 - Priorizar clareza: “o que fazer agora” (follow-ups, stages).
 - Server Components por padrão; Client só com interação.
 - Formulários curtos; acessibilidade básica.
-- Tailwind + componentes reutilizáveis; sem estado global prematuro.
+- Chakra UI v3 = padrão (ADR 0011); Tailwind = legado até a tela ser tocada.
+- Theme/tokens em `src/theme/`; primitives em `src/components/ui/`.
+- Migração incremental; sem estado global prematuro.
 
 ## Foco de telas (V1)
 

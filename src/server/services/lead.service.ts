@@ -205,6 +205,7 @@ function buildNotesFromIntelligence(
   notes: string | undefined,
   intelligence:
     | {
+        diagnostic?: string;
         summary?: string;
         pitch?: string;
         score?: number;
@@ -221,8 +222,9 @@ function buildNotesFromIntelligence(
   if (typeof intelligence.score === "number") {
     parts.push(`Score: ${intelligence.score}/100`);
   }
-  if (intelligence.summary) {
-    parts.push(intelligence.summary);
+  const diagnosis = intelligence.diagnostic ?? intelligence.summary;
+  if (diagnosis) {
+    parts.push(diagnosis);
   }
   if (intelligence.pitch) {
     parts.push(`Pitch: ${intelligence.pitch}`);
