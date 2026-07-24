@@ -2,7 +2,13 @@
 
 import { useActionState } from "react";
 
-import { Alert, Field, Fieldset, Stack, Text } from "@chakra-ui/react";
+import {
+  Alert,
+  Field,
+  Fieldset,
+  Link as ChakraLink,
+  Stack,
+} from "@chakra-ui/react";
 import NextLink from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -32,9 +38,15 @@ export function ForgotPasswordForm() {
             </Alert.Description>
           </Alert.Content>
         </Alert.Root>
-        <Text fontSize="sm">
+        <ChakraLink
+          asChild
+          fontSize="sm"
+          fontWeight="medium"
+          color="brand.fg"
+          _hover={{ opacity: 0.8 }}
+        >
           <NextLink href="/login">Voltar ao login</NextLink>
-        </Text>
+        </ChakraLink>
       </Stack>
     );
   }
@@ -51,6 +63,7 @@ export function ForgotPasswordForm() {
                 type="email"
                 autoComplete="username"
                 required
+                minH="touch"
               />
             </Field.Root>
 
@@ -66,15 +79,22 @@ export function ForgotPasswordForm() {
             <Button
               type="submit"
               width="full"
+              minH="touch"
               loading={pending}
               disabled={pending}
             >
               {pending ? "Enviando…" : "Enviar"}
             </Button>
 
-            <Text fontSize="sm" color="fg.muted">
+            <ChakraLink
+              asChild
+              fontSize="sm"
+              fontWeight="medium"
+              color="brand.fg"
+              _hover={{ opacity: 0.8 }}
+            >
               <NextLink href="/login">Voltar ao login</NextLink>
-            </Text>
+            </ChakraLink>
           </Stack>
         </Fieldset.Content>
       </Fieldset.Root>
