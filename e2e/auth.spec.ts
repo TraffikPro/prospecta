@@ -44,8 +44,17 @@ test.describe("auth + ACL", () => {
     const response = await page.goto("/admin/users");
     expect(response?.status()).toBe(403);
     await expect(
-      page.getByText(/403|Forbidden|não tem permissão/i).first(),
+      page.getByText(/403|Acesso negado|não possui permissão/i).first(),
     ).toBeVisible();
+  });
+
+  test("ADMIN can open users list", async ({ page }) => {
+    await login(page, adminEmail, adminPassword);
+    await page.goto("/admin/users");
+    await expect(
+      page.getByRole("heading", { name: "Usuários", exact: true }),
+    ).toBeVisible();
+    await expect(page.getByTestId("admin-users")).toBeVisible();
   });
 
   test("invalid credentials do not reveal whether email exists", async ({
