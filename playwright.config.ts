@@ -9,6 +9,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   workers: 1,
   reporter: "list",
+  globalSetup: "./e2e/global-setup.ts",
   use: {
     baseURL,
     trace: "on-first-retry",
