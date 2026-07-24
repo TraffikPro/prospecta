@@ -7,6 +7,7 @@ import {
   LeadValidationError,
 } from "@/features/leads/lead.errors";
 import { AuthenticationError } from "@/server/auth/errors";
+import { loginPath } from "@/server/auth/login-redirect";
 import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
 import {
@@ -35,7 +36,7 @@ export async function createLeadAction(
     requireAnyRole(sessionUser, ["ADMIN", "MEMBER"]);
   } catch (error) {
     if (error instanceof AuthenticationError) {
-      redirect("/login");
+      redirect(loginPath("session_expired"));
     }
     throw error;
   }
@@ -88,7 +89,7 @@ export async function moveLeadStageAction(
     requireAnyRole(sessionUser, ["ADMIN", "MEMBER"]);
   } catch (error) {
     if (error instanceof AuthenticationError) {
-      redirect("/login");
+      redirect(loginPath("session_expired"));
     }
     throw error;
   }

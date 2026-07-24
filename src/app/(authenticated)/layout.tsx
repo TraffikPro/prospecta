@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation";
 
 import { AppShell } from "@/components/layout/app-shell";
-import { AuthenticationError } from "@/server/auth/errors";
-import { requireAuth } from "@/server/auth/guards";
-import { getSessionUser } from "@/server/auth/session";
+import { loginPath } from "@/server/auth/login-redirect";
+import { resolveSession } from "@/server/auth/session";
 
 export const dynamic = "force-dynamic";
 
@@ -12,18 +11,17 @@ export default async function AuthenticatedLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const sessionUser = await getSessionUser();
+  const resolved = await resolveSession();
 
-  try {
-    requireAuth(sessionUser);
-  } catch (error) {
-    if (error instanceof AuthenticationError) {
-      redirect("/login");
-    }
-    throw error;
+  if (resolved.status === "unauthenticated") {
+    redirect(loginPath());
   }
 
-  const user = sessionUser!;
+  if (resolved.status === "invalid") {
+    redirect(loginPath("session_expired"));
+  }
+
+  const user = resolved.user;
 
   return (
     <AppShell userName={user.name} userRole={user.role}>

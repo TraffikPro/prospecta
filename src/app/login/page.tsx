@@ -1,16 +1,29 @@
-import { Box, Card, Heading, Stack, Text } from "@chakra-ui/react";
+import { Alert, Box, Card, Heading, Stack, Text } from "@chakra-ui/react";
 import { redirect } from "next/navigation";
 
 import { LoginForm } from "@/features/auth/login-form";
+import {
+  isSessionExpiredReason,
+  SESSION_EXPIRED_MESSAGE,
+} from "@/server/auth/login-redirect";
 import { getSessionUser } from "@/server/auth/session";
 
 export const dynamic = "force-dynamic";
 
-export default async function LoginPage() {
+type LoginPageProps = {
+  searchParams: Promise<{
+    reason?: string;
+  }>;
+};
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
   const user = await getSessionUser();
   if (user) {
     redirect("/app");
   }
+
+  const params = await searchParams;
+  const showSessionExpired = isSessionExpiredReason(params.reason);
 
   return (
     <Box
@@ -40,7 +53,22 @@ export default async function LoginPage() {
           </Stack>
         </Card.Header>
         <Card.Body>
-          <LoginForm />
+          <Stack gap="4">
+            {showSessionExpired ? (
+              <Alert.Root
+                status="warning"
+                variant="subtle"
+                role="status"
+                data-testid="session-expired-alert"
+              >
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Description>{SESSION_EXPIRED_MESSAGE}</Alert.Description>
+                </Alert.Content>
+              </Alert.Root>
+            ) : null}
+            <LoginForm />
+          </Stack>
         </Card.Body>
       </Card.Root>
     </Box>
