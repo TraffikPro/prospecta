@@ -26,7 +26,9 @@ test.describe("pipeline foundation", () => {
     );
 
     await page.goto("/app/pipeline");
-    await expect(page.getByRole("heading", { name: "Pipeline" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Pipeline", exact: true }),
+    ).toBeVisible();
     await expect(page.getByTestId("pipeline-stage-NEW")).toBeVisible();
     await page.getByRole("link", { name: company, exact: true }).click();
     await page.waitForURL(/\/app\/leads\/.+/);

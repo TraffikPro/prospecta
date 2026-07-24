@@ -17,8 +17,8 @@ Tailwind → 0 usos → remover deps/config
 | 1 | Login | Feito (esta fatia) |
 | 2 | Layout autenticado (nav, user, logout) | Feito (esta fatia) |
 | 3 | Leads lista / new / detail (+ stage/activity no detail) | Feito |
-| 4 | Pipeline | Pendente |
-| 5 | Activity (timeline + form) | Pendente |
+| 4 | Pipeline | Feito (esta fatia) |
+| 5 | Activity (timeline + form) | Feito no detail (Fase 3); revisar se sobrar superfície |
 | 6 | Admin users | Pendente |
 | 7 | Remover Tailwind (`tailwindcss`, `@tailwindcss/postcss`, `globals.css` import) | Pendente |
 
