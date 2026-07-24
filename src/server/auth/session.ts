@@ -22,12 +22,14 @@ function toSessionUser(user: {
   name: string;
   email: string;
   role: "ADMIN" | "MEMBER";
+  mustChangePassword: boolean;
 }): SessionUser {
   return {
     id: user.id,
     name: user.name,
     email: user.email,
     role: user.role,
+    mustChangePassword: user.mustChangePassword,
   };
 }
 
@@ -73,6 +75,7 @@ export async function resolveSession(): Promise<ResolvedSession> {
           email: true,
           role: true,
           isActive: true,
+          mustChangePassword: true,
         },
       },
     },

@@ -1,30 +1,29 @@
 import { Alert, Box, Card, Heading, Stack, Text } from "@chakra-ui/react";
+import NextLink from "next/link";
 import { redirect } from "next/navigation";
 
-import { LoginForm } from "@/features/auth/login-form";
-import {
-  isSessionExpiredReason,
-  postAuthPath,
-  SESSION_EXPIRED_MESSAGE,
-} from "@/server/auth/login-redirect";
+import { ResetPasswordForm } from "@/features/auth/reset-password-form";
+import { postAuthPath } from "@/server/auth/login-redirect";
 import { getSessionUser } from "@/server/auth/session";
 
 export const dynamic = "force-dynamic";
 
-type LoginPageProps = {
+type ResetPasswordPageProps = {
   searchParams: Promise<{
-    reason?: string;
+    token?: string;
   }>;
 };
 
-export default async function LoginPage({ searchParams }: LoginPageProps) {
+export default async function ResetPasswordPage({
+  searchParams,
+}: ResetPasswordPageProps) {
   const user = await getSessionUser();
   if (user) {
     redirect(postAuthPath(user));
   }
 
   const params = await searchParams;
-  const showSessionExpired = isSessionExpiredReason(params.reason);
+  const token = params.token?.trim() ?? "";
 
   return (
     <Box
@@ -46,30 +45,33 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <Card.Header>
           <Stack gap="2">
             <Heading as="h1" size="xl">
-              Prospecta
+              Nova senha
             </Heading>
             <Text fontSize="sm" color="fg.muted">
-              Entre com sua conta do time fundador.
+              Defina uma nova senha para continuar.
             </Text>
           </Stack>
         </Card.Header>
         <Card.Body>
-          <Stack gap="4">
-            {showSessionExpired ? (
-              <Alert.Root
-                status="warning"
-                variant="subtle"
-                role="status"
-                data-testid="session-expired-alert"
-              >
+          {token ? (
+            <ResetPasswordForm token={token} />
+          ) : (
+            <Stack gap="4">
+              <Alert.Root status="error" variant="subtle" role="alert">
                 <Alert.Indicator />
                 <Alert.Content>
-                  <Alert.Description>{SESSION_EXPIRED_MESSAGE}</Alert.Description>
+                  <Alert.Description>
+                    Link inválido ou expirado.
+                  </Alert.Description>
                 </Alert.Content>
               </Alert.Root>
-            ) : null}
-            <LoginForm />
-          </Stack>
+              <Text fontSize="sm">
+                <NextLink href="/forgot-password">
+                  Solicitar novo link
+                </NextLink>
+              </Text>
+            </Stack>
+          )}
         </Card.Body>
       </Card.Root>
     </Box>

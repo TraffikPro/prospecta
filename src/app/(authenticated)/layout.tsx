@@ -1,7 +1,10 @@
 import { redirect } from "next/navigation";
 
 import { AppShell } from "@/components/layout/app-shell";
-import { loginPath } from "@/server/auth/login-redirect";
+import {
+  CHANGE_PASSWORD_PATH,
+  loginPath,
+} from "@/server/auth/login-redirect";
 import { resolveSession } from "@/server/auth/session";
 
 export const dynamic = "force-dynamic";
@@ -22,6 +25,10 @@ export default async function AuthenticatedLayout({
   }
 
   const user = resolved.user;
+
+  if (user.mustChangePassword) {
+    redirect(CHANGE_PASSWORD_PATH);
+  }
 
   return (
     <AppShell userName={user.name} userRole={user.role}>

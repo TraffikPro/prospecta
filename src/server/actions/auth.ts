@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { INVALID_CREDENTIALS_MESSAGE } from "@/server/auth/errors";
+import { postAuthPath } from "@/server/auth/login-redirect";
 import { verifyPassword } from "@/server/auth/password";
 import { createSession, destroySession } from "@/server/auth/session";
 
@@ -47,7 +48,9 @@ export async function loginAction(
   }
 
   await createSession(user.id);
-  redirect("/app");
+  redirect(
+    postAuthPath({ mustChangePassword: user.mustChangePassword }),
+  );
 }
 
 export async function logoutAction(): Promise<void> {

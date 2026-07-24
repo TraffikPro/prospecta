@@ -4,6 +4,9 @@ import {
   FORGOT_PASSWORD_ACK_MESSAGE,
   isSessionExpiredReason,
   loginPath,
+  MUST_CHANGE_PASSWORD_MESSAGE,
+  PASSWORD_CHANGED_MESSAGE,
+  postAuthPath,
   SESSION_EXPIRED_MESSAGE,
 } from "./login-redirect";
 
@@ -31,5 +34,19 @@ describe("login redirect helpers", () => {
       FORGOT_PASSWORD_ACK_MESSAGE,
       "Se este email estiver cadastrado, enviaremos instruções.",
     );
+    assert.equal(
+      PASSWORD_CHANGED_MESSAGE,
+      "Senha alterada. Faça login novamente.",
+    );
+    assert.equal(
+      MUST_CHANGE_PASSWORD_MESSAGE,
+      "Você precisa alterar sua senha para continuar.",
+    );
+  });
+
+  it("routes first-access users to change-password", () => {
+    assert.equal(postAuthPath({ mustChangePassword: true }), "/change-password");
+    assert.equal(postAuthPath({ mustChangePassword: false }), "/app");
   });
 });
+
