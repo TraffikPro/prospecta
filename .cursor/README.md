@@ -53,7 +53,7 @@ Nenhuma feature relevante deve começar sem `product-grill`.
 Registrar decisão em `## Product Decision` (plano + corpo da PR).
 Ver `workflows/feature-development.md`.
 
-**UI stack:** ADOPT CHAKRA v3 ([ADR 0011](../docs/adr/0011-ui-stack-keep-tailwind.md)). Tailwind = legado até migração gradual.
+**UI stack:** CHAKRA ONLY ([ADR 0011](../docs/adr/0011-ui-stack-keep-tailwind.md), [plano](../docs/product/chakra-only-migration-plan.md)).
 
 ### Workflows (`.cursor/workflows/`)
 

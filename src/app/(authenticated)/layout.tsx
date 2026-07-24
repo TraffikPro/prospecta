@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-import { LogoutButton } from "@/features/auth/logout-button";
+
+import { AppShell } from "@/components/layout/app-shell";
 import { AuthenticationError } from "@/server/auth/errors";
 import { requireAuth } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
@@ -25,19 +26,8 @@ export default async function AuthenticatedLayout({
   const user = sessionUser!;
 
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-neutral-200 bg-white">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-6 py-4">
-          <div>
-            <p className="text-sm font-semibold text-neutral-900">Prospecta</p>
-            <p className="text-xs text-neutral-600">
-              {user.name} · {user.role}
-            </p>
-          </div>
-          <LogoutButton />
-        </div>
-      </header>
-      <div className="mx-auto max-w-3xl px-6 py-8">{children}</div>
-    </div>
+    <AppShell userName={user.name} userRole={user.role}>
+      {children}
+    </AppShell>
   );
 }
