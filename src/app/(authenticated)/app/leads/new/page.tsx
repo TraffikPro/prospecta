@@ -1,6 +1,7 @@
-import { Heading, Stack } from "@chakra-ui/react";
 import { redirect } from "next/navigation";
 
+import { PageFrame } from "@/components/layout/page-frame";
+import { PageHeading } from "@/components/layout/page-heading";
 import { ContextualNav } from "@/components/navigation";
 import { CreateLeadForm } from "@/features/leads/create-lead-form";
 import { AuthenticationError } from "@/server/auth/errors";
@@ -19,17 +20,15 @@ export default async function NewLeadPage() {
   }
 
   return (
-    <Stack as="main" gap="6">
+    <PageFrame width="form" gap="6">
       <ContextualNav
         items={[
           { label: "Leads", href: "/app/leads" },
           { label: "Novo lead" },
         ]}
       />
-      <Heading as="h1" size="lg">
-        Novo lead
-      </Heading>
+      <PageHeading title="Novo lead" />
       <CreateLeadForm />
-    </Stack>
+    </PageFrame>
   );
 }

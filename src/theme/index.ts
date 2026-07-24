@@ -1,11 +1,14 @@
 import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 
+import { textStyles } from "./text-styles";
+
 /**
  * Prospecta design tokens (Chakra UI v3).
  * Brand: teal/slate — B2B CRM, not purple defaults.
  */
 const config = defineConfig({
   theme: {
+    textStyles,
     tokens: {
       colors: {
         brand: {
@@ -66,6 +69,15 @@ const config = defineConfig({
         md: { value: "1rem" },
         lg: { value: "1.5rem" },
         /** Minimum comfortable touch target (44px). */
+        touch: { value: "2.75rem" },
+      },
+      sizes: {
+        /** Forms — 720px */
+        containerForm: { value: "45rem" },
+        /** Lead detail — 960px */
+        containerDetail: { value: "60rem" },
+        /** Lists / pipeline — 1200px */
+        containerList: { value: "75rem" },
         touch: { value: "2.75rem" },
       },
       radii: {

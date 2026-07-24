@@ -8,6 +8,10 @@ import type {
   IntelligenceQualificationFilter,
   IntelligenceSourceFilter,
 } from "@/features/leads/intelligence/inbox";
+import {
+  leadSourceLabels,
+  qualificationLabels,
+} from "@/features/leads/lead.labels";
 
 type IntelligenceFiltersProps = {
   filters: IntelligenceInboxFilters;
@@ -48,6 +52,10 @@ function FilterChip({
           textUnderlineOffset: "3px",
           color: active ? "inherit" : undefined,
           opacity: active ? 1 : 0.75,
+          minHeight: "44px",
+          display: "inline-flex",
+          alignItems: "center",
+          paddingInline: "0.25rem",
         }}
       >
         {children}
@@ -61,14 +69,14 @@ const QUALIFICATION_OPTIONS: {
   label: string;
 }[] = [
   { value: "ALL", label: "Todos" },
-  { value: "HIGH", label: "HIGH" },
-  { value: "MEDIUM", label: "MEDIUM" },
+  { value: "HIGH", label: qualificationLabels.HIGH },
+  { value: "MEDIUM", label: qualificationLabels.MEDIUM },
 ];
 
 const SOURCE_OPTIONS: { value: IntelligenceSourceFilter; label: string }[] = [
   { value: "ALL", label: "Todas" },
-  { value: "GOOGLE_PLACES", label: "GOOGLE_PLACES" },
-  { value: "MANUAL", label: "MANUAL" },
+  { value: "GOOGLE_PLACES", label: leadSourceLabels.GOOGLE_PLACES },
+  { value: "MANUAL", label: leadSourceLabels.MANUAL },
 ];
 
 export function IntelligenceFilters({ filters }: IntelligenceFiltersProps) {

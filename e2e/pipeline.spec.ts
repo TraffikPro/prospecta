@@ -44,7 +44,7 @@ test.describe("pipeline foundation", () => {
       "MEETING",
       { timeout: 15_000 },
     );
-    await expect(page.getByText("Mudança de stage")).toBeVisible();
+    await expect(page.getByText("Mudança de etapa")).toBeVisible();
     await expect(page.getByText("Novo → Reunião")).toBeVisible();
   });
 

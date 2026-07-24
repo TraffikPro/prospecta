@@ -1,9 +1,18 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Heading, Link as ChakraLink, List, Stack, Text } from "@chakra-ui/react";
+import { Link as ChakraLink, SimpleGrid, Stack, Text } from "@chakra-ui/react";
 
+import { PageFrame } from "@/components/layout/page-frame";
+import { PageHeading } from "@/components/layout/page-heading";
 import { ContextualNav } from "@/components/navigation";
+import { Button } from "@/components/ui/button";
 import { getSessionUser } from "@/server/auth/session";
+
+type Shortcut = {
+  href: string;
+  label: string;
+  description: string;
+};
 
 export default async function AppHomePage() {
   const user = await getSessionUser();
@@ -11,39 +20,87 @@ export default async function AppHomePage() {
     redirect("/login");
   }
 
+  const firstName = user.name.trim().split(/\s+/)[0] || user.name;
+
+  const shortcuts: Shortcut[] = [
+    {
+      href: "/app/my-leads",
+      label: "Minha fila",
+      description: "Priorize follow-ups e próximos contatos.",
+    },
+    {
+      href: "/app/intelligence",
+      label: "Inteligência",
+      description: "Oportunidades ordenadas por score.",
+    },
+    {
+      href: "/app/pipeline",
+      label: "Pipeline",
+      description: "Veja leads por etapa do funil.",
+    },
+  ];
+
+  if (user.role === "ADMIN") {
+    shortcuts.push(
+      {
+        href: "/app/leads",
+        label: "Leads",
+        description: "Lista completa e cadastro manual.",
+      },
+      {
+        href: "/admin/users",
+        label: "Usuários",
+        description: "Visão administrativa da equipe.",
+      },
+    );
+  } else {
+    shortcuts.push({
+      href: "/app/leads/new",
+      label: "Novo lead",
+      description: "Cadastre um contato para trabalhar.",
+    });
+  }
+
   return (
-    <Stack as="main" gap="4">
+    <PageFrame width="list" gap="6">
       <ContextualNav items={[{ label: "Início" }]} />
-      <Heading as="h1" size="lg" fontWeight="semibold">
-        Área autenticada
-      </Heading>
-      <Text fontSize="sm" color="fg.muted">
-        Sessão ativa para {user.email}.
-      </Text>
-      <List.Root gap="2" fontSize="sm" variant="plain">
-        <List.Item>
+      <PageHeading
+        title={`Olá, ${firstName}`}
+        meta="Escolha por onde começar a operação de hoje."
+      />
+
+      <SimpleGrid columns={{ base: 1, md: 2 }} gap="3">
+        {shortcuts.map((item) => (
+          <Stack
+            key={item.href}
+            borderWidth="1px"
+            borderColor="border"
+            borderRadius="card"
+            bg="bg"
+            p="4"
+            gap="3"
+            justify="space-between"
+            minH="touch"
+          >
+            <Stack gap="1">
+              <Text fontWeight="semibold">{item.label}</Text>
+              <Text textStyle="meta">{item.description}</Text>
+            </Stack>
+            <Button asChild size="md" minH="touch" alignSelf="stretch">
+              <Link href={item.href}>{item.label}</Link>
+            </Button>
+          </Stack>
+        ))}
+      </SimpleGrid>
+
+      {user.role === "MEMBER" ? (
+        <Text textStyle="meta">
+          Atalho rápido:{" "}
           <ChakraLink asChild textDecoration="underline">
-            <Link href="/app/intelligence">Inteligência</Link>
+            <Link href="/app/more">Mais opções</Link>
           </ChakraLink>
-        </List.Item>
-        <List.Item>
-          <ChakraLink asChild textDecoration="underline">
-            <Link href="/app/leads">Leads</Link>
-          </ChakraLink>
-        </List.Item>
-        <List.Item>
-          <ChakraLink asChild textDecoration="underline">
-            <Link href="/app/pipeline">Pipeline</Link>
-          </ChakraLink>
-        </List.Item>
-        {user.role === "ADMIN" ? (
-          <List.Item>
-            <ChakraLink asChild textDecoration="underline">
-              <Link href="/admin/users">Usuários (ADMIN)</Link>
-            </ChakraLink>
-          </List.Item>
-        ) : null}
-      </List.Root>
-    </Stack>
+        </Text>
+      ) : null}
+    </PageFrame>
   );
 }

@@ -11,7 +11,7 @@ export function MobileContextBack({ href, label }: MobileContextBackProps) {
     <ChakraLink
       asChild
       fontSize="sm"
-      minH="11"
+      minH="touch"
       display="inline-flex"
       alignItems="center"
       maxW="full"

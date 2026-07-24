@@ -50,7 +50,7 @@ test.describe("intelligence inbox", () => {
     await expect(page.getByText(highCompany)).toBeVisible();
     await expect(page.getByText(mediumCompany)).toBeVisible();
 
-    await page.getByRole("link", { name: "HIGH", exact: true }).click();
+    await page.getByRole("link", { name: "Alta", exact: true }).click();
     await page.waitForURL(/qualification=HIGH/);
     await expect(page.getByText(highCompany)).toBeVisible();
     await expect(page.getByText(mediumCompany)).toHaveCount(0);

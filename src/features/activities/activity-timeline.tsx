@@ -35,7 +35,7 @@ export function ActivityTimeline({ activities, nextFollowUpAt }: Props) {
       {activities.map((activity) => {
         const typeLabel =
           activity.type === "STAGE_CHANGE"
-            ? "Mudança de stage"
+            ? "Mudança de etapa"
             : activityTypeLabels[activity.type];
 
         return (

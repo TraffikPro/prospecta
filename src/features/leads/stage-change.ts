@@ -44,7 +44,7 @@ export function formatStageChangeSummary(
 ): string {
   const parsed = parseStageChangeBody(body);
   if (!parsed) {
-    return body?.trim() || "Mudança de stage";
+    return body?.trim() || "Mudança de etapa";
   }
   return `${leadStageLabels[parsed.from]} → ${leadStageLabels[parsed.to]}`;
 }

@@ -1,6 +1,7 @@
 import { forbidden, redirect } from "next/navigation";
-import { Heading, Stack, Text } from "@chakra-ui/react";
 
+import { PageFrame } from "@/components/layout/page-frame";
+import { PageHeading } from "@/components/layout/page-heading";
 import { ContextualNav } from "@/components/navigation";
 import { UsersTable } from "@/features/admin/components/users-table";
 import { AuthenticationError, AuthorizationError } from "@/server/auth/errors";
@@ -26,23 +27,19 @@ export default async function AdminUsersPage() {
   const users = await getAdminUsers();
 
   return (
-    <Stack as="main" gap="6">
+    <PageFrame width="list" gap="6">
       <ContextualNav
         items={[
           { label: "Mais", href: "/app/more" },
           { label: "Usuários" },
         ]}
       />
-      <Stack gap="1">
-        <Heading as="h1" size="lg" fontWeight="semibold">
-          Usuários
-        </Heading>
-        <Text fontSize="sm" color="fg.muted">
-          Visão administrativa somente leitura. Sem CRUD nesta fatia.
-        </Text>
-      </Stack>
+      <PageHeading
+        title="Usuários"
+        meta="Visão administrativa somente leitura."
+      />
 
       <UsersTable users={users} />
-    </Stack>
+    </PageFrame>
   );
 }

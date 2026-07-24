@@ -3,6 +3,8 @@ import { notFound, redirect } from "next/navigation";
 
 import { ActivityTimeline } from "@/features/activities/activity-timeline";
 import { CreateActivityForm } from "@/features/activities/create-activity-form";
+import { PageFrame } from "@/components/layout/page-frame";
+import { SectionHeading } from "@/components/layout/page-heading";
 import {
   ContextualNav,
   leadBreadcrumbItems,
@@ -71,7 +73,7 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
     : "—";
 
   return (
-    <Stack as="main" gap={{ base: "6", md: "8" }}>
+    <PageFrame width="detail" gap={{ base: "6", md: "8" }}>
       <ContextualNav items={crumbItems} />
 
       <LeadInfoCard
@@ -106,7 +108,7 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
             whiteSpace="nowrap"
             borderWidth="0"
           >
-            Lead Intelligence
+            Inteligência do lead
           </Heading>
           <IntelligenceCard intelligence={intelligence} />
         </section>
@@ -114,9 +116,7 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
 
       {lead.notes ? (
         <Stack as="section" gap="2" aria-labelledby="notes-heading">
-          <Heading as="h2" id="notes-heading" size="md">
-            Notas
-          </Heading>
+          <SectionHeading id="notes-heading">Notas</SectionHeading>
           <Text fontSize="sm" whiteSpace="pre-wrap">
             {lead.notes}
           </Text>
@@ -132,9 +132,7 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
       </section>
 
       <Stack as="section" gap="3" aria-labelledby="history-heading">
-        <Heading as="h2" id="history-heading" size="md">
-          Histórico
-        </Heading>
+        <SectionHeading id="history-heading">Histórico</SectionHeading>
         <ActivityTimeline
           activities={activities}
           nextFollowUpAt={lead.nextFollowUpAt}
@@ -144,6 +142,6 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
       <section aria-labelledby="move-stage-heading">
         <MoveStageForm leadId={lead.id} currentStage={lead.stage} />
       </section>
-    </Stack>
+    </PageFrame>
   );
 }

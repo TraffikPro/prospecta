@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Heading, HStack, Link as ChakraLink, Stack } from "@chakra-ui/react";
+import { Link as ChakraLink } from "@chakra-ui/react";
 
+import { PageFrame } from "@/components/layout/page-frame";
+import { PageHeading } from "@/components/layout/page-heading";
 import { ContextualNav } from "@/components/navigation";
 import { PipelineBoard } from "@/features/pipeline/components/pipeline-board";
 import { AuthenticationError } from "@/server/auth/errors";
@@ -23,18 +25,26 @@ export default async function PipelinePage() {
   const grouped = await getLeadsGroupedByStage();
 
   return (
-    <Stack as="main" gap="8">
+    <PageFrame width="list" gap="6">
       <ContextualNav items={[{ label: "Pipeline" }]} />
-      <HStack justify="space-between" align="center" gap="4" flexWrap="wrap">
-        <Heading as="h1" size="lg" fontWeight="semibold">
-          Pipeline
-        </Heading>
-        <ChakraLink asChild fontSize="sm" textDecoration="underline">
-          <Link href="/app/leads">Ver lista</Link>
-        </ChakraLink>
-      </HStack>
+      <PageHeading
+        title="Pipeline"
+        meta="Etapas recolhíveis — abra a que precisa e use Ver todos quando houver muitos leads."
+        actions={
+          <ChakraLink
+            asChild
+            fontSize="sm"
+            textDecoration="underline"
+            minH="touch"
+            display="inline-flex"
+            alignItems="center"
+          >
+            <Link href="/app/leads">Ver lista</Link>
+          </ChakraLink>
+        }
+      />
 
       <PipelineBoard grouped={grouped} />
-    </Stack>
+    </PageFrame>
   );
 }

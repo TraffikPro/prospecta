@@ -124,6 +124,6 @@ test.describe("mobile experience v1", () => {
       "CONTACTED",
       { timeout: 15_000 },
     );
-    await expect(page.getByText("Mudança de stage")).toBeVisible();
+    await expect(page.getByText("Mudança de etapa")).toBeVisible();
   });
 });
