@@ -1,0 +1,174 @@
+{
+  "capturedAt": "2026-07-25T00:08:37.931Z",
+  "baseURL": "https://prospecta-ten-tau.vercel.app",
+  "commitHint": "production tip pós Fatia A DONE",
+  "scenarios": {
+    "desktop_no_activity": {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "sticky": "true",
+      "header": {
+        "h": 136,
+        "y": 294,
+        "bottom": 430
+      },
+      "next": {
+        "h": 251,
+        "y": 463,
+        "bottom": 714,
+        "x": 901
+      },
+      "contact": {
+        "h": 133,
+        "y": 746,
+        "bottom": 879,
+        "x": 901
+      },
+      "stage": {
+        "h": 218,
+        "y": 912,
+        "bottom": 1130,
+        "x": 902
+      },
+      "activity": {
+        "h": 554,
+        "y": 463,
+        "bottom": 1017,
+        "x": 144
+      },
+      "intel": null,
+      "history": null,
+      "origin": {
+        "h": 44,
+        "y": 1163,
+        "bottom": 1207,
+        "x": 144
+      },
+      "nextInFirstFold": true,
+      "contactInFirstFold": true,
+      "stageInFirstFold": false,
+      "railStackApproxH": 650,
+      "contactTextLen": 35,
+      "nextTextLen": 105,
+      "headerTextLen": 109,
+      "timelineItems": 0,
+      "screenshot": "C:/Users/Xakep/Desktop/prospecta/docs/product/assets/lead-detail-density-v1/desktop-1440x900-no-activity.png",
+      "leadUrl": "https://prospecta-ten-tau.vercel.app/app/leads/cmrzm2ksc000bju046vdszui3"
+    },
+    "desktop_with_history": {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "sticky": "true",
+      "header": {
+        "h": 136,
+        "y": 288,
+        "bottom": 424
+      },
+      "next": {
+        "h": 251,
+        "y": 457,
+        "bottom": 708,
+        "x": 901
+      },
+      "contact": {
+        "h": 133,
+        "y": 748,
+        "bottom": 881,
+        "x": 901
+      },
+      "stage": {
+        "h": 218,
+        "y": 921,
+        "bottom": 1140,
+        "x": 902
+      },
+      "activity": {
+        "h": 554,
+        "y": 457,
+        "bottom": 1011,
+        "x": 144
+      },
+      "intel": null,
+      "history": {
+        "h": 69,
+        "y": 1079,
+        "bottom": 1148,
+        "x": 144
+      },
+      "origin": {
+        "h": 44,
+        "y": 1180,
+        "bottom": 1224,
+        "x": 144
+      },
+      "nextInFirstFold": true,
+      "contactInFirstFold": true,
+      "stageInFirstFold": false,
+      "railStackApproxH": 650,
+      "contactTextLen": 35,
+      "nextTextLen": 105,
+      "headerTextLen": 109,
+      "timelineItems": 1,
+      "screenshot": "C:/Users/Xakep/Desktop/prospecta/docs/product/assets/lead-detail-density-v1/desktop-1440x900-with-history.png",
+      "leadUrl": "https://prospecta-ten-tau.vercel.app/app/leads/cmrzm2ksc000bju046vdszui3"
+    },
+    "mobile_no_activity": {
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "sticky": "false",
+      "header": {
+        "h": 188,
+        "y": 246,
+        "bottom": 434
+      },
+      "next": {
+        "h": 251,
+        "y": 459,
+        "bottom": 710,
+        "x": 16
+      },
+      "contact": {
+        "h": 133,
+        "y": 734,
+        "bottom": 867,
+        "x": 16
+      },
+      "stage": {
+        "h": 218,
+        "y": 1568,
+        "bottom": 1787,
+        "x": 17
+      },
+      "activity": {
+        "h": 571,
+        "y": 891,
+        "bottom": 1462,
+        "x": 16
+      },
+      "intel": null,
+      "history": null,
+      "origin": {
+        "h": 44,
+        "y": 1812,
+        "bottom": 1856,
+        "x": 16
+      },
+      "nextInFirstFold": true,
+      "contactInFirstFold": false,
+      "stageInFirstFold": false,
+      "railStackApproxH": 650,
+      "contactTextLen": 35,
+      "nextTextLen": 105,
+      "headerTextLen": 107,
+      "timelineItems": 0,
+      "screenshot": "C:/Users/Xakep/Desktop/prospecta/docs/product/assets/lead-detail-density-v1/mobile-390x844-no-activity.png",
+      "leadUrl": "https://prospecta-ten-tau.vercel.app/app/leads/cmrzm2r1u000bl604di7vzngn"
+    }
+  }
+}
