@@ -1,3 +1,4 @@
+import NextLink from "next/link";
 import { Alert, Card, Heading, HStack, Stack, Text } from "@chakra-ui/react";
 
 import type { NextActionView } from "@/features/leads/next-action";
@@ -5,12 +6,21 @@ import type { NextActionView } from "@/features/leads/next-action";
 type LeadNextActionCardProps = {
   view: NextActionView;
   followUpLabel: string;
+  /** Presentation-only: suppress residual follow-up urgency on WON/LOST. */
+  isTerminal?: boolean;
 };
 
 export function LeadNextActionCard({
   view,
   followUpLabel,
+  isTerminal = false,
 }: LeadNextActionCardProps) {
+  const showUrgency =
+    !isTerminal &&
+    (view.followUpState === "due_today" || view.followUpState === "overdue");
+  const showMissingFollowUpGuidance =
+    !isTerminal && view.followUpState === "none";
+
   return (
     <Card.Root
       variant="outline"
@@ -18,6 +28,7 @@ export function LeadNextActionCard({
       data-testid="lead-next-action"
       data-follow-up-state={view.followUpState}
       data-action={view.actionLabel}
+      data-terminal={isTerminal ? "true" : "false"}
     >
       <Card.Body py="1.5" px="3">
         <Stack gap="1">
@@ -88,14 +99,35 @@ export function LeadNextActionCard({
             </Text>
           </Stack>
 
-          {view.followUpState === "due_today" ? (
+          {showMissingFollowUpGuidance ? (
+            <Text
+              fontSize="sm"
+              color="fg.muted"
+              lineHeight="1.35"
+              data-testid="next-action-follow-up-guidance"
+            >
+              Registre uma atividade para definir o próximo passo.{" "}
+              <NextLink
+                href="#register-activity"
+                style={{
+                  color: "inherit",
+                  fontWeight: 600,
+                  textDecoration: "underline",
+                }}
+              >
+                Registrar atividade
+              </NextLink>
+            </Text>
+          ) : null}
+
+          {showUrgency && view.followUpState === "due_today" ? (
             <Alert.Root status="warning" variant="subtle" size="sm">
               <Alert.Indicator />
               <Alert.Title>Follow-up hoje</Alert.Title>
             </Alert.Root>
           ) : null}
 
-          {view.followUpState === "overdue" ? (
+          {showUrgency && view.followUpState === "overdue" ? (
             <Alert.Root status="error" variant="subtle" size="sm">
               <Alert.Indicator />
               <Alert.Title>Follow-up atrasado</Alert.Title>
