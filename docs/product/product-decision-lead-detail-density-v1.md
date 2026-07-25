@@ -1,28 +1,69 @@
 # Lead Detail Density v1 — Decision
 
 - **Data:** 2026-07-24
-- **Decisão:** **BUILD REDUCED** — rail density only
+- **Decisão:** **DONE** — BUILD REDUCED (rail density only)
 - **Classificação:** WORKSPACE
 - **Grill:** [product-grill-lead-detail-density-v1.md](product-grill-lead-detail-density-v1.md) — merge [#39](https://github.com/TraffikPro/prospecta/pull/39) @ `e5f2a90`
 - **Predecessor:** [Lead Detail Redesign Fatia A DONE](product-decision-lead-detail-redesign-v1.md) ([#37](https://github.com/TraffikPro/prospecta/pull/37))
 - **Rota:** `/app/leads/[id]` (rail operacional apenas)
-- **Produção baseline:** `https://prospecta-ten-tau.vercel.app` @ tip pós Fatia A
-- **Evidência:** `docs/product/assets/lead-detail-density-v1/measurements.json`
+- **Produção:** `https://prospecta-ten-tau.vercel.app` @ `0f22415` (merge [#41](https://github.com/TraffikPro/prospecta/pull/41))
+- **Smoke:** `scripts/smoke-lead-detail-density-prod.mjs` — OVERALL PASS
+- **Evidência BUILD:** `docs/product/assets/lead-detail-density-v1-build/`
+- **Baseline grill:** `docs/product/assets/lead-detail-density-v1/measurements.json`
 
 ## Product Decision
 
 ```text
 Lead Detail Redesign v1
     Fatia A — DONE (composição)
-    → Lead Detail Density v1: BUILD REDUCED — rail density only
+    → Lead Detail Density v1: DONE
          (= Fatia B do redesign, escopo reduzido ao rail)
 ```
 
-Após o merge deste documento, o **BUILD** fica liberado em **branch exclusiva**, sem commit automático.
+---
+
+## Entrega — DONE
+
+| Item | Valor |
+|------|-------|
+| PR | [#41](https://github.com/TraffikPro/prospecta/pull/41) → merge `0f22415` |
+| Branch | `feat/lead-detail-rail-density` |
+| Commit | `00e6802` — `feat(leads): compact lead detail operational rail` |
+| Deploy Production | Ready @ `0f22415` |
+| Smoke prod | `scripts/smoke-lead-detail-density-prod.mjs` — **OVERALL PASS** |
+
+### Antes → depois (1440×900, estado normal)
+
+| Bloco | Antes (Fatia A prod) | Depois | Δ |
+|-------|---------------------:|-------:|--:|
+| Next Action | 251px | 103px | −148 |
+| Contato | 133px | 62px | −71 |
+| Alterar etapa | 218px | 127px | −91 |
+| Stage `y` | 912 | 636 | −276 |
+| Select `bottom` | >900 | **708** | na dobra |
+
+### Smoke produção (confirmado)
+
+- Desktop normal: heading + select na 1ª dobra (`select.bottom` 708 ≤ 900)
+- Sticky → unstick: seleção preservada
+- LOST + `lostReason`
+- Overdue: alerta “Follow-up atrasado” integral
+- Mobile 390×844: sem overflow; ordem intacta; sticky=false
+- Domínio: sem schema / action / service
+
+### Screenshots
+
+- `docs/product/assets/lead-detail-density-v1-build/desktop-1440x900-normal.png`
+- `docs/product/assets/lead-detail-density-v1-build/desktop-1440x900-overdue.png`
+- `docs/product/assets/lead-detail-density-v1-build/mobile-390x844.png`
+- Probe zoom 200%: `desktop-1440x900-next-action-zoom-200.png`
+- Medidas: `validation.json`
+
+Validação local reproduzível: `scripts/validate-lead-detail-density.mjs`
 
 ---
 
-## Escopo autorizado — BUILD REDUCED
+## Escopo autorizado — BUILD REDUCED (histórico)
 
 Somente densidade/hierarquia interna do **rail operacional**:
 
@@ -42,15 +83,7 @@ Somente densidade/hierarquia interna do **rail operacional**:
 título “Alterar etapa” + select visíveis na primeira dobra
 ```
 
-O botão **“Salvar etapa”** pode ficar abaixo da dobra, desde que apareça com scroll curto e previsível.
-
-Não exigir card completo + CTA na dobra (compressão excessiva / risco de mudar composição).
-
-### Contato
-
-- Título **“Contato”** permanece **visível** (não `sr-only`).
-- Permitido: reduzir margem inferior, tamanho do heading, texto auxiliar, espaçamento entre botões.
-- Touch targets **≥ 44px**.
+O botão **“Salvar etapa”** pode ficar abaixo da dobra.
 
 ### Follow-up atrasado — exceção
 
@@ -61,12 +94,6 @@ estado normal
 estado overdue
 → stage pode descer; alerta overdue tem prioridade
 ```
-
-Testes **não** devem esconder ou truncar o alerta para atingir a métrica visual.
-
-### Activity
-
-Fora desta fatia.
 
 ---
 
@@ -87,36 +114,17 @@ Fora desta fatia.
 
 ---
 
-## Aceite
+## Aceite — cumprido
 
-### Principal
-
-| Check | Critério |
-|-------|----------|
-| Desktop 1440×900, estado normal | Título “Alterar etapa” + `move-stage-select` visíveis na 1ª dobra (`bottom` do select ≤ 900) |
-
-### Complementares
-
-| Check | Critério |
-|-------|----------|
-| Overdue | Alerta integral; stage pode sair da dobra |
-| Legibilidade | Rail continua legível; sem ícones-only |
-| Mobile 390×844 | Sem overflow; ordem intacta; sticky=false; targets ≥ 44px |
-| Sticky/unstick | Seleção de stage preservada ao reduzir/restaurar altura |
-| Domínio | Nenhuma mudança schema/action/service |
-| E2E existentes | Activity / stage / pitch / breadcrumbs PASS |
-
-Smoke sugerido: estender `scripts/smoke-lead-detail-fatia-a-prod.mjs` ou `scripts/smoke-lead-detail-density-prod.mjs` com assert da meta principal.
-
----
-
-## Entrega
-
-```text
-Branch exclusiva (ex.: feat/lead-detail-rail-density)
-PR sugerido: feat(leads): densify lead detail operational rail
-Sem commit automático — BUILD sob pedido explícito após merge desta decisão
-```
+| Check | Resultado |
+|-------|-----------|
+| Desktop 1440×900 normal — heading + select na dobra | PASS (prod smoke) |
+| Overdue alerta integral | PASS |
+| Mobile ordem / overflow / sticky=false | PASS |
+| Sticky/unstick preserva seleção | PASS |
+| LOST + `lostReason` | PASS |
+| Domínio intacto | PASS |
+| E2E afetados | PASS (flake isolado `my-leads` filter URL — PASS no retry) |
 
 ---
 
@@ -134,4 +142,4 @@ Sem commit automático — BUILD sob pedido explícito após merge desta decisã
 
 ## Regra de DONE
 
-DONE só após merge, deploy Production e smoke da meta principal + complementares confirmados.
+DONE após merge, deploy Production e smoke da meta principal + complementares — **cumprido** em 2026-07-24/25.

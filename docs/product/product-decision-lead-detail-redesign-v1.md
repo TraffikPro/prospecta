@@ -1,7 +1,7 @@
 # Lead Detail Redesign v1 — Decision
 
 - **Data:** 2026-07-24
-- **Decisão:** Fatia A — **DONE** · Fatia B — **PLANNED** · Fatia C — **PLANNED**
+- **Decisão:** Fatia A — **DONE** · Fatia B — **DONE** (Density v1 / rail) · Fatia C — **PLANNED**
 - **Classificação:** WORKSPACE (UI operacional do detalhe do lead)
 - **Grill (fechado):** [product-grill-lead-detail-redesign-v1.md](product-grill-lead-detail-redesign-v1.md) — merge [#35](https://github.com/TraffikPro/prospecta/pull/35)
 - **Rota:** `/app/leads/[id]`
@@ -18,9 +18,8 @@ Lead Detail Redesign v1
 Fatia A — DONE
 Composição responsiva e reposicionamento (#37 @ 866b4f5)
 
-Fatia B — PLANNED
-Densidade e hierarquia interna dos blocos
-(requer novo grill com densidade real observada em produção)
+Fatia B — DONE (Density v1 — rail only)
+[#41](https://github.com/TraffikPro/prospecta/pull/41) @ `0f22415`
 
 Fatia C — PLANNED
 Urgência, empty states e smoke final
@@ -69,13 +68,15 @@ No desktop 1440×900 com cards atuais (sem densificar), **Alterar etapa** pode f
 
 ---
 
-## Fatia B — PLANNED
+## Fatia B — DONE (Density v1 — rail only)
 
-Densidade e hierarquia interna dos blocos (Next Action, Contact, Intelligence, Origin, Stage) — **sem** mudar schemas/actions/services.
+Densidade do **rail operacional** (Next Action, Contato, Alterar etapa) — **sem** mudar schemas/actions/services; Intelligence / Activity / Origin fora do escopo reduzido.
 
-**Grill / Decision:** [product-grill-lead-detail-density-v1.md](product-grill-lead-detail-density-v1.md) → [product-decision-lead-detail-density-v1.md](product-decision-lead-detail-density-v1.md) (**BUILD REDUCED** — rail only).
+**Grill / Decision / BUILD:** [product-grill-lead-detail-density-v1.md](product-grill-lead-detail-density-v1.md) → [product-decision-lead-detail-density-v1.md](product-decision-lead-detail-density-v1.md) (**DONE**).
 
-Dependência: Fatia A **DONE** (este doc).
+- PR [#41](https://github.com/TraffikPro/prospecta/pull/41) → merge `0f22415`
+- Smoke: `scripts/smoke-lead-detail-density-prod.mjs` — OVERALL PASS
+- Meta: heading + select de “Alterar etapa” na 1ª dobra em `1440×900` (estado normal)
 
 ---
 
