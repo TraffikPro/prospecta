@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type CSSProperties,
@@ -12,7 +12,8 @@ import { Box, Stack } from "@chakra-ui/react";
 
 /** Offset below sticky AppShell header (logo + desktop nav) — ~5.5rem. */
 const STICKY_TOP_PX = 88;
-const GAP_PX = 24;
+/** Matches desktop rail stack gap token `1` (0.25rem). */
+const GAP_PX = 4;
 
 type LeadDetailLayoutProps = {
   nextAction: ReactNode;
@@ -41,7 +42,8 @@ const STATIC_RAIL: RailStickyStyles = {
 /**
  * Lead Detail Fatia A — desktop ~65/35 + mobile operational order.
  * Stable DOM (no breakpoint remount): keyboard order matches mobile visual order.
- * Rail items stick on desktop only when the stacked group fits the viewport.
+ * Desktop rail shares one grid cell (stacked) so main-column row tracks do not
+ * insert gaps between Next / Contact / Stage. Sticky when the group fits.
  */
 export function LeadDetailLayout({
   nextAction,
@@ -57,7 +59,7 @@ export function LeadDetailLayout({
   const stageRef = useRef<HTMLDivElement>(null);
   const [railSticky, setRailSticky] = useState<RailStickyStyles>(STATIC_RAIL);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const nextEl = nextRef.current;
     const contactEl = contactRef.current;
     const stageEl = stageRef.current;
@@ -78,8 +80,18 @@ export function LeadDetailLayout({
       const groupH = nextH + contactH + stageH + GAP_PX * 2;
       const canStick = groupH + STICKY_TOP_PX <= window.innerHeight;
 
+      // Same grid cell on desktop: stack with marginTop so main row tracks
+      // cannot stretch gaps between rail blocks.
+      const contactOffset = nextH + GAP_PX;
+      const stageOffset = nextH + GAP_PX + contactH + GAP_PX;
+
       if (!canStick) {
-        setRailSticky(STATIC_RAIL);
+        setRailSticky({
+          canStick: false,
+          next: { position: "relative" },
+          contact: { position: "relative", marginTop: contactOffset },
+          stage: { position: "relative", marginTop: stageOffset },
+        });
         return;
       }
 
@@ -88,11 +100,13 @@ export function LeadDetailLayout({
         next: { position: "sticky", top: STICKY_TOP_PX },
         contact: {
           position: "sticky",
-          top: STICKY_TOP_PX + nextH + GAP_PX,
+          top: STICKY_TOP_PX + contactOffset,
+          marginTop: contactOffset,
         },
         stage: {
           position: "sticky",
-          top: STICKY_TOP_PX + nextH + GAP_PX + contactH + GAP_PX,
+          top: STICKY_TOP_PX + stageOffset,
+          marginTop: stageOffset,
         },
       });
     };
@@ -114,7 +128,8 @@ export function LeadDetailLayout({
       display="grid"
       w="full"
       alignItems="start"
-      gap={{ base: "6", lg: "8" }}
+      columnGap={{ base: "6", lg: "6" }}
+      rowGap={{ base: "3", lg: "6" }}
       gridTemplateColumns={{
         base: "1fr",
         lg: "minmax(0, 1.65fr) minmax(0, 0.9fr)",
@@ -128,9 +143,7 @@ export function LeadDetailLayout({
           "origin"
         `,
         lg: `
-          "main next"
-          "main contact"
-          "main stage"
+          "main rail"
           "origin origin"
         `,
       }}
@@ -139,7 +152,7 @@ export function LeadDetailLayout({
     >
       <Box
         ref={nextRef}
-        gridArea="next"
+        gridArea={{ base: "next", lg: "rail" }}
         minW={0}
         style={railSticky.next}
         zIndex={{ lg: railSticky.canStick ? 2 : "auto" }}
@@ -150,7 +163,7 @@ export function LeadDetailLayout({
       </Box>
       <Box
         ref={contactRef}
-        gridArea="contact"
+        gridArea={{ base: "contact", lg: "rail" }}
         minW={0}
         style={railSticky.contact}
         zIndex={{ lg: railSticky.canStick ? 2 : "auto" }}
@@ -164,7 +177,7 @@ export function LeadDetailLayout({
       </Stack>
       <Box
         ref={stageRef}
-        gridArea="stage"
+        gridArea={{ base: "stage", lg: "rail" }}
         minW={0}
         style={railSticky.stage}
         zIndex={{ lg: railSticky.canStick ? 2 : "auto" }}
