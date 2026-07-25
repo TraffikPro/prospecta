@@ -1,7 +1,7 @@
 # Product Grill — Lead Detail Density v1
 
 - **Data:** 2026-07-24
-- **Status:** **GRILL** (sem autorização de BUILD)
+- **Status:** **GRILL FECHADO** — decision [BUILD REDUCED](product-decision-lead-detail-density-v1.md)
 - **Classificação:** WORKSPACE (densidade / hierarquia interna — não composição)
 - **Predecessor:** [Lead Detail Redesign v1 — Fatia A DONE](product-decision-lead-detail-redesign-v1.md) ([#37](https://github.com/TraffikPro/prospecta/pull/37) @ `866b4f5`)
 - **Cadeia Fatia B:** densidade e hierarquia interna dos blocos do detail
@@ -15,8 +15,9 @@
 ```text
 Lead Detail Redesign v1
     Fatia A — DONE (composição 65/35 + ordem mobile)
-    → Lead Detail Density v1: GRILL (este doc)  [= Fatia B do redesign]
-         Fatia C — PLANNED (urgência / empty / smoke final)
+    → Lead Detail Density v1: GRILL FECHADO (este doc)
+         → product-decision-lead-detail-density-v1.md
+              BUILD REDUCED — rail density only
 ```
 
 ---
@@ -230,49 +231,46 @@ Conclusão: histórico **não** é a causa do stage fora da dobra. Foco da Fatia
 
 ---
 
-## 7. Fatias sugeridas (pós-fechamento deste grill)
+## 7. Escopo fechado — BUILD REDUCED (rail only)
 
 ```text
-Density A — Rail only (Next + Contact + Stage) — maior ROI na dobra
-Density B — Header compacto + polish tipográfico
-Density C — Re-medida prod + smoke gate (opcional se A+B juntos)
+Entra: Next Action · Contato · Alterar etapa · gaps do rail
+Fora:  header · Intelligence · Activity · Timeline · Origin · grid · ordem mobile
 ```
-
-Preferência inicial: **Density A pura** (como Fatia A do redesign), depois header se a meta ideal ainda falhar.
 
 ---
 
-## 8. Aceite (quando BUILD)
+## 8. Aceite (alinhado à decision)
 
 | Check | Critério |
 |-------|----------|
 | Composição | Grid 65/35 e ordem mobile **inalterados** |
-| Desktop 1440×900 | Topo de “Alterar etapa” na 1ª dobra em lead sem alerta de follow-up |
-| Desktop ideal | CTA “Salvar etapa” na 1ª dobra no mesmo estado (stretch goal se legibilidade ok) |
-| Sticky | Unstick ao reduzir altura; form de etapa preserva seleção |
-| Mobile 390×844 | Sem overflow; touch targets; sticky=false; ordem intacta |
-| Domínio | Sem schema/action/service; campos visíveis preservados |
-| A11y | Headings/labels presentes; Collapsible/pitch contracts intactos |
-| E2E | Activity / stage / pitch / breadcrumbs PASS |
+| Desktop 1440×900, estado normal | Título “Alterar etapa” + select na 1ª dobra |
+| CTA Salvar etapa | Pode ficar abaixo; scroll curto ok |
+| Overdue | Alerta integral; stage pode descer |
+| Sticky | Unstick; seleção de stage preservada |
+| Mobile 390×844 | Sem overflow; targets ≥ 44px; sticky=false; ordem intacta |
+| Domínio | Sem schema/action/service |
 
 ---
 
-## 9. Ambiguidades — ABERTAS
+## 9. Ambiguidades — FECHADAS
 
-| # | Pergunta | Opções |
-|---|----------|--------|
-| 1 | Meta da dobra | (a) só topo do stage · (b) card+CTA na dobra · (c) a com stretch b |
-| 2 | Título “Contato” | (a) manter · (b) remover · (c) sr-only |
-| 3 | Next Action com alerta overdue | Exceção à meta ideal? |
-| 4 | Escopo PR | Density A (rail) sozinha vs A+B (rail+header) |
-| 5 | Activity form (main) | Fora desta v1 (sim/não) — default **fora** |
+| # | Decisão |
+|---|--------|
+| 1 Meta dobra | Heading + select na dobra; CTA Salvar pode ficar abaixo |
+| 2 Contato | Título visível e compacto; sem sr-only; targets ≥ 44px |
+| 3 Overdue | Exceção — urgência > meta de dobra; não truncar alerta |
+| 4 Escopo PR | **Somente rail** |
+| 5 Activity | Fora |
 
 ---
 
 ## 10. Decisão
 
-- Grill **aberto** em 2026-07-24 com evidência de produção.
-- **BUILD não autorizado** até fechar ambiguidades §9 e publicar `product-decision-lead-detail-density-v1.md`.
+- Grill **fechado** com ambiguidades resolvidas (2026-07-24).
+- Decision: [product-decision-lead-detail-density-v1.md](product-decision-lead-detail-density-v1.md) — **BUILD REDUCED**.
+- BUILD só após merge da decision + pedido explícito.
 
 ---
 
@@ -291,6 +289,6 @@ Preferência inicial: **Density A pura** (como Fatia A do redesign), depois head
 - [x] Medidas de altura Next / Contato / Stage / Header
 - [x] Comparativo sem Activity vs com histórico
 - [x] Guardrails de composição documentados
-- [ ] Ambiguidades §9 fechadas
-- [ ] `product-decision-lead-detail-density-v1.md`
-- [ ] BUILD autorizado
+- [x] Ambiguidades §9 fechadas (2026-07-24)
+- [x] `product-decision-lead-detail-density-v1.md` (BUILD REDUCED)
+- [ ] BUILD rail density executado + smoke
