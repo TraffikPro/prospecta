@@ -1,0 +1,84 @@
+{
+  "checks": [
+    {
+      "name": "sem Activity empty compact",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "aberto sem próximo passo",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "MANUAL sem Intelligence",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "sem canal: CTA Registrar atividade + scroll/foco #register-activity",
+      "ok": true,
+      "detail": "{\"ok\":true,\"hash\":\"#register-activity\",\"top\":96,\"tabIndex\":-1,\"hasFocus\":true}"
+    },
+    {
+      "name": "WON terminal flag",
+      "ok": true,
+      "detail": "true"
+    },
+    {
+      "name": "WON sem urgência residual",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "WON preserva nextFollowUpAt",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "LOST sem urgência residual",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "GOOGLE_PLACES sem Intelligence (sem linha Manual)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "follow-up hoje aberto",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "follow-up atrasado aberto",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "zoom 200% empty/intel legíveis",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile sem overflow",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile ordem preservada",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "matrix": {
+    "no_activity_manual": "PASS",
+    "no_contact": "PASS",
+    "won_residual": "PASS",
+    "lost_residual": "PASS",
+    "places_no_intel": "PASS",
+    "due_today": "PASS",
+    "overdue": "PASS",
+    "mobile": "PASS"
+  }
+}

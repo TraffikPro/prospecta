@@ -13,6 +13,7 @@ import { IntelligenceCard } from "@/features/leads/components/intelligence";
 import { LeadContactActions } from "@/features/leads/components/lead-contact-actions";
 import { LeadDetailLayout } from "@/features/leads/components/lead-detail-layout";
 import { LeadInfoCard } from "@/features/leads/components/lead-info-card";
+import { LeadIntelligenceFallback } from "@/features/leads/components/lead-intelligence-fallback";
 import { LeadNextActionCard } from "@/features/leads/components/lead-next-action-card";
 import { LeadOriginDetails } from "@/features/leads/components/lead-origin-details";
 import { parseLeadIntelligence } from "@/features/leads/intelligence/parse-intelligence";
@@ -70,9 +71,10 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
     nextFollowUpAt: lead.nextFollowUpAt,
     latestOutcome: pickLatestOutcome(activities),
   });
+  const isTerminal = lead.stage === "WON" || lead.stage === "LOST";
   const followUpLabel = lead.nextFollowUpAt
     ? formatDateTime(lead.nextFollowUpAt)
-    : "—";
+    : "Não definido";
 
   return (
     <PageFrame width="detailWide" gap={{ base: "6", md: "8" }}>
@@ -90,7 +92,11 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
 
       <LeadDetailLayout
         nextAction={
-          <LeadNextActionCard view={nextAction} followUpLabel={followUpLabel} />
+          <LeadNextActionCard
+            view={nextAction}
+            followUpLabel={followUpLabel}
+            isTerminal={isTerminal}
+          />
         }
         contact={<LeadContactActions phone={lead.phone} email={lead.email} />}
         intelligence={
@@ -113,11 +119,14 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
               </Heading>
               <IntelligenceCard intelligence={intelligence} />
             </section>
-          ) : null
+          ) : (
+            <LeadIntelligenceFallback source={lead.source} />
+          )
         }
         activity={
           <section
             id="register-activity"
+            tabIndex={-1}
             aria-labelledby="register-activity-heading"
             style={{
               scrollMarginTop: "6rem",

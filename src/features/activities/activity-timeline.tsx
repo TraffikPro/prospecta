@@ -1,7 +1,10 @@
 "use client";
 
+import NextLink from "next/link";
 import { Text, Timeline } from "@chakra-ui/react";
 
+import { AppEmptyState } from "@/components/ui/app-empty-state";
+import { Button } from "@/components/ui/button";
 import {
   activityOutcomeLabels,
   activityTypeLabels,
@@ -24,9 +27,17 @@ type Props = {
 export function ActivityTimeline({ activities, nextFollowUpAt }: Props) {
   if (activities.length === 0) {
     return (
-      <Text fontSize="sm" color="fg.muted">
-        Nenhuma atividade registrada.
-      </Text>
+      <AppEmptyState
+        variant="compact"
+        data-testid="activity-timeline-empty"
+        title="Nenhuma atividade registrada"
+        description="Registre o primeiro contato para iniciar o histórico deste lead."
+        action={
+          <Button asChild size="md" minH="11" variant="outline" alignSelf="start">
+            <NextLink href="#register-activity">Registrar atividade</NextLink>
+          </Button>
+        }
+      />
     );
   }
 

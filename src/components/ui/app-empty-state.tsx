@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { EmptyState, Text } from "@chakra-ui/react";
+import { EmptyState, Stack, Text } from "@chakra-ui/react";
 
 type AppEmptyStateProps = {
   title: string;
@@ -22,16 +22,26 @@ export function AppEmptyState({
   "data-testid": testId,
 }: AppEmptyStateProps) {
   if (variant === "compact") {
+    if (!description && !action) {
+      return (
+        <Text fontSize="sm" color="fg.muted" data-testid={testId} py="1">
+          {title}
+        </Text>
+      );
+    }
+
     return (
-      <Text
-        fontSize="sm"
-        color="fg.muted"
-        data-testid={testId}
-        py="1"
-      >
-        {title}
-        {description ? ` ${description}` : ""}
-      </Text>
+      <Stack gap="1" data-testid={testId} py="1">
+        <Text fontSize="sm" fontWeight="medium" color="fg" lineHeight="1.3">
+          {title}
+        </Text>
+        {description ? (
+          <Text fontSize="sm" color="fg.muted" lineHeight="1.35">
+            {description}
+          </Text>
+        ) : null}
+        {action}
+      </Stack>
     );
   }
 
