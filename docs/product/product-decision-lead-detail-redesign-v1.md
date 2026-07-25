@@ -73,7 +73,7 @@ No desktop 1440×900 com cards atuais (sem densificar), **Alterar etapa** pode f
 
 Densidade e hierarquia interna dos blocos (Next Action, Contact, Intelligence, Origin, Stage) — **sem** mudar schemas/actions/services.
 
-**Próximo passo obrigatório:** abrir **novo Product Grill** usando a densidade real observada em produção pós-Fatia A (primeira dobra, altura do rail, stage sticky/unstick, pitch). Não iniciar BUILD B sem esse grill.
+**Grill:** [product-grill-lead-detail-density-v1.md](product-grill-lead-detail-density-v1.md) (**GRILL** — densidade real em produção). Não iniciar BUILD B sem fechar esse grill + decision.
 
 Dependência: Fatia A **DONE** (este doc).
 
