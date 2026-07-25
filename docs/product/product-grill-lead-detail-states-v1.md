@@ -1,7 +1,7 @@
 # Product Grill — Lead Detail States & Urgency v1
 
 - **Data:** 2026-07-24
-- **Status:** **GRILL**
+- **Status:** **GRILL FECHADO** — decision [BUILD REDUCED](product-decision-lead-detail-states-v1.md)
 - **Classificação:** WORKSPACE (estados vazios / urgência / terminais — não composição nem densidade)
 - **Cadeia:** Lead Detail Redesign v1 → **Fatia C**
 - **Predecessor:** [Density v1 DONE](product-decision-lead-detail-density-v1.md) ([#41](https://github.com/TraffikPro/prospecta/pull/41) @ `0f22415`) · [Redesign Fatia A DONE](product-decision-lead-detail-redesign-v1.md)
@@ -16,11 +16,12 @@
 Lead Detail Redesign v1
     Fatia A — composição          CONGELADA (DONE)
     Fatia B — densidade           CONGELADA (DONE)
-    Fatia C — estados e urgência  GRILL (este documento)
-         → decision BUILD (escopo reduzido após revisão da matriz)
+    Fatia C — estados e urgência  GRILL FECHADO (este documento)
+         → product-decision-lead-detail-states-v1.md
+              BUILD REDUCED — explicit empty and terminal states
 ```
 
-Ainda **não** é BUILD. Depois deste grill, a decision escolhe quais estados entram; **não** é obrigatório redesenhar todos se alguns já estiverem claros.
+Matriz fechada na decision. BUILD só após merge da decision, em branch exclusiva.
 
 ---
 
@@ -315,11 +316,10 @@ Viewports: `1440×900` e `390×844`.
 ## 10. Próximo passo
 
 ```text
-GRILL (este PR)
-→ product-decision-lead-detail-states-v1.md
-     escolhe IN/OUT da matriz
+GRILL FECHADO
+→ product-decision-lead-detail-states-v1.md (BUILD REDUCED)
 → BUILD Fatia C em branch exclusiva
 → smoke estados → DONE
 ```
 
-Sem commit automático de BUILD. Sem redesenhar estados já claros (4/5/9/10 tendem a ficar).
+Sem commit automático de BUILD.
