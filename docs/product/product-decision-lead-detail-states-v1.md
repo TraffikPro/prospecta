@@ -1,162 +1,99 @@
 # Lead Detail States & Urgency v1 — Decision
 
 - **Data:** 2026-07-24
-- **Decisão:** **BUILD REDUCED** — explicit empty and terminal states
+- **Decisão:** **DONE** — BUILD REDUCED (explicit empty and terminal states)
 - **Classificação:** WORKSPACE
 - **Grill:** [product-grill-lead-detail-states-v1.md](product-grill-lead-detail-states-v1.md) — merge [#43](https://github.com/TraffikPro/prospecta/pull/43) @ `2221e4f`
 - **Predecessor:** [Density v1 DONE](product-decision-lead-detail-density-v1.md) ([#41](https://github.com/TraffikPro/prospecta/pull/41)) · [Redesign Fatia A DONE](product-decision-lead-detail-redesign-v1.md)
 - **Rota:** `/app/leads/[id]`
-- **Produção tip:** `https://prospecta-ten-tau.vercel.app` @ tip pós Density / grill states
+- **Produção:** `https://prospecta-ten-tau.vercel.app` @ `9ee09b8` (merge [#45](https://github.com/TraffikPro/prospecta/pull/45))
+- **Smoke:** `scripts/smoke-lead-detail-states-prod.mjs` — OVERALL PASS
+- **Evidência BUILD:** `docs/product/assets/lead-detail-states-v1-build/`
 
 ## Product Decision
 
 ```text
 Lead Detail Redesign v1
-    Fatia A — composição          CONGELADA (DONE)
-    Fatia B — densidade           CONGELADA (DONE)
-    Fatia C — estados e urgência  BUILD REDUCED
+    Fatia A — composição          DONE
+    Fatia B — densidade           DONE
+    Fatia C — estados e urgência  DONE
          (= explicit empty + terminal presentation)
 ```
 
-Após o merge deste documento, o **BUILD** da Fatia C fica liberado em **branch exclusiva**, sem commit automático.
+---
+
+## Entrega — DONE
+
+| Item | Valor |
+|------|-------|
+| PR | [#45](https://github.com/TraffikPro/prospecta/pull/45) → merge `9ee09b8` |
+| Branch | `feat/lead-detail-states-fatia-c` |
+| Commit | `b77659a` — `feat(leads): clarify empty and terminal lead states` |
+| Deploy Production | Ready @ `9ee09b8` |
+| Smoke prod | `scripts/smoke-lead-detail-states-prod.mjs` — **OVERALL PASS** |
+
+### Matriz entregue
+
+| Estado | Resultado |
+|--------|-----------|
+| Sem Activity | `AppEmptyState compact` + CTA `#register-activity` |
+| Sem telefone/e-mail | “Contato indisponível” + **Registrar atividade** → `#register-activity` |
+| Com canal | **Registrar resultado** preservado |
+| Aberto sem próximo passo | Follow-up **Não definido** + orientação |
+| WON/LOST + FU residual | Sem alert urgência; **`nextFollowUpAt` preservado no banco** |
+| MANUAL sem Intelligence | Fallback + “Lead cadastrado manualmente.” |
+| GOOGLE_PLACES sem Intelligence | Fallback sem linha Manual |
+| Follow-up hoje/atrasado (aberto) | KEEP |
+
+### Smoke produção (confirmado)
+
+- sem Activity
+- sem canal + anchor scroll/foco
+- WON/LOST sem urgência residual + `nextFollowUpAt` preservado
+- MANUAL sem Intelligence
+- aberto overdue
+- mobile `390×844`
+
+### Evidência
+
+- `docs/product/assets/lead-detail-states-v1-build/`
+- Validação local: `scripts/validate-lead-detail-states.mjs`
+
+Domínio: sem schema / action / service.
 
 ---
 
-## Escopo autorizado — BUILD REDUCED
+## Escopo autorizado — BUILD REDUCED (histórico)
 
 ### IN
 
-#### 1. Sem Activity (Histórico)
-
-`AppEmptyState` **compact**:
-
-```text
-Nenhuma atividade registrada
-
-Registre o primeiro contato para iniciar o histórico deste lead.
-```
-
-Ação opcional:
-
-```text
-Registrar atividade → #register-activity
-```
-
-#### 2. Sem canal de contato
-
-Estado **neutro** no bloco Contato (não CTA de edição — operação inexistente):
-
-```text
-Contato indisponível
-
-Este lead não possui telefone ou e-mail cadastrado.
-```
-
-Manter “Registrar resultado” se já existir (registro de activity não depende de canal externo).
-
-#### 3. Sem próximo passo
-
-Substituir `—` ambíguo por:
-
-```text
-Não definido
-```
-
-Para **stages abertos** (não WON/LOST), orientação:
-
-```text
-Registre uma atividade para definir o próximo passo.
-```
-
-Pode apontar para `#register-activity`. Sem nova server action.
-
-#### 4. WON / LOST (terminais) — só apresentação
-
-- Suprimir alerta `due_today` / `overdue`
-- Não recomendar novo contato (copy terminal já existente / reforçada)
-- Status terminal por **texto + badge**
-- Histórico e consulta permanecem
-- **Não** apagar `nextFollowUpAt` no banco nesta fatia
-
-#### 5. Sem Intelligence
-
-Fallback compacto **sempre** (nunca omitir silenciosamente):
-
-```text
-Inteligência não disponível
-
-Este lead não possui dados de qualificação automática.
-```
-
-Para `source === MANUAL`, complementar:
-
-```text
-Lead cadastrado manualmente.
-```
-
-Sem CTA “Gerar inteligência”.
+1. Sem Activity — `AppEmptyState compact` + CTA opcional `#register-activity`
+2. Sem canal — estado neutro; CTA **Registrar atividade** (não “resultado”)
+3. Sem próximo passo — “Não definido” + orientação em stages abertos
+4. WON/LOST — suppress alerts FU; sem mutar `nextFollowUpAt`
+5. Sem Intelligence — fallback compacto; MANUAL com linha extra
 
 ### KEEP
 
-Follow-up **hoje** e **atrasado** permanecem como estão:
-
-- texto · ícone · cor · alerta integral
-- Sem nova escala de urgência
-- Regras `classifyFollowUp` / outcomes / stages intactas
+Follow-up hoje/atrasado integral (texto + ícone + cor).
 
 ### OUT
 
-| Fora |
-|------|
-| Mudanças nos Alerts de erro Activity/Stage |
-| Novos outcomes |
-| Edição do lead |
-| Recomputar inteligência |
-| Limpar `nextFollowUpAt` |
-| Animações / notificações |
-| Alterações em Fatia A/B (grid, width, ordem mobile, gaps) |
-| Schema / actions / services / automações |
-| Modal / dashboard / novo sistema de prioridade |
+Forms error polish · edição de lead · recomputar inteligência · limpar `nextFollowUpAt` · animações · A/B · domínio.
 
 ---
 
-## Guardrails
+## Aceite — cumprido
 
-```text
-grid 65/35 · detailWide ~1200px · ordem mobile · gaps Fatia B
-score · outcomes · stages · regras de follow-up (domínio)
-sem mutação de nextFollowUpAt
-touch targets ≥ 44px onde já há CTA
-anchors (#register-activity) e teclado funcionam
-```
-
-Urgência (hoje/atrasado): **cor + texto + ícone** — sem regressão.
-
----
-
-## Aceite
-
-| Check | Critério |
-|-------|----------|
-| Sem `—` ambíguo | Estados tratados usam “Não definido” / empty explícito |
-| Sem Intelligence | Fallback compacto; **não** parece erro de carregamento |
-| Sem canal | Copy neutra; **sem** ação impossível (editar lead) |
-| WON/LOST | Sem urgência residual (alerts hoje/atrasado suprimidos) |
-| Anchors / teclado | `#register-activity` e foco/tab OK |
-| Desktop / mobile | Sem regressão de layout A/B (`1440×900`, `390×844`) |
-| Domínio | Nenhuma mudança schema / action / service |
-
-Smoke sugerido: `scripts/smoke-lead-detail-states-prod.mjs` (IN 1–5 + KEEP overdue/hoje + terminais).
-
----
-
-## Entrega
-
-```text
-Branch exclusiva (ex.: feat/lead-detail-states-fatia-c)
-PR sugerido: feat(leads): clarify lead detail empty and terminal states
-Sem commit automático — BUILD sob pedido explícito após merge desta decision
-```
+| Check | Resultado |
+|-------|-----------|
+| Sem `—` ambíguo nos estados tratados | PASS |
+| Intelligence fallback explícito | PASS |
+| Sem canal sem ação impossível | PASS |
+| WON/LOST sem urgência residual | PASS |
+| Anchors / teclado (`#register-activity`) | PASS |
+| Desktop / mobile sem regressão A/B | PASS |
+| Domínio intacto | PASS |
 
 ---
 
@@ -165,14 +102,14 @@ Sem commit automático — BUILD sob pedido explícito após merge desta decisio
 | # | Decisão |
 |---|--------|
 | 1 Intelligence empty | **IN** — fallback compacto; MANUAL com linha extra |
-| 2 Sem próximo passo | Copy “Não definido” + orientação em stages abertos; âncora opcional |
-| 3 Sem canal | Estado neutro; **sem** CTA de edição |
-| 4 Terminais | Suppress alerts FU; sem mutar `nextFollowUpAt` |
-| 5 Forms error | **OUT** desta fatia |
-| 6 Urgência hoje/atrasado | **KEEP** integral |
+| 2 Sem próximo passo | “Não definido” + orientação; âncora |
+| 3 Sem canal | Neutro; CTA **Registrar atividade** (não edição) |
+| 4 Terminais | Suppress alerts FU; sem mutar DB |
+| 5 Forms error | **OUT** |
+| 6 Urgência hoje/atrasado | **KEEP** |
 
 ---
 
 ## Regra de DONE
 
-DONE só após merge do BUILD, deploy Production e smoke dos estados IN + KEEP confirmados.
+DONE após merge do BUILD, deploy Production e smoke — **cumprido** em 2026-07-24/25.
