@@ -1,19 +1,21 @@
 # Lead Detail Redesign v1 — Decision
 
 - **Data:** 2026-07-24
-- **Decisão:** Fatia A — **DONE** · Fatia B — **DONE** (Density v1 / rail) · Fatia C — **BUILD REDUCED** (states)
+- **Decisão:** Fatia A — **DONE** · Fatia B — **DONE** · Fatia C — **DONE** (Lead Detail Redesign v1 completo)
 - **Classificação:** WORKSPACE (UI operacional do detalhe do lead)
 - **Grill (fechado):** [product-grill-lead-detail-redesign-v1.md](product-grill-lead-detail-redesign-v1.md) — merge [#35](https://github.com/TraffikPro/prospecta/pull/35)
 - **Rota:** `/app/leads/[id]`
 - **Fonte Make:** [Figma Make `5KiDxQt6U8TX1vDg3j1Upz`](https://www.figma.com/make/5KiDxQt6U8TX1vDg3j1Upz/Login-screen-example)
-- **Produção:** `https://prospecta-ten-tau.vercel.app` @ `866b4f5` (merge [#37](https://github.com/TraffikPro/prospecta/pull/37))
+- **Produção:** `https://prospecta-ten-tau.vercel.app` @ `9ee09b8` (merge [#45](https://github.com/TraffikPro/prospecta/pull/45) — Fatia C; tip Redesign completo)
 - **Smoke A:** `scripts/smoke-lead-detail-fatia-a-prod.mjs` — OVERALL PASS
+- **Smoke B:** `scripts/smoke-lead-detail-density-prod.mjs` — OVERALL PASS
+- **Smoke C:** `scripts/smoke-lead-detail-states-prod.mjs` — OVERALL PASS
 - **Relacionado:** [Lead Next Action](product-decision-lead-next-action.md), ADR 0011 (Chakra only)
 
 ## Product Decision
 
 ```text
-Lead Detail Redesign v1
+Lead Detail Redesign v1 — COMPLETO
 
 Fatia A — DONE
 Composição responsiva e reposicionamento (#37 @ 866b4f5)
@@ -21,8 +23,8 @@ Composição responsiva e reposicionamento (#37 @ 866b4f5)
 Fatia B — DONE (Density v1 — rail only)
 [#41](https://github.com/TraffikPro/prospecta/pull/41) @ `0f22415`
 
-Fatia C — BUILD REDUCED (states)
-[product-decision-lead-detail-states-v1.md](product-decision-lead-detail-states-v1.md)
+Fatia C — DONE (States v1 — empty + terminal)
+[#45](https://github.com/TraffikPro/prospecta/pull/45) @ `9ee09b8`
 ```
 
 ---
@@ -80,16 +82,17 @@ Densidade do **rail operacional** (Next Action, Contato, Alterar etapa) — **se
 
 ---
 
-## Fatia C — BUILD REDUCED (states)
+## Fatia C — DONE (States v1)
 
-Empty states explícitos, fallback de Intelligence, copy de “sem próximo passo”, terminais WON/LOST sem urgência residual. Urgência hoje/atrasado **KEEP**.
+Empty states explícitos, fallback de Intelligence, “Não definido” + orientação, terminais WON/LOST sem urgência residual (`nextFollowUpAt` preservado). Urgência hoje/atrasado **KEEP**.
 
-**Grill / Decision:** [product-grill-lead-detail-states-v1.md](product-grill-lead-detail-states-v1.md) → [product-decision-lead-detail-states-v1.md](product-decision-lead-detail-states-v1.md).
+**Grill / Decision / BUILD:** [product-grill-lead-detail-states-v1.md](product-grill-lead-detail-states-v1.md) → [product-decision-lead-detail-states-v1.md](product-decision-lead-detail-states-v1.md) (**DONE**).
 
-Dependência: A + B **DONE**. BUILD liberado após merge da decision, em branch exclusiva.
+- PR [#45](https://github.com/TraffikPro/prospecta/pull/45) → merge `9ee09b8`
+- Smoke: `scripts/smoke-lead-detail-states-prod.mjs` — OVERALL PASS
 
 ---
 
 ## Regra de DONE
 
-Cada fatia só marca **DONE** após merge, deploy Production e smoke confirmados por fatia.
+Cada fatia só marca **DONE** após merge, deploy Production e smoke confirmados por fatia — **A, B e C cumpridos**. Lead Detail Redesign v1 está **completo**.
