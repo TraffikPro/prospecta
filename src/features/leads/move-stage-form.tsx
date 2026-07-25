@@ -8,12 +8,13 @@ import {
   Alert,
   Card,
   Field,
+  Heading,
   NativeSelect,
   Stack,
   Textarea,
+  VisuallyHidden,
 } from "@chakra-ui/react";
 
-import { SectionHeading } from "@/components/layout/page-heading";
 import { Button } from "@/components/ui/button";
 import { notifySuccess } from "@/components/ui/toaster";
 import { LEAD_STAGE_ORDER, leadStageLabels } from "@/features/leads/lead.labels";
@@ -51,17 +52,22 @@ export function MoveStageForm({ leadId, currentStage }: Props) {
 
   return (
     <Card.Root variant="outline" borderRadius="card">
-      <Card.Body>
+      <Card.Body py="1.5" px="3">
         <form action={formAction}>
-          <Stack gap="4" maxW="md">
+          <Stack gap="1" w="full">
             <input type="hidden" name="leadId" value={leadId} />
-            <SectionHeading id="move-stage-heading">Alterar etapa</SectionHeading>
+            <Heading as="h2" id="move-stage-heading" size="sm" lineHeight="1.2">
+              Alterar etapa
+            </Heading>
 
-            <Field.Root>
-              <Field.Label>Nova etapa</Field.Label>
+            <Field.Root gap="1">
+              <VisuallyHidden>
+                <Field.Label>Nova etapa</Field.Label>
+              </VisuallyHidden>
               <NativeSelect.Root>
                 <NativeSelect.Field
                   name="stage"
+                  aria-labelledby="move-stage-heading"
                   value={selectedStage}
                   onChange={(event) =>
                     setSelectedStage(event.target.value as LeadStage)
@@ -81,8 +87,10 @@ export function MoveStageForm({ leadId, currentStage }: Props) {
             </Field.Root>
 
             {selectedStage === "LOST" ? (
-              <Field.Root>
-                <Field.Label>Motivo da perda *</Field.Label>
+              <Field.Root gap="1">
+                <Field.Label fontSize="xs" mb="0">
+                  Motivo da perda *
+                </Field.Label>
                 <Textarea
                   name="lostReason"
                   rows={2}
@@ -103,7 +111,7 @@ export function MoveStageForm({ leadId, currentStage }: Props) {
 
             <Button
               type="submit"
-              width="fit-content"
+              width="full"
               minH="touch"
               loading={pending}
               disabled={pending}

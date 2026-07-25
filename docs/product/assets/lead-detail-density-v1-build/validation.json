@@ -1,0 +1,209 @@
+{
+  "before": {
+    "next": 251,
+    "contact": 133,
+    "stage": 218,
+    "stageY": 912,
+    "railGaps": 48
+  },
+  "after": {
+    "desktop_normal": {
+      "vh": 900,
+      "next": {
+        "h": 103,
+        "y": 463,
+        "bottom": 566
+      },
+      "contact": {
+        "h": 62,
+        "y": 570,
+        "bottom": 632
+      },
+      "stage": {
+        "h": 127,
+        "y": 636,
+        "bottom": 763
+      },
+      "stageHeading": {
+        "h": 17,
+        "y": 643,
+        "bottom": 660
+      },
+      "stageSelect": {
+        "h": 44,
+        "y": 664,
+        "bottom": 708
+      },
+      "headingInFold": true,
+      "selectInFold": true,
+      "sticky": "true",
+      "overdueVisible": false,
+      "followUpState": "none"
+    },
+    "desktop_overdue": {
+      "vh": 900,
+      "next": {
+        "h": 149,
+        "y": 463,
+        "bottom": 612
+      },
+      "contact": {
+        "h": 62,
+        "y": 616,
+        "bottom": 678
+      },
+      "stage": {
+        "h": 127,
+        "y": 682,
+        "bottom": 809
+      },
+      "stageHeading": {
+        "h": 17,
+        "y": 689,
+        "bottom": 706
+      },
+      "stageSelect": {
+        "h": 44,
+        "y": 710,
+        "bottom": 754
+      },
+      "headingInFold": true,
+      "selectInFold": true,
+      "sticky": "true",
+      "overdueVisible": true,
+      "followUpState": "overdue"
+    },
+    "mobile": {
+      "vh": 844,
+      "next": {
+        "h": 103,
+        "y": 459,
+        "bottom": 562
+      },
+      "contact": {
+        "h": 62,
+        "y": 574,
+        "bottom": 636
+      },
+      "stage": {
+        "h": 127,
+        "y": 1312,
+        "bottom": 1439
+      },
+      "stageHeading": {
+        "h": 17,
+        "y": 1319,
+        "bottom": 1336
+      },
+      "stageSelect": {
+        "h": 44,
+        "y": 1340,
+        "bottom": 1384
+      },
+      "headingInFold": false,
+      "selectInFold": false,
+      "sticky": "false",
+      "overdueVisible": false,
+      "followUpState": "none"
+    }
+  },
+  "checks": [
+    {
+      "name": "desktop normal: heading+select na dobra",
+      "ok": true,
+      "detail": "{\"heading\":{\"h\":17,\"y\":643,\"bottom\":660},\"select\":{\"h\":44,\"y\":664,\"bottom\":708},\"nextH\":103,\"contactH\":62,\"stageH\":127}"
+    },
+    {
+      "name": "next action readability (labels + long copy)",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "next action readability @200% zoom",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "unstick ao reduzir altura",
+      "ok": true,
+      "detail": "false"
+    },
+    {
+      "name": "seleção preservada no unstick",
+      "ok": true,
+      "detail": "MEETING"
+    },
+    {
+      "name": "seleção preservada ao restaurar",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "LOST mostra lostReason",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "overdue alerta completo",
+      "ok": true,
+      "detail": "overdue"
+    },
+    {
+      "name": "overdue não depende só de cor",
+      "ok": true,
+      "detail": "{\"ok\":true,\"text\":\"Follow-up atrasado\",\"hasIcon\":true}"
+    },
+    {
+      "name": "mobile sem overflow",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile sticky=false",
+      "ok": true,
+      "detail": "false"
+    },
+    {
+      "name": "mobile ordem preservada",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "readability": {
+    "at100": {
+      "ok": true,
+      "issues": [],
+      "labels": [
+        "Próxima ação",
+        "Status atual",
+        "Enviado sem resposta",
+        "Follow-up",
+        "24/07/2026, 21:45",
+        "Ação recomendada",
+        "Definir próximo passo ou encerrar"
+      ]
+    },
+    "at200": {
+      "ok": true,
+      "issues": []
+    }
+  },
+  "deltas": {
+    "nextH": {
+      "before": 251,
+      "after": 103
+    },
+    "contactH": {
+      "before": 133,
+      "after": 62
+    },
+    "stageH": {
+      "before": 218,
+      "after": 127
+    },
+    "stageY": {
+      "before": 912,
+      "after": 636
+    }
+  }
+}
