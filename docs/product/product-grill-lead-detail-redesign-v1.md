@@ -1,24 +1,23 @@
 # Product Grill — Lead Detail Redesign v1
 
 - **Data:** 2026-07-24
-- **Status:** **GRILL FECHADO** — decisões de produto fechadas; BUILD só após Product Decision + autorização explícita por fatia
+- **Status:** **GRILL FECHADO** — Fatia A **DONE** em produção; Fatia B exige **novo grill** com densidade real
 - **Classificação:** WORKSPACE (UI operacional do detalhe do lead)
 - **Fonte Make:** [Figma Make `5KiDxQt6U8TX1vDg3j1Upz`](https://www.figma.com/make/5KiDxQt6U8TX1vDg3j1Upz/Login-screen-example) — protótipo **Detalhe do Lead** (não mais Login)
 - **Brief Make:** `file://figma/make/source/5KiDxQt6U8TX1vDg3j1Upz/src/imports/pasted_text/lead-detail-redesign.md`
 - **Rota alvo:** `/app/leads/[id]`
-- **Produção baseline:** `https://prospecta-ten-tau.vercel.app` @ tip pós Auth Visual Consistency (`727e17e`)
+- **Produção:** `https://prospecta-ten-tau.vercel.app` @ `866b4f5` ([#37](https://github.com/TraffikPro/prospecta/pull/37))
+- **Decisão:** [product-decision-lead-detail-redesign-v1.md](product-decision-lead-detail-redesign-v1.md)
 - **Relacionado:** [Lead Next Action](product-decision-lead-next-action.md), ADR 0011 (Chakra only), AppShell / ContextualNav existentes
-- **Próximo artefato (após merge deste grill):** `product-decision-lead-detail-redesign-v1.md`  
-  Fatia A — **BUILD** · Fatia B — **PLANNED** · Fatia C — **PLANNED**
 
 ## Product Decision (cadeia)
 
 ```text
 Lead Detail atual (single-column handoff)
     → Lead Detail Redesign v1: GRILL FECHADO (este doc)
-         → product-decision-lead-detail-redesign-v1.md (após merge)
-              Fatia A — BUILD (layout puro)
-              Fatia B — PLANNED
+         → product-decision-lead-detail-redesign-v1.md
+              Fatia A — DONE (#37 @ 866b4f5)
+              Fatia B — PLANNED (novo grill com densidade prod)
               Fatia C — PLANNED
 ```
 
@@ -338,6 +337,7 @@ Smoke sugerido: Fatia C (ou A se útil) — `scripts/smoke-lead-detail-visual-pr
 - [x] Make + brief lidos (Detalhe do Lead, não Login)
 - [x] Contratos a preservar listados
 - [x] Ambiguidades §12 fechadas com o produto (2026-07-24)
-- [ ] Merge PR docs deste grill
-- [ ] `product-decision-lead-detail-redesign-v1.md` (A BUILD · B/C PLANNED)
-- [ ] BUILD Fatia A autorizado e executado
+- [x] Merge PR docs deste grill (#35)
+- [x] `product-decision-lead-detail-redesign-v1.md` (#36)
+- [x] BUILD Fatia A (#37) + deploy Production + smoke OVERALL PASS
+- [ ] Novo grill Fatia B com densidade real em produção
