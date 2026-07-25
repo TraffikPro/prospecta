@@ -1,7 +1,7 @@
 # Lead Detail Redesign v1 — Decision
 
 - **Data:** 2026-07-24
-- **Decisão:** Fatia A — **DONE** · Fatia B — **DONE** (Density v1 / rail) · Fatia C — **PLANNED**
+- **Decisão:** Fatia A — **DONE** · Fatia B — **DONE** (Density v1 / rail) · Fatia C — **BUILD REDUCED** (states)
 - **Classificação:** WORKSPACE (UI operacional do detalhe do lead)
 - **Grill (fechado):** [product-grill-lead-detail-redesign-v1.md](product-grill-lead-detail-redesign-v1.md) — merge [#35](https://github.com/TraffikPro/prospecta/pull/35)
 - **Rota:** `/app/leads/[id]`
@@ -21,8 +21,8 @@ Composição responsiva e reposicionamento (#37 @ 866b4f5)
 Fatia B — DONE (Density v1 — rail only)
 [#41](https://github.com/TraffikPro/prospecta/pull/41) @ `0f22415`
 
-Fatia C — PLANNED
-Urgência, empty states e smoke final
+Fatia C — BUILD REDUCED (states)
+[product-decision-lead-detail-states-v1.md](product-decision-lead-detail-states-v1.md)
 ```
 
 ---
@@ -80,11 +80,13 @@ Densidade do **rail operacional** (Next Action, Contato, Alterar etapa) — **se
 
 ---
 
-## Fatia C — PLANNED
+## Fatia C — BUILD REDUCED (states)
 
-Urgência (`due_today` / `overdue`), empty states e smoke visual final.
+Empty states explícitos, fallback de Intelligence, copy de “sem próximo passo”, terminais WON/LOST sem urgência residual. Urgência hoje/atrasado **KEEP**.
 
-Dependência: A + B estáveis.
+**Grill / Decision:** [product-grill-lead-detail-states-v1.md](product-grill-lead-detail-states-v1.md) → [product-decision-lead-detail-states-v1.md](product-decision-lead-detail-states-v1.md).
+
+Dependência: A + B **DONE**. BUILD liberado após merge da decision, em branch exclusiva.
 
 ---
 
