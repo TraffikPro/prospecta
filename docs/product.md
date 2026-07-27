@@ -143,24 +143,28 @@ Cumpridos na [decisão do MVP](product/product-decision-mvp-technical.md) (fluxo
 ## Estágio atual
 
 ```text
-FASE 0–5 — MVP técnico (Auth → Lead → Activity → Pipeline) = feito
-→ FASE 6 — piloto fundador (14 dias; aquisição manual; oferta de sites)
-→ automação Maps / Places API = DEFER até evidência do piloto
+MVP técnico em produção (Auth → Lead → Activity → Pipeline → Intelligence → Lead Detail) = DONE
+→ VALIDATE — piloto fundador / lote Santos (Activity → resposta → reunião)
+→ Dashboard / Campaign entity / CSV UI / polish = só com product-grill após evidência
 ```
 
-Detalhe do piloto comercial: [product/founder-pilot.md](product/founder-pilot.md).
+Status canônico pós-MVP: [product/status-post-mvp.md](product/status-post-mvp.md).  
+Piloto comercial: [product/founder-pilot.md](product/founder-pilot.md).  
+Lote oficial: [product/campaign-santos-odonto-batch-1.md](product/campaign-santos-odonto-batch-1.md).
 
-Checklist societário segue **em paralelo** e não bloqueia o BUILD do fluxo vertical.
+Checklist societário segue **em paralelo** e não bloqueia a operação do piloto.
 
 ## Fonte da verdade
 
 | Fonte | Uso |
 | --- | --- |
 | `docs/product.md` | Este documento (resumo normativo V1) |
+| `docs/product/status-post-mvp.md` | Status canônico pós-MVP (estágio atual) |
 | `docs/product/product-decision-mvp-technical.md` | Grill + decisões detalhadas |
 | `docs/product/pilot-validation-plan.md` | Validação técnica/operacional do piloto |
 | `docs/product/founder-pilot.md` | Piloto comercial (tese, métricas, DEFER Maps) |
 | `docs/product/founder-pilot-execution.md` | Manual operacional dos sócios (14 dias) |
+| `docs/product/campaign-santos-odonto-batch-1.md` | Lote Santos (VALIDATE) |
 | `docs/product/pilot-day-1-checklist.md` | Checklist pré–dia 1 / Pilot Day 1 Ready |
 | `docs/adr/0009-google-places-lead-ingestion.md` | Ingestão externa → CRM (accepted; BUILD fatia 1) |
 | `docs/adr/0010-lead-intelligence-pipeline.md` | Lead Intelligence pipeline (accepted; BUILD fatia 1) |

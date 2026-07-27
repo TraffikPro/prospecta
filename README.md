@@ -4,11 +4,17 @@ Plataforma **founder-led** de **prospecção B2B**: pipeline de leads, atividade
 
 ## Status
 
-Auth, Lead, Activity, Pipeline e **ingestão externa** (`POST /api/internal/leads`) ativos. Lead Intelligence generator = fatia seguinte ([ADR 0010](docs/adr/0010-lead-intelligence-pipeline.md)). Piloto: [founder-pilot](docs/product/founder-pilot.md).
+**MVP operacional em produção** (`main` @ `d85c8f5`). Auth, Lead, Activity, Pipeline, ingestão externa, Intelligence Inbox, Minha fila, Portfolio e Lead Detail (Redesign A+B+C) estão DONE. Próximo passo: **VALIDATE** o piloto comercial (lote Santos) — não reabrir auth/login nem polish sem evidência.
+
+Status canônico: [`docs/product/status-post-mvp.md`](docs/product/status-post-mvp.md).  
+Produção: `https://prospecta-ten-tau.vercel.app` · Repo: [`TraffikPro/prospecta`](https://github.com/TraffikPro/prospecta).
 
 | Doc | Uso |
 | --- | --- |
+| [`docs/product/status-post-mvp.md`](docs/product/status-post-mvp.md) | Status pós-MVP (canônico) |
 | [`docs/product.md`](docs/product.md) | Produto e normas V1 |
+| [`docs/product/founder-pilot.md`](docs/product/founder-pilot.md) | Piloto comercial |
+| [`docs/product/campaign-santos-odonto-batch-1.md`](docs/product/campaign-santos-odonto-batch-1.md) | Lote Santos (VALIDATE) |
 | [`docs/product/product-decision-mvp-technical.md`](docs/product/product-decision-mvp-technical.md) | Grill **BUILD** do MVP técnico |
 | [`docs/founding/roles-and-governance.md`](docs/founding/roles-and-governance.md) | Sociedade vs sistema + checklist |
 | [`docs/adr/0005-auth-sessions-acl-v1.md`](docs/adr/0005-auth-sessions-acl-v1.md) | Sessões HttpOnly + ACL |
@@ -21,7 +27,7 @@ Auth, Lead, Activity, Pipeline e **ingestão externa** (`POST /api/internal/lead
 - pnpm
 - Sessão em cookie HttpOnly + tabela `Session`
 - Roles `ADMIN` | `MEMBER`
-- UI: [ADR 0011](docs/adr/0011-ui-stack-keep-tailwind.md)
+- UI: [ADR 0011 — Chakra-only](docs/adr/0011-ui-stack-keep-tailwind.md)
 
 ## Setup
 
