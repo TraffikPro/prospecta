@@ -95,6 +95,23 @@ de notes + ajustes pontuais na UI + testes. Sem migration.
 - **Owner:** sócio comercial (demo) + produto/engenharia (checklist técnico)
 - **Prazo de observação:** 1 sessão de apresentação + 3 dias de uso na fila
 - **Como:** preview → abrir 5 leads do lote → checklist do critério de aceite
+- **Draft PR:** [#49](https://github.com/TraffikPro/prospecta/pull/49)
+- **Preview:** https://prospecta-git-feat-lead-detai-9bb3af-gustavos-projects-74c68bcc.vercel.app  
+  (Vercel Authentication / SSO — acesso do time)
+
+### Resultado do critério `<15s` (lote Santos)
+
+| # | Lead | Sem código técnico | Sem duplicata | `<15s` | Notas |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Comsorriso | _pendente_ | _pendente_ | _pendente_ | Preview SSO; inspeção manual |
+| 2 | Clínica Brasil Sorriso - Gonzaga | _pendente_ | _pendente_ | _pendente_ | |
+| 3 | Lux Estética Odontológica Santos | _pendente_ | _pendente_ | _pendente_ | |
+| 4 | Centro Santista de Odontologia | _pendente_ | _pendente_ | _pendente_ | |
+| 5 | Drª Ariany de França Ferreira | _pendente_ | _pendente_ | _pendente_ | |
+
+- **Status atual:** `PENDING` — código + preview prontos; inspeção dos 5 leads e demo comercial ainda não executadas neste ambiente (sem sessão SSO/credenciais de smoke).
+- **Demo comercial:** não iniciada.
+- **Merge:** bloqueado até PASS do critério + demo aprovada.
 
 ## Evidência que mudaria o DEFER
 
