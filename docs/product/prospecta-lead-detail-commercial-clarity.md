@@ -103,15 +103,17 @@ de notes + ajustes pontuais na UI + testes. Sem migration.
 
 | # | Lead | Sem código técnico | Sem duplicata | `<15s` | Notas |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Comsorriso | _pendente_ | _pendente_ | _pendente_ | Preview SSO; inspeção manual |
-| 2 | Clínica Brasil Sorriso - Gonzaga | _pendente_ | _pendente_ | _pendente_ | |
-| 3 | Lux Estética Odontológica Santos | _pendente_ | _pendente_ | _pendente_ | |
-| 4 | Centro Santista de Odontologia | _pendente_ | _pendente_ | _pendente_ | |
-| 5 | Drª Ariany de França Ferreira | _pendente_ | _pendente_ | _pendente_ | |
+| 1 | Comsorriso | PASS | PASS | PASS | Playwright 2026-07-28 |
+| 2 | Clínica Brasil Sorriso - Gonzaga | PASS | PASS | PASS | Playwright 2026-07-28 |
+| 3 | Lux Estética Odontológica Santos | PASS | PASS | PASS | Playwright 2026-07-28 |
+| 4 | Centro Santista de Odontologia | PASS | PASS | PASS | Playwright 2026-07-28 |
+| 5 | Drª Ariany de França Ferreira | PASS | PASS | PASS | Playwright 2026-07-28 |
 
-- **Status atual:** `PENDING` — código + preview prontos; inspeção dos 5 leads e demo comercial ainda não executadas neste ambiente (sem sessão SSO/credenciais de smoke).
-- **Demo comercial:** não iniciada.
-- **Merge:** bloqueado até PASS do critério + demo aprovada.
+- **Checklist 5 leads:** `PASS` (Playwright — preview com Fatia 1)
+- **Demo comercial:** `PENDING`
+- **Status atual:** aguardando demo com sócio comercial antes de ACCEPTED / Ready / merge
+- **Evidência:** comentário na [PR #49](https://github.com/TraffikPro/prospecta/pull/49); script `scripts/smoke-commercial-clarity-preview.mjs`
+- **Merge:** bloqueado até demo aprovada
 
 ## Evidência que mudaria o DEFER
 
