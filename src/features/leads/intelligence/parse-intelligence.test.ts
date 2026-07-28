@@ -194,6 +194,40 @@ describe("sanitizeLeadNotes", () => {
     assert.equal(result, null);
   });
 
+  it("strips Score lines with qualification enum and keeps campaign context", () => {
+    const result = sanitizeLeadNotes(
+      "Campanha: santos-odontologia-2026-07\nScore: 90/100 (HIGH)\nSinais",
+      { score: 90, signals: ["NO_WEBSITE"] },
+    );
+    assert.equal(
+      result,
+      "Campanha: santos-odontologia-2026-07\nSinais",
+    );
+    assert.equal(result?.includes("HIGH"), false);
+    assert.equal(result?.includes("90/100"), false);
+  });
+
+  it("strips score/priority line variants across newlines", () => {
+    const notes = [
+      "Contexto comercial útil.",
+      "Score:90/100(HIGH)",
+      "score: 70/100 (medium)",
+      "50/100 (LOW)",
+      "HIGH",
+      "Prioridade alta",
+      "Oportunidade média",
+      "Score: 80/100 — HIGH",
+    ].join("\r\n");
+
+    const result = sanitizeLeadNotes(notes, { score: 90 });
+    assert.equal(result, "Contexto comercial útil.");
+  });
+
+  it("does not invent Portuguese replacements for removed score lines", () => {
+    const result = sanitizeLeadNotes("Score: 90/100 (HIGH)", { score: 90 });
+    assert.equal(result, null);
+  });
+
   it("keeps additional commercial context", () => {
     const result = sanitizeLeadNotes(
       "Sócia pediu retorno após feriado.",
