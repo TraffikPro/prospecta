@@ -2,20 +2,26 @@
 
 - **Data:** 2026-07-28
 - **Decisão:** **BUILD** (escopo reduzido)
-- **Status:** **ACCEPTED** — checklist 5/5 PASS (Playwright) + demo comercial aprovada pelo sócio
+- **Status técnico:** **ACCEPTED — 5/5** (gate visual + correção de Notas)
+- **Status de produto:** demo comercial = gate final restante
 - **Classificação:** WORKSPACE (apresentação/operação do detail) · catálogo de sinais = PLATFORM leve
 - **Arquivo de referência:** `prospecta-lead-detail-commercial-clarity`
 - **Rota:** `/app/leads/[id]`
-- **PR:** [#49](https://github.com/TraffikPro/prospecta/pull/49)
+- **PRs:**
+  - Fatia 1: [#49](https://github.com/TraffikPro/prospecta/pull/49) (merged)
+  - Correção complementar (Notas / `HIGH`): [#50](https://github.com/TraffikPro/prospecta/pull/50) (merged `f9dedf6`)
 - **Relacionado:** [ADR 0010](../adr/0010-lead-intelligence-pipeline.md), [Lead Detail Redesign v1](product-decision-lead-detail-redesign-v1.md), [Intelligence Inbox](product-decision-intelligence-inbox.md)
 
 ## Product Decision
 
 ```text
-Lead Detail Commercial Clarity — Fatia 1 — ACCEPTED
+Lead Detail Commercial Clarity — Fatia 1
 
 Proposta completa (P0–P2, 34 itens): REDUCE SCOPE
-Fatia 1: BUILD → implementada → validada (5/5 + demo) → ACCEPTED
+Fatia 1: BUILD → implementada (#49)
+Gate técnico visual: ACCEPTED — 5/5
+Correção complementar Notas: #50 (strip Score/HIGH)
+Demo comercial: PENDING (único gate de produto restante)
 ```
 
 ## Problema
@@ -35,6 +41,8 @@ comercial.
 - Notes são exibidas brutas (podem trazer códigos ou `rating=…; reviews=…`).
 - Score breakdown, endereço completo, `collectedAt` e versionamento **não**
   existem de forma confiável.
+- Gate visual pós-#49: 5/5 leads do lote Santos exibiam
+  `Score: 90/100 (HIGH)` nas Notas — vazamento sistêmico corrigido na #50.
 
 ## Hipótese
 
@@ -93,27 +101,32 @@ de notes + ajustes pontuais na UI + testes. Sem migration.
 
 ## Validação
 
-- **Owner:** sócio comercial (demo) + produto/engenharia (checklist técnico)
-- **Prazo de observação:** 1 sessão de apresentação + 3 dias de uso na fila
-- **Como:** preview → abrir 5 leads do lote → checklist do critério de aceite
-- **Draft PR:** [#49](https://github.com/TraffikPro/prospecta/pull/49)
-- **Preview:** https://prospecta-git-feat-lead-detai-9bb3af-gustavos-projects-74c68bcc.vercel.app  
-  (Vercel Authentication / SSO — acesso do time)
+- **Owner técnico:** engenharia (checklist 5 leads + CI)
+- **Owner de produto:** sócio comercial (demo final)
+- **Como:** preview/produção → abrir 5 leads do lote → checklist do critério de aceite
 
-### Resultado do critério `<15s` (lote Santos)
+### Gate técnico — **ACCEPTED — 5/5**
 
-| # | Lead | Sem código técnico | Sem duplicata | `<15s` | Notas |
-| --- | --- | --- | --- | --- | --- |
-| 1 | Comsorriso | PASS | PASS | PASS | Playwright 2026-07-28 |
-| 2 | Clínica Brasil Sorriso - Gonzaga | PASS | PASS | PASS | Playwright 2026-07-28 |
-| 3 | Lux Estética Odontológica Santos | PASS | PASS | PASS | Playwright 2026-07-28 |
-| 4 | Centro Santista de Odontologia | PASS | PASS | PASS | Playwright 2026-07-28 |
-| 5 | Drª Ariany de França Ferreira | PASS | PASS | PASS | Playwright 2026-07-28 |
+| # | Lead | Sem `Score: … (HIGH)` | Demais critérios Fatia 1 |
+| --- | --- | --- | --- |
+| 1 | Centro Santista de Odontologia | PASS | PASS (após #50) |
+| 2 | Comsorriso | PASS | PASS (após #50) |
+| 3 | Clínica Brasil Sorriso - Gonzaga | PASS | PASS (após #50) |
+| 4 | Lux Estética Odontológica Santos | PASS | PASS (após #50) |
+| 5 | Drª Ariany de França Ferreira | PASS | PASS (após #50) |
 
-- **Checklist 5 leads:** `PASS` (Playwright — preview com Fatia 1)
-- **Demo comercial:** `APPROVED` (sócio comercial — 2026-07-28)
-- **Status atual:** **ACCEPTED**
-- **Evidência:** comentário na [PR #49](https://github.com/TraffikPro/prospecta/pull/49); script `scripts/smoke-commercial-clarity-preview.mjs`
+**Validações automáticas (#50):**
+
+- `pnpm test` — **118 pass**
+- `pnpm typecheck` — ok
+- `pnpm lint` — 0 erros
+
+**Correção complementar:** [#50](https://github.com/TraffikPro/prospecta/pull/50) — remove a linha completa de score/prioridade em `sanitize-notes.ts` (sem substituir por PT; demais notas preservadas).
+
+### Gate de produto — demo comercial
+
+- **Status:** `PENDING` — único gate restante antes de encerrar a iniciativa
+- Após aprovação: comparar os cinco leads → escolher clínica-modelo → portfólio **Presença, Conversão e Operação**
 
 ## Evidência que mudaria o DEFER
 
