@@ -25,8 +25,6 @@ const LEADS = [
   "Drª Ariany de França Ferreira",
 ];
 
-const TECH_CODE_RE =
-  /\b(HIGH_REPUTATION|HIGH_RATING|HIGH_REVIEWS|NO_WEBSITE|HIGH|MEDIUM|LOW)\b/;
 const ENGLISHISH_RE =
   /\b(High reputation|Lead Intelligence|No website|Sem website identificado)\b/i;
 
@@ -64,7 +62,7 @@ async function login(page) {
   await page.getByRole("button", { name: "Entrar" }).click();
   try {
     await page.waitForURL(/\/app(\/|$)/, { timeout: 45_000 });
-  } catch (err) {
+  } catch {
     const url = page.url();
     const body = (await page.locator("body").innerText().catch(() => "")).slice(
       0,
@@ -114,9 +112,6 @@ async function evaluateLead(page, companyName) {
   }
 
   // Codes / English
-  const codeHits = bodyText.match(TECH_CODE_RE) || [];
-  // Allow "Prioridade alta" etc — filter bare HIGH/MEDIUM/LOW as whole badge-only risk
-  const badCodes = codeHits.filter((c) => !["HIGH", "MEDIUM", "LOW"].includes(c) || /\bHIGH\b/.test(bodyText) && !/Prioridade alta/i.test(bodyText));
   // Stricter: internal snake codes always fail; bare HIGH fails unless Prioridade present nearby
   const snakeCodes = (bodyText.match(/\b(HIGH_REPUTATION|HIGH_RATING|HIGH_REVIEWS|NO_WEBSITE)\b/g) || []);
   const englishHits = bodyText.match(ENGLISHISH_RE) || [];

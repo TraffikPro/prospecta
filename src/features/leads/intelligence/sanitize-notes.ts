@@ -124,11 +124,9 @@ function isDuplicateLine(line: string, context: SanitizeNotesContext): boolean {
     return true;
   }
 
-  if (
-    typeof context.score === "number" &&
-    (comparable === normalizeComparable(`Score: ${context.score}/100`) ||
-      comparable === normalizeComparable(`${context.score}/100`))
-  ) {
+  // Score / priority already shown in the intelligence header — drop the whole line.
+  // Matches: "Score: 90/100 (HIGH)", "90/100", "HIGH", "Prioridade alta", etc.
+  if (isScoreOrPriorityLine(comparable)) {
     return true;
   }
 
@@ -152,6 +150,33 @@ function isDuplicateLine(line: string, context: SanitizeNotesContext): boolean {
     }
   }
 
+  return false;
+}
+
+/** True when the line only restates score or qualification already in the UI. */
+function isScoreOrPriorityLine(comparable: string): boolean {
+  if (/^(?:high|medium|low)$/i.test(comparable)) {
+    return true;
+  }
+  if (/^(?:prioridade|oportunidade)\s+(?:alta|m[eé]dia|baixa)$/i.test(comparable)) {
+    return true;
+  }
+  // Score: 90/100 | Score: 90/100 (HIGH) | 90/100 (medium)
+  if (
+    /^(?:score\s*:\s*)?\d{1,3}\s*\/\s*100(?:\s*\(\s*(?:high|medium|low)\s*\))?$/i.test(
+      comparable,
+    )
+  ) {
+    return true;
+  }
+  // Score: 90/100 — HIGH | Score 90/100 HIGH
+  if (
+    /^score\s*:?\s*\d{1,3}\s*\/\s*100(?:\s*[—\-–:]?\s*(?:high|medium|low))?$/i.test(
+      comparable,
+    )
+  ) {
+    return true;
+  }
   return false;
 }
 
