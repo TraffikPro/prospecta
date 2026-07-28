@@ -2,16 +2,30 @@
 
 Plataforma **founder-led** de **prospecção B2B**: pipeline de leads, atividades, follow-ups e handoff para WhatsApp (`wa.me`) + e-mail (`mailto`/template).
 
+**Repo canônico:** [`TraffikPro/prospecta`](https://github.com/TraffikPro/prospecta)  
+**Produção:** https://prospecta-ten-tau.vercel.app
+
 ## Status
 
-**MVP operacional em produção** (`main` @ `d85c8f5`). Auth, Lead, Activity, Pipeline, ingestão externa, Intelligence Inbox, Minha fila, Portfolio e Lead Detail (Redesign A+B+C) estão DONE. Próximo passo: **VALIDATE** o piloto comercial (lote Santos) — não reabrir auth/login nem polish sem evidência.
+**MVP técnico operacional em produção** (`main` @ `c161e25`).
 
-Status canônico: [`docs/product/status-post-mvp.md`](docs/product/status-post-mvp.md).  
-Produção: `https://prospecta-ten-tau.vercel.app` · Repo: [`TraffikPro/prospecta`](https://github.com/TraffikPro/prospecta).
+| Marco | Estado |
+| --- | --- |
+| Auth, Lead, Activity, Pipeline, ingestão, Intelligence Inbox, Minha fila, Portfolio, Lead Detail Redesign | **DONE** |
+| Lead Detail Commercial Clarity (Fatia 1) | **DONE** — PRs [#49](https://github.com/TraffikPro/prospecta/pull/49), [#50](https://github.com/TraffikPro/prospecta/pull/50), [#51](https://github.com/TraffikPro/prospecta/pull/51) |
+| Gate técnico visual (lote Santos, 5 leads) | **ACCEPTED — 5/5** |
+| Testes automatizados | **118** + `typecheck` + `lint` |
+| Demo comercial com sócio | **PENDING** (único gate de produto restante) |
+| Próximo após a demo | Comparar os 5 leads → escolher clínica-modelo → portfólio **Presença, Conversão e Operação** |
+
+Status canônico: [`docs/product/status-post-mvp.md`](docs/product/status-post-mvp.md)  
+Product Decision (clareza comercial): [`docs/product/prospecta-lead-detail-commercial-clarity.md`](docs/product/prospecta-lead-detail-commercial-clarity.md)  
+Piloto Santos: [`docs/product/campaign-santos-odonto-batch-1.md`](docs/product/campaign-santos-odonto-batch-1.md)
 
 | Doc | Uso |
 | --- | --- |
 | [`docs/product/status-post-mvp.md`](docs/product/status-post-mvp.md) | Status pós-MVP (canônico) |
+| [`docs/product/prospecta-lead-detail-commercial-clarity.md`](docs/product/prospecta-lead-detail-commercial-clarity.md) | Gate técnico ACCEPTED 5/5 + demo PENDING |
 | [`docs/product.md`](docs/product.md) | Produto e normas V1 |
 | [`docs/product/founder-pilot.md`](docs/product/founder-pilot.md) | Piloto comercial |
 | [`docs/product/campaign-santos-odonto-batch-1.md`](docs/product/campaign-santos-odonto-batch-1.md) | Lote Santos (VALIDATE) |
@@ -19,6 +33,15 @@ Produção: `https://prospecta-ten-tau.vercel.app` · Repo: [`TraffikPro/prospec
 | [`docs/founding/roles-and-governance.md`](docs/founding/roles-and-governance.md) | Sociedade vs sistema + checklist |
 | [`docs/adr/0005-auth-sessions-acl-v1.md`](docs/adr/0005-auth-sessions-acl-v1.md) | Sessões HttpOnly + ACL |
 | [`docs/development/mcp-setup.md`](docs/development/mcp-setup.md) | MCPs |
+
+## O que o produto faz hoje
+
+- Autenticação segura com cookies **HttpOnly** e ACL server-side (`ADMIN` \| `MEMBER`)
+- Pipeline de leads, atividades, follow-ups e filas operacionais
+- Ingestão externa + **Intelligence Inbox** priorizada por score
+- Evidências Google Places: nota, avaliações e link Maps
+- Sinais comerciais normalizados + prioridade em português
+- Product Decisions para controlar escopo e evitar desenvolvimento especulativo
 
 ## Stack
 
