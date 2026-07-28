@@ -4,6 +4,7 @@ import { Alert, Card, Heading, Stack, Text } from "@chakra-ui/react";
 
 import type { LeadIntelligence } from "@/features/leads/intelligence/types";
 
+import { PlacesEvidence } from "./places-evidence";
 import { PitchBox } from "./pitch-box";
 import { ScoreDisplay } from "./score-display";
 import { SignalList } from "./signal-list";
@@ -21,7 +22,7 @@ export function IntelligenceCard({ intelligence }: IntelligenceCardProps) {
     >
       <Card.Header pb="2">
         <Heading as="h2" size="md">
-          Lead Intelligence
+          Inteligência do lead
         </Heading>
         <Text fontSize="sm" color="fg.muted">
           Qualificação gerada para apoiar a abordagem comercial
@@ -30,6 +31,11 @@ export function IntelligenceCard({ intelligence }: IntelligenceCardProps) {
       <Card.Body>
         <Stack gap="6">
           <ScoreDisplay intelligence={intelligence} />
+          <PlacesEvidence
+            rating={intelligence.rating}
+            reviews={intelligence.reviews}
+            googleMapsUrl={intelligence.googleMapsUrl}
+          />
           <SignalList signals={intelligence.signals} />
 
           {intelligence.diagnostic ? (

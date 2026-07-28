@@ -1,6 +1,7 @@
 export { IntelligenceCard } from "./intelligence-card";
 export { IntelligenceFilters } from "./intelligence-filters";
 export { LeadScoreCard } from "./lead-score-card";
+export { PlacesEvidence } from "./places-evidence";
 export { PitchBox } from "./pitch-box";
 export { PitchPreview } from "./pitch-preview";
 export { QualificationBadge } from "./qualification-badge";

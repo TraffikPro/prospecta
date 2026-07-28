@@ -1,18 +1,14 @@
-const SIGNAL_LABELS: Record<string, string> = {
-  NO_WEBSITE: "Sem website identificado",
-  HIGH_RATING: "Alta reputação Google",
-  HIGH_REVIEWS: "Volume relevante de avaliações",
-};
+import {
+  dedupeSignals,
+  signalLabel as catalogSignalLabel,
+} from "./signal-catalog";
 
-/** Human-readable label for a machine signal code. Unknown codes stay readable. */
+/**
+ * @deprecated Prefer importing from `./signal-catalog`.
+ * Kept as a thin re-export for existing call sites.
+ */
 export function signalLabel(signal: string): string {
-  const key = signal.trim().toUpperCase();
-  if (SIGNAL_LABELS[key]) {
-    return SIGNAL_LABELS[key];
-  }
-  return signal
-    .trim()
-    .replace(/_/g, " ")
-    .toLowerCase()
-    .replace(/^\w/, (c) => c.toUpperCase());
+  return catalogSignalLabel(signal);
 }
+
+export { dedupeSignals };

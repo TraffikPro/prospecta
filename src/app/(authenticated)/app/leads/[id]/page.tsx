@@ -17,6 +17,7 @@ import { LeadIntelligenceFallback } from "@/features/leads/components/lead-intel
 import { LeadNextActionCard } from "@/features/leads/components/lead-next-action-card";
 import { LeadOriginDetails } from "@/features/leads/components/lead-origin-details";
 import { parseLeadIntelligence } from "@/features/leads/intelligence/parse-intelligence";
+import { sanitizeLeadNotes } from "@/features/leads/intelligence/sanitize-notes";
 import { getNextAction, pickLatestOutcome } from "@/features/leads/next-action";
 import { MoveStageForm } from "@/features/leads/move-stage-form";
 import { AuthenticationError } from "@/server/auth/errors";
@@ -66,6 +67,14 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
 
   const activities = await getActivitiesForLead(lead.id);
   const intelligence = parseLeadIntelligence(lead.intelligence);
+  const displayNotes = sanitizeLeadNotes(lead.notes, {
+    signals: intelligence?.signals,
+    diagnostic: intelligence?.diagnostic,
+    pitch: intelligence?.pitch,
+    score: intelligence?.score,
+    rating: intelligence?.rating,
+    reviews: intelligence?.reviews,
+  });
   const nextAction = getNextAction({
     stage: lead.stage,
     nextFollowUpAt: lead.nextFollowUpAt,
@@ -159,7 +168,7 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
             contactName={lead.contactName}
             website={lead.website}
             nextFollowUpLabel={followUpLabel}
-            notes={lead.notes}
+            notes={displayNotes}
           />
         }
       />
