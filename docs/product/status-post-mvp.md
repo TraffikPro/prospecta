@@ -1,11 +1,12 @@
 # Status canônico — Prospecta (pós-MVP)
 
-- **Data:** 2026-07-27
+- **Data:** 2026-07-28
 - **Repo canônico:** [`TraffikPro/prospecta`](https://github.com/TraffikPro/prospecta)
-- **Branch:** `main` @ `d85c8f5` (merge [#46](https://github.com/TraffikPro/prospecta/pull/46))
+- **Branch:** `main` @ `c161e25` (merge [#51](https://github.com/TraffikPro/prospecta/pull/51))
 - **Produção:** `https://prospecta-ten-tau.vercel.app`
-- **PRs:** 45 merged (#1–#46; #18 é issue) · 0 abertas
-- **Decisão de estágio:** MVP técnico **DONE** em produção · próximo passo = **VALIDATE** (piloto comercial)
+- **PRs:** merged até #51 (#18 é issue)
+- **Testes:** 118 + typecheck + lint
+- **Decisão de estágio:** MVP técnico **DONE** · gate técnico Commercial Clarity **ACCEPTED — 5/5** · próximo passo = **demo comercial** (único gate de produto restante)
 
 Este documento substitui narrativas de “scaffold técnico”. Não autoriza feature code por si só.
 
@@ -13,7 +14,7 @@ Este documento substitui narrativas de “scaffold técnico”. Não autoriza fe
 
 ## Veredito
 
-Prospecta é um **MVP operacional em produção**. Auth, leads, atividades, pipeline, ingestão externa, Intelligence Inbox, filas, Lead Detail (A+B+C) e smokes de produção existem. O gargalo atual **não** é reabrir auth/login nem polish de UI — é **operar o piloto** até evidência de Activity/conversão.
+Prospecta é um **MVP operacional em produção**. Auth, leads, atividades, pipeline, ingestão externa, Intelligence Inbox, filas, Lead Detail (A+B+C), Commercial Clarity Fatia 1 e smokes de produção existem. O gargalo atual **não** é reabrir auth/login nem polish de UI — é a **demo comercial** e, após ela, escolher clínica-modelo e validar a oferta (**Presença, Conversão e Operação**).
 
 ---
 
@@ -30,9 +31,10 @@ Prospecta é um **MVP operacional em produção**. Auth, leads, atividades, pipe
 | Chakra-only + mobile + breadcrumbs + visual foundation | DONE | PRs #1–#5, #12–#19, #22–#27 |
 | Portfolio comercial (demos) | DONE | PRs #20–#21 |
 | Lead Detail Redesign Fatias A+B+C | DONE | PRs #37–#46 · smoke **OVERALL PASS** |
+| Lead Detail Commercial Clarity Fatia 1 | DONE | PRs [#49](https://github.com/TraffikPro/prospecta/pull/49), [#50](https://github.com/TraffikPro/prospecta/pull/50), [#51](https://github.com/TraffikPro/prospecta/pull/51) · gate **ACCEPTED — 5/5** |
 | Hygiene / anti-mutação em produção | DONE | `production-mutation-guard` · scripts |
 
-Última entrega formal: **Lead Detail States v1 DONE** ([product-decision-lead-detail-states-v1.md](product-decision-lead-detail-states-v1.md)).
+Última entrega formal: **Lead Detail Commercial Clarity Fatia 1** ([prospecta-lead-detail-commercial-clarity.md](prospecta-lead-detail-commercial-clarity.md)) — gate técnico ACCEPTED; demo comercial PENDING.
 
 ---
 
@@ -103,14 +105,15 @@ CSV deixou de ser o hub (ADR 0009). Só reabre com sintoma real do piloto.
 
 | Prioridade | Ação | Tipo |
 | --- | --- | --- |
-| P0 | Operar lote Santos: Inbox → contato → Activity real (meta: ciclo do lote) | **VALIDATE** |
-| P1 | Fechar/assinar Pilot Day 1 com evidência | Ops |
-| P2 | Após evidência: novo `product-grill` (Dashboard **ou** edição de lead **ou** admin write **ou** CSV) | Product |
+| P0 | Demo comercial com sócio (único gate de produto restante) | **VALIDATE** |
+| P1 | Comparar os 5 leads Santos → escolher clínica-modelo | Ops / Product |
+| P1 | Validar oferta: portfólio **Presença, Conversão e Operação** | Product |
+| P2 | Fechar/assinar Pilot Day 1 com evidência de Activity | Ops |
 | P2 | Issue #18 + CI Actions | Tech debt |
 
 **Hipótese ativa (piloto):** se o comercial operar os HIGH no Prospecta, gera conversa (Activity → resposta → reunião) sem planilha paralela.
 
-Até essa evidência, a decisão correta é **VALIDATE / operar**, não **BUILD**.
+Até a demo e a evidência comercial, a decisão correta é **VALIDATE / operar**, não **BUILD** de polish.
 
 ---
 
@@ -122,5 +125,6 @@ Até essa evidência, a decisão correta é **VALIDATE / operar**, não **BUILD*
 | [founder-pilot-execution.md](founder-pilot-execution.md) | Manual dos sócios |
 | [campaign-santos-odonto-batch-1.md](campaign-santos-odonto-batch-1.md) | Lote oficial VALIDATE |
 | [product-decision-dashboard-defer.md](product-decision-dashboard-defer.md) | Dashboard DEFER |
-| [product-decision-lead-detail-states-v1.md](product-decision-lead-detail-states-v1.md) | Última fatia UI DONE |
+| [prospecta-lead-detail-commercial-clarity.md](prospecta-lead-detail-commercial-clarity.md) | Gate técnico ACCEPTED 5/5 · demo PENDING |
+| [product-decision-lead-detail-states-v1.md](product-decision-lead-detail-states-v1.md) | Lead Detail States v1 DONE |
 | [`docs/product.md`](../product.md) | Normas V1 |
