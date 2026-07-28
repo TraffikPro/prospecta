@@ -2,19 +2,20 @@
 
 - **Data:** 2026-07-28
 - **Decisão:** **BUILD** (escopo reduzido)
-- **Status:** implementado na branch `feat/lead-detail-commercial-clarity-fatia-1` — aguardando validação com 5 leads do lote + demo comercial
+- **Status:** **ACCEPTED** — checklist 5/5 PASS (Playwright) + demo comercial aprovada pelo sócio
 - **Classificação:** WORKSPACE (apresentação/operação do detail) · catálogo de sinais = PLATFORM leve
 - **Arquivo de referência:** `prospecta-lead-detail-commercial-clarity`
 - **Rota:** `/app/leads/[id]`
+- **PR:** [#49](https://github.com/TraffikPro/prospecta/pull/49)
 - **Relacionado:** [ADR 0010](../adr/0010-lead-intelligence-pipeline.md), [Lead Detail Redesign v1](product-decision-lead-detail-redesign-v1.md), [Intelligence Inbox](product-decision-intelligence-inbox.md)
 
 ## Product Decision
 
 ```text
-Lead Detail Commercial Clarity — Fatia 1 — BUILD (REDUCED)
+Lead Detail Commercial Clarity — Fatia 1 — ACCEPTED
 
 Proposta completa (P0–P2, 34 itens): REDUCE SCOPE
-Fatia 1 (abaixo): BUILD
+Fatia 1: BUILD → implementada → validada (5/5 + demo) → ACCEPTED
 ```
 
 ## Problema
@@ -110,10 +111,9 @@ de notes + ajustes pontuais na UI + testes. Sem migration.
 | 5 | Drª Ariany de França Ferreira | PASS | PASS | PASS | Playwright 2026-07-28 |
 
 - **Checklist 5 leads:** `PASS` (Playwright — preview com Fatia 1)
-- **Demo comercial:** `PENDING`
-- **Status atual:** aguardando demo com sócio comercial antes de ACCEPTED / Ready / merge
+- **Demo comercial:** `APPROVED` (sócio comercial — 2026-07-28)
+- **Status atual:** **ACCEPTED**
 - **Evidência:** comentário na [PR #49](https://github.com/TraffikPro/prospecta/pull/49); script `scripts/smoke-commercial-clarity-preview.mjs`
-- **Merge:** bloqueado até demo aprovada
 
 ## Evidência que mudaria o DEFER
 
