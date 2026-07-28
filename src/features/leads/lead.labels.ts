@@ -29,7 +29,7 @@ export const leadSourceLabels: Record<LeadSource, string> = {
 };
 
 export const qualificationLabels: Record<LeadQualification, string> = {
-  HIGH: "Alta",
-  MEDIUM: "Média",
-  LOW: "Baixa",
+  HIGH: "Prioridade alta",
+  MEDIUM: "Prioridade média",
+  LOW: "Prioridade baixa",
 };

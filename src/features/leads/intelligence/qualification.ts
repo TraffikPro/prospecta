@@ -22,11 +22,11 @@ export function resolveQualification(
 export function qualificationLabel(qualification: LeadQualification): string {
   switch (qualification) {
     case "HIGH":
-      return "Oportunidade alta";
+      return "Prioridade alta";
     case "MEDIUM":
-      return "Oportunidade média";
+      return "Prioridade média";
     case "LOW":
-      return "Oportunidade baixa";
+      return "Prioridade baixa";
   }
 }
 

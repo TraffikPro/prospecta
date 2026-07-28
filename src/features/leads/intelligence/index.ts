@@ -16,5 +16,12 @@ export {
   qualificationLabel,
   resolveQualification,
 } from "./qualification";
-export { signalLabel } from "./signal-labels";
+export { sanitizeLeadNotes } from "./sanitize-notes";
+export type { SanitizeNotesContext } from "./sanitize-notes";
+export {
+  CANONICAL_SIGNALS,
+  dedupeSignals,
+  normalizeSignalCode,
+  signalLabel,
+} from "./signal-catalog";
 export type { LeadIntelligence, LeadQualification } from "./types";
