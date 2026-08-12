@@ -69,8 +69,8 @@ Mensagens de erro: seguras (sem tokens, keys ou PII sensível além do necessár
 
 ### Idempotência (endurecimento pós-revisão)
 
-- CRM: índice único parcial `AcquisitionJob_active_fingerprint_key` em `fingerprint` onde `status IN ('QUEUED','RUNNING')`.
-- Runner: store em disco (`output/runner-jobs`) + consulta `GET /api/internal/acquisition-jobs/:id` antes de executar.
+- CRM: índice único parcial `AcquisitionJob_active_fingerprint_key` em `fingerprint` onde `status IN ('QUEUED','RUNNING')` (migration `20260812140000_acquisition_job_active_fingerprint`).
+- Runner: claim sob `withExclusive(jobId)` + store em disco; `RUNNING` local fresco + CRM `QUEUED` → dedupe; `RUNNING` stale + CRM `QUEUED` → reclaim (crash antes do callback); `SUCCEEDED`/`FAILED` terminais.
 - Request: `limit` inteiro 1–30; body ≤ 16 KiB; `callbackUrl`/`prospectaBaseUrl` restritos ao origin de `PROSPECTA_BASE_URL`.
 
 ## Consequências
