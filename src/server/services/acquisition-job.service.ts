@@ -7,9 +7,8 @@ import {
   type AcquisitionRequestInput,
 } from "@/features/acquisition/acquisition.schema";
 import {
-  createAcquisitionJobRecord,
+  createAcquisitionJobAtomic,
   findAcquisitionJobById,
-  findActiveJobByFingerprint,
   listAcquisitionJobs,
   updateAcquisitionJobStatus,
   type AcquisitionJobWithRequester,
@@ -116,16 +115,8 @@ export async function requestAcquisitionJob(input: {
   const data = parseAcquisitionRequest(input.raw);
   const fingerprint = normalizeAcquisitionFingerprint(data);
 
-  const active = await findActiveJobByFingerprint(fingerprint);
-  if (active) {
-    throw new AcquisitionConflictError(
-      "Já existe uma aquisição em andamento para esta cidade, nicho e campanha.",
-      active.id,
-    );
-  }
-
   const timeoutAt = new Date(Date.now() + ACQUISITION_JOB_TIMEOUT_MS);
-  const job = await createAcquisitionJobRecord({
+  const created = await createAcquisitionJobAtomic({
     city: data.city,
     query: data.query,
     limit: data.limit,
@@ -134,6 +125,15 @@ export async function requestAcquisitionJob(input: {
     requestedById: input.requestedById,
     timeoutAt,
   });
+
+  if (created.kind === "conflict") {
+    throw new AcquisitionConflictError(
+      "Já existe uma aquisição em andamento para esta cidade, nicho e campanha.",
+      created.existing.id,
+    );
+  }
+
+  const job = created.job;
 
   try {
     await dispatchJobToRunner(job);

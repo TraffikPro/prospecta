@@ -64,8 +64,14 @@ Mensagens de erro: seguras (sem tokens, keys ou PII sensível além do necessár
 
 ### Timeout
 
-- Runner: falha segura se o pipeline exceder o limite configurado (default 15 min).
+- Runner: AbortController + checagens cooperativas entre etapas e **antes de cada sync**; após abort não há novos POSTs de leads.
 - CRM: jobs `RUNNING` além do `timeoutAt` exibem aviso operacional (sem auto-cancel sofisticado na Fase 1).
+
+### Idempotência (endurecimento pós-revisão)
+
+- CRM: índice único parcial `AcquisitionJob_active_fingerprint_key` em `fingerprint` onde `status IN ('QUEUED','RUNNING')`.
+- Runner: store em disco (`output/runner-jobs`) + consulta `GET /api/internal/acquisition-jobs/:id` antes de executar.
+- Request: `limit` inteiro 1–30; body ≤ 16 KiB; `callbackUrl`/`prospectaBaseUrl` restritos ao origin de `PROSPECTA_BASE_URL`.
 
 ## Consequências
 

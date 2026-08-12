@@ -1,4 +1,5 @@
 import type { AcquisitionJob, AcquisitionJobStatus, Prisma } from "@prisma/client";
+import { Prisma as PrismaNamespace } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
@@ -45,6 +46,40 @@ export async function createAcquisitionJobRecord(data: {
       status: "QUEUED",
     },
   });
+}
+
+/**
+ * Create QUEUED job atomically. Relies on partial unique index
+ * AcquisitionJob_active_fingerprint_key (QUEUED|RUNNING).
+ * Returns { kind: 'created', job } or { kind: 'conflict', existing }.
+ */
+export async function createAcquisitionJobAtomic(data: {
+  city: string;
+  query: string;
+  limit: number;
+  campaign: string;
+  fingerprint: string;
+  requestedById: string;
+  timeoutAt: Date;
+}): Promise<
+  | { kind: "created"; job: AcquisitionJob }
+  | { kind: "conflict"; existing: AcquisitionJob }
+> {
+  try {
+    const job = await createAcquisitionJobRecord(data);
+    return { kind: "created", job };
+  } catch (error) {
+    if (
+      error instanceof PrismaNamespace.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      const existing = await findActiveJobByFingerprint(data.fingerprint);
+      if (existing) {
+        return { kind: "conflict", existing };
+      }
+    }
+    throw error;
+  }
 }
 
 export async function findAcquisitionJobById(

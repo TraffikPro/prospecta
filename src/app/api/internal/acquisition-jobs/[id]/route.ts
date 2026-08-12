@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { authorizeAcquisitionJobRequest } from "@/server/auth/acquisition-job-token";
+import { findAcquisitionJobById } from "@/server/repositories/acquisition-job.repository";
 import {
   AcquisitionConflictError,
   AcquisitionValidationError,
@@ -10,6 +11,28 @@ import {
 type RouteContext = {
   params: Promise<{ id: string }>;
 };
+
+export async function GET(request: Request, context: RouteContext) {
+  if (!authorizeAcquisitionJobRequest(request)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = await context.params;
+  if (!id?.trim()) {
+    return NextResponse.json({ error: "Missing job id" }, { status: 400 });
+  }
+
+  const job = await findAcquisitionJobById(id);
+  if (!job) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  return NextResponse.json({
+    id: job.id,
+    status: job.status,
+    fingerprint: job.fingerprint,
+  });
+}
 
 export async function PATCH(request: Request, context: RouteContext) {
   if (!authorizeAcquisitionJobRequest(request)) {

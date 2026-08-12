@@ -174,4 +174,6 @@ model AcquisitionJob {
   @@index([fingerprint, status])
   @@index([requestedAt])
   @@index([requestedById])
+  // Partial unique index (QUEUED|RUNNING only) lives in migration SQL —
+  // AcquisitionJob_active_fingerprint_key — Prisma schema cannot express WHERE.
 }
