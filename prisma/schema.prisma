@@ -49,6 +49,13 @@ enum ActivityOutcome {
   OTHER
 }
 
+enum AcquisitionJobStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+}
+
 model User {
   id                  String               @id @default(cuid())
   email               String               @unique
@@ -63,6 +70,7 @@ model User {
   activities          Activity[]
   sessions            Session[]
   passwordResetTokens PasswordResetToken[]
+  acquisitionJobs     AcquisitionJob[]
 }
 
 model Session {
@@ -135,4 +143,37 @@ model Activity {
 
   @@index([leadId, createdAt])
   @@index([authorId])
+}
+
+/// ADMIN-triggered Places acquisition via external runner (ADR 0014).
+model AcquisitionJob {
+  id              String               @id @default(cuid())
+  status          AcquisitionJobStatus @default(QUEUED)
+  city            String
+  query           String
+  limit           Int
+  campaign        String
+  fingerprint     String
+  requestedById   String
+  requestedBy     User                 @relation(fields: [requestedById], references: [id])
+  requestedAt     DateTime             @default(now())
+  startedAt       DateTime?
+  finishedAt      DateTime?
+  timeoutAt       DateTime
+  foundCount      Int?
+  qualifiedCount  Int?
+  createdTotal    Int?
+  createdHigh     Int?
+  existingCount   Int?
+  failedCount     Int?
+  errorMessage    String?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  @@index([status])
+  @@index([fingerprint, status])
+  @@index([requestedAt])
+  @@index([requestedById])
+  // Partial unique index (QUEUED|RUNNING only) lives in migration SQL —
+  // AcquisitionJob_active_fingerprint_key — Prisma schema cannot express WHERE.
 }

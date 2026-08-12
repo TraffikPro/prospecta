@@ -6,7 +6,7 @@
 - **Produção:** `https://prospecta-ten-tau.vercel.app`
 - **PRs:** merged até #51 (#18 é issue)
 - **Testes:** 118 + typecheck + lint
-- **Decisão de estágio:** MVP técnico **DONE** · gate técnico Commercial Clarity **ACCEPTED — 5/5** · próximo passo = **demo comercial** (único gate de produto restante)
+- **Decisão de estágio:** MVP técnico **DONE** · gate técnico Commercial Clarity **ACCEPTED — 5/5** · Acquisition Self-Serve Fase 1 **BUILD** · próximo passo produto = **demo comercial** + liberar aquisição ADMIN em piloto
 
 Este documento substitui narrativas de “scaffold técnico”. Não autoriza feature code por si só.
 
@@ -32,6 +32,7 @@ Prospecta é um **MVP operacional em produção**. Auth, leads, atividades, pipe
 | Portfolio comercial (demos) | DONE | PRs #20–#21 |
 | Lead Detail Redesign Fatias A+B+C | DONE | PRs #37–#46 · smoke **OVERALL PASS** |
 | Lead Detail Commercial Clarity Fatia 1 | DONE | PRs [#49](https://github.com/TraffikPro/prospecta/pull/49), [#50](https://github.com/TraffikPro/prospecta/pull/50), [#51](https://github.com/TraffikPro/prospecta/pull/51) · gate **ACCEPTED — 5/5** |
+| Acquisition Self-Serve Fase 1 (`/admin/acquisition`) | BUILD | [product-decision](product-decision-acquisition-self-serve-v1.md) · [ADR 0014](../adr/0014-acquisition-runner-contract.md) |
 | Hygiene / anti-mutação em produção | DONE | `production-mutation-guard` · scripts |
 
 Última entrega formal: **Lead Detail Commercial Clarity Fatia 1** ([prospecta-lead-detail-commercial-clarity.md](prospecta-lead-detail-commercial-clarity.md)) — gate técnico ACCEPTED; demo comercial PENDING.
