@@ -61,15 +61,26 @@ export default async function MorePage() {
           <Link href="/app">Início</Link>
         </ChakraLink>
         {user.role === "ADMIN" ? (
-          <ChakraLink
-            asChild
-            textDecoration="underline"
-            minH="touch"
-            display="flex"
-            alignItems="center"
-          >
-            <Link href="/admin/users">Usuários</Link>
-          </ChakraLink>
+          <>
+            <ChakraLink
+              asChild
+              textDecoration="underline"
+              minH="touch"
+              display="flex"
+              alignItems="center"
+            >
+              <Link href="/admin/acquisition">Aquisição</Link>
+            </ChakraLink>
+            <ChakraLink
+              asChild
+              textDecoration="underline"
+              minH="touch"
+              display="flex"
+              alignItems="center"
+            >
+              <Link href="/admin/users">Usuários</Link>
+            </ChakraLink>
+          </>
         ) : null}
       </Stack>
 

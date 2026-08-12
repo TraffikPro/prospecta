@@ -53,6 +53,11 @@ export default async function AppHomePage() {
         description: "Lista completa e cadastro manual.",
       },
       {
+        href: "/admin/acquisition",
+        label: "Aquisição",
+        description: "Puxar leads Places via runner externo.",
+      },
+      {
         href: "/admin/users",
         label: "Usuários",
         description: "Visão administrativa da equipe.",

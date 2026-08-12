@@ -114,29 +114,61 @@ export function AppShell({ userName, userRole, children }: AppShellProps) {
                 );
               })}
               {userRole === "ADMIN" ? (
-                <ChakraLink asChild>
-                  <NextLink
-                    href="/admin/users"
-                    aria-current={
-                      isActivePath(pathname, "/admin/users") ? "page" : undefined
-                    }
-                    style={{
-                      fontSize: "0.875rem",
-                      fontWeight: isActivePath(pathname, "/admin/users")
-                        ? 600
-                        : 400,
-                      textDecoration: isActivePath(pathname, "/admin/users")
-                        ? "underline"
-                        : "none",
-                      textUnderlineOffset: "3px",
-                      minHeight: "44px",
-                      display: "inline-flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    Usuários
-                  </NextLink>
-                </ChakraLink>
+                <>
+                  <ChakraLink asChild>
+                    <NextLink
+                      href="/admin/acquisition"
+                      aria-current={
+                        isActivePath(pathname, "/admin/acquisition")
+                          ? "page"
+                          : undefined
+                      }
+                      style={{
+                        fontSize: "0.875rem",
+                        fontWeight: isActivePath(pathname, "/admin/acquisition")
+                          ? 600
+                          : 400,
+                        textDecoration: isActivePath(
+                          pathname,
+                          "/admin/acquisition",
+                        )
+                          ? "underline"
+                          : "none",
+                        textUnderlineOffset: "3px",
+                        minHeight: "44px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      Aquisição
+                    </NextLink>
+                  </ChakraLink>
+                  <ChakraLink asChild>
+                    <NextLink
+                      href="/admin/users"
+                      aria-current={
+                        isActivePath(pathname, "/admin/users")
+                          ? "page"
+                          : undefined
+                      }
+                      style={{
+                        fontSize: "0.875rem",
+                        fontWeight: isActivePath(pathname, "/admin/users")
+                          ? 600
+                          : 400,
+                        textDecoration: isActivePath(pathname, "/admin/users")
+                          ? "underline"
+                          : "none",
+                        textUnderlineOffset: "3px",
+                        minHeight: "44px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      Usuários
+                    </NextLink>
+                  </ChakraLink>
+                </>
               ) : null}
             </HStack>
           </Stack>
