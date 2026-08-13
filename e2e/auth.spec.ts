@@ -18,7 +18,7 @@ test.describe("auth + ACL", () => {
     context,
   }) => {
     await login(page, adminEmail, adminPassword);
-    await expect(page.getByRole("heading", { name: /^Olá,/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Visão geral", exact: true })).toBeVisible();
 
     const cookies = await context.cookies();
     const sessionCookie = cookies.find(
@@ -32,7 +32,8 @@ test.describe("auth + ACL", () => {
 
   test("logout clears session and returns to login", async ({ page }) => {
     await login(page, adminEmail, adminPassword);
-    await page.getByRole("button", { name: "Sair" }).click();
+    await page.getByTestId("nav-profile-trigger").click();
+    await page.getByRole("menuitem", { name: "Sair" }).click();
     await expect(page).toHaveURL(/\/login/);
 
     await page.goto("/app");
@@ -52,7 +53,7 @@ test.describe("auth + ACL", () => {
     await login(page, adminEmail, adminPassword);
     await page.goto("/admin/users");
     await expect(
-      page.getByRole("heading", { name: "Usuários", exact: true }),
+      page.getByRole("heading", { name: "Equipe", exact: true }),
     ).toBeVisible();
     await expect(page.getByTestId("admin-users")).toBeVisible();
   });

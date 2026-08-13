@@ -31,12 +31,12 @@ export default async function AdminUsersPage() {
       <ContextualNav
         items={[
           { label: "Mais", href: "/app/more" },
-          { label: "Usuários" },
+          { label: "Equipe" },
         ]}
       />
       <PageHeading
-        title="Usuários"
-        meta="Gerencie a equipe e a autorização de aquisição."
+        title="Equipe"
+        meta="Gerencie operadores, permissões e autorização de aquisição."
       />
 
       <UsersTable users={users} />

@@ -80,6 +80,9 @@ const config = defineConfig({
         containerDetailWide: { value: "75rem" },
         /** Lists / pipeline — 1200px */
         containerList: { value: "75rem" },
+        /** Desktop commercial nav — expanded / collapsed */
+        sidebarExpanded: { value: "15rem" },
+        sidebarCollapsed: { value: "4rem" },
         touch: { value: "2.75rem" },
       },
       radii: {

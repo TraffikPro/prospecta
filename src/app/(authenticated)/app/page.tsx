@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Link as ChakraLink, SimpleGrid, Stack, Text } from "@chakra-ui/react";
+import { SimpleGrid, Stack, Text } from "@chakra-ui/react";
 
 import { PageFrame } from "@/components/layout/page-frame";
 import { PageHeading } from "@/components/layout/page-heading";
@@ -65,8 +65,8 @@ export default async function AppHomePage() {
   if (user.role === "ADMIN") {
     shortcuts.push({
       href: "/admin/users",
-      label: "Usuários",
-      description: "Visão administrativa da equipe.",
+      label: "Equipe",
+      description: "Operadores, permissões e autorização de aquisição.",
     });
   } else {
     shortcuts.push({
@@ -78,10 +78,15 @@ export default async function AppHomePage() {
 
   return (
     <PageFrame width="list" gap="6">
-      <ContextualNav items={[{ label: "Início" }]} />
+      <ContextualNav items={[{ label: "Visão geral" }]} />
       <PageHeading
-        title={`Olá, ${firstName}`}
-        meta="Escolha por onde começar a operação de hoje."
+        title="Visão geral"
+        meta={`Olá, ${firstName}. Escolha por onde começar a operação de hoje.`}
+        actions={
+          <Button asChild size="md" minH="touch">
+            <Link href="/app/my-leads">Abrir minha fila</Link>
+          </Button>
+        }
       />
 
       <SimpleGrid columns={{ base: 1, md: 2 }} gap="3">
@@ -107,15 +112,6 @@ export default async function AppHomePage() {
           </Stack>
         ))}
       </SimpleGrid>
-
-      {user.role === "MEMBER" ? (
-        <Text textStyle="meta">
-          Atalho rápido:{" "}
-          <ChakraLink asChild textDecoration="underline">
-            <Link href="/app/more">Mais opções</Link>
-          </ChakraLink>
-        </Text>
-      ) : null}
     </PageFrame>
   );
 }

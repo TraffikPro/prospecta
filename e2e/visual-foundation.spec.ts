@@ -14,10 +14,31 @@ test.describe("visual foundation desktop", () => {
   test("home greets admin and exposes role shortcuts", async ({ page }) => {
     await login(page, adminEmail, adminPassword);
     await page.goto("/app");
-    await expect(page.getByRole("heading", { name: /^Olá,/ })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Minha fila" }).first()).toBeVisible();
-    await expect(page.getByRole("link", { name: "Usuários" }).first()).toBeVisible();
-    await expect(page.locator("main")).toHaveAttribute("data-page-width", "list");
+    await expect(page.getByRole("heading", { name: "Visão geral", exact: true })).toBeVisible();
+    await expect(page.getByTestId("desktop-sidebar")).toBeVisible();
+    await expect(
+      page.getByTestId("desktop-sidebar").getByRole("link", { name: "Minha fila" }),
+    ).toBeVisible();
+    await expect(
+      page.getByTestId("desktop-sidebar").getByRole("link", { name: "Equipe" }),
+    ).toBeVisible();
+    await expect(page.getByTestId("desktop-sidebar").getByText(/operação/i)).toBeVisible();
+    await expect(page.getByTestId("desktop-sidebar").getByText(/gestão/i)).toBeVisible();
+    await expect(page.locator("[data-page-width]").first()).toHaveAttribute(
+      "data-page-width",
+      "list",
+    );
+  });
+
+  test("MEMBER sidebar hides Equipe and Aquisição", async ({ page }) => {
+    await login(page, memberEmail, memberPassword);
+    await page.goto("/app/my-leads");
+    const sidebar = page.getByTestId("desktop-sidebar");
+    await expect(sidebar).toBeVisible();
+    await expect(sidebar.getByRole("link", { name: "Minha fila" })).toBeVisible();
+    await expect(sidebar.getByRole("link", { name: "Leads" })).toBeVisible();
+    await expect(sidebar.getByRole("link", { name: "Equipe" })).toHaveCount(0);
+    await expect(sidebar.getByRole("link", { name: "Aquisição" })).toHaveCount(0);
   });
 
   test("pipeline first fold shows collapsible stages", async ({ page }) => {
@@ -39,9 +60,15 @@ test.describe("visual foundation desktop", () => {
   test("form and list page widths differ as designed", async ({ page }) => {
     await login(page, memberEmail, memberPassword);
     await page.goto("/app/leads/new");
-    await expect(page.locator("main")).toHaveAttribute("data-page-width", "form");
+    await expect(page.locator("[data-page-width]").first()).toHaveAttribute(
+      "data-page-width",
+      "form",
+    );
     await page.goto("/app/my-leads");
-    await expect(page.locator("main")).toHaveAttribute("data-page-width", "list");
+    await expect(page.locator("[data-page-width]").first()).toHaveAttribute(
+      "data-page-width",
+      "list",
+    );
   });
 });
 
@@ -56,6 +83,7 @@ test.describe("visual foundation mobile critical", () => {
     await page.goto("/app/my-leads");
     await expect(page.getByRole("heading", { name: "Minha operação" })).toBeVisible();
     await expect(page.getByTestId("mobile-nav-my-leads")).toBeVisible();
+    await expect(page.getByTestId("mobile-nav-my-leads")).toHaveText("Fila");
 
     const overflow = await page.evaluate(() => {
       const doc = document.documentElement;

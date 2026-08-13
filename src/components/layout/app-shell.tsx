@@ -15,8 +15,13 @@ import {
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 
-import { roleLabels } from "@/features/admin/role.labels";
-import { LogoutButton } from "@/features/auth/logout-button";
+import { AppSidebar } from "@/components/layout/app-sidebar";
+import {
+  isNavPathActive,
+  MOBILE_PRIMARY_NAV,
+  profileRoleLabel,
+  type NavAccess,
+} from "@/components/navigation/nav-config";
 
 type AppShellProps = {
   userName: string;
@@ -25,32 +30,6 @@ type AppShellProps = {
   children: ReactNode;
 };
 
-const PRIMARY_NAV = [
-  { href: "/app/my-leads", label: "Minha fila" },
-  { href: "/app/intelligence", label: "Inteligência" },
-  { href: "/app/pipeline", label: "Pipeline" },
-  { href: "/app/more", label: "Mais" },
-] as const;
-
-const DESKTOP_NAV = [
-  { href: "/app/my-leads", label: "Minha fila" },
-  { href: "/app/intelligence", label: "Inteligência" },
-  { href: "/app/leads", label: "Leads" },
-  { href: "/app/pipeline", label: "Pipeline" },
-  { href: "/app/portfolio", label: "Portfólio" },
-] as const;
-
-function isActivePath(pathname: string, href: string): boolean {
-  return pathname === href || pathname.startsWith(`${href}/`);
-}
-
-function roleLabel(role: string): string {
-  if (role === "ADMIN" || role === "MEMBER") {
-    return roleLabels[role];
-  }
-  return role;
-}
-
 export function AppShell({
   userName,
   userRole,
@@ -58,155 +37,74 @@ export function AppShell({
   children,
 }: AppShellProps) {
   const pathname = usePathname();
-  const showAcquisition =
-    userRole === "ADMIN" || (userRole === "MEMBER" && canRunAcquisition);
-  const showUsersAdmin = userRole === "ADMIN";
+  const access: NavAccess = { role: userRole, canRunAcquisition };
 
   return (
-    <Box minH="100vh" bg="bg.subtle" pb={{ base: "20", md: "0" }} overflowX="hidden">
+    <Box minH="100vh" bg="bg.subtle" overflowX="hidden">
       <SkipNavLink id="main-content" data-testid="skip-nav-link">
         Ir para o conteúdo
       </SkipNavLink>
-      <Box
-        as="header"
-        borderBottomWidth="1px"
-        borderColor="border"
-        bg="bg"
-        position="sticky"
-        top="0"
-        zIndex="docked"
-        style={{ paddingTop: "env(safe-area-inset-top)" }}
-      >
-        <Container maxW="containerList" py={{ base: "3", md: "4" }} px={{ base: "4", md: "6" }}>
-          <Stack gap={{ base: "0", md: "3" }}>
-            <HStack justify="space-between" align="center" gap="4" minH="touch">
+      <Box display="flex" alignItems="stretch" minH="100vh">
+        <AppSidebar
+          userName={userName}
+          userRole={userRole}
+          access={access}
+        />
+
+        <Box flex="1" minW="0" pb={{ base: "20", md: "0" }}>
+          <Box
+            as="header"
+            display={{ base: "block", md: "none" }}
+            borderBottomWidth="1px"
+            borderColor="border"
+            bg="bg"
+            position="sticky"
+            top="0"
+            zIndex="docked"
+            style={{ paddingTop: "env(safe-area-inset-top)" }}
+          >
+            <HStack
+              justify="space-between"
+              align="center"
+              gap="4"
+              minH="touch"
+              px="4"
+              py="3"
+            >
               <Stack gap="0" minW="0">
                 <Text fontSize="sm" fontWeight="semibold">
                   Prospecta
                 </Text>
                 <Text fontSize="xs" color="fg.muted" truncate>
-                  {userName} · {roleLabel(userRole)}
+                  {userName} · {profileRoleLabel(userRole)}
                 </Text>
               </Stack>
-              <Box display={{ base: "none", md: "block" }}>
-                <LogoutButton />
-              </Box>
             </HStack>
-            <HStack
-              as="nav"
-              gap="4"
-              flexWrap="wrap"
-              aria-label="Principal"
-              display={{ base: "none", md: "flex" }}
-            >
-              {DESKTOP_NAV.map((item) => {
-                const active = isActivePath(pathname, item.href);
-                return (
-                  <ChakraLink asChild key={item.href}>
-                    <NextLink
-                      href={item.href}
-                      aria-current={active ? "page" : undefined}
-                      style={{
-                        fontSize: "0.875rem",
-                        fontWeight: active ? 600 : 400,
-                        textDecoration: active ? "underline" : "none",
-                        textUnderlineOffset: "3px",
-                        opacity: active ? 1 : 0.8,
-                        minHeight: "44px",
-                        display: "inline-flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      {item.label}
-                    </NextLink>
-                  </ChakraLink>
-                );
-              })}
-              {showAcquisition ? (
-                <ChakraLink asChild>
-                  <NextLink
-                    href="/admin/acquisition"
-                    aria-current={
-                      isActivePath(pathname, "/admin/acquisition")
-                        ? "page"
-                        : undefined
-                    }
-                    data-testid="nav-acquisition"
-                    style={{
-                      fontSize: "0.875rem",
-                      fontWeight: isActivePath(pathname, "/admin/acquisition")
-                        ? 600
-                        : 400,
-                      textDecoration: isActivePath(
-                        pathname,
-                        "/admin/acquisition",
-                      )
-                        ? "underline"
-                        : "none",
-                      textUnderlineOffset: "3px",
-                      minHeight: "44px",
-                      display: "inline-flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    Aquisição
-                  </NextLink>
-                </ChakraLink>
-              ) : null}
-              {showUsersAdmin ? (
-                <ChakraLink asChild>
-                  <NextLink
-                    href="/admin/users"
-                    aria-current={
-                      isActivePath(pathname, "/admin/users")
-                        ? "page"
-                        : undefined
-                    }
-                    data-testid="nav-admin-users"
-                    style={{
-                      fontSize: "0.875rem",
-                      fontWeight: isActivePath(pathname, "/admin/users")
-                        ? 600
-                        : 400,
-                      textDecoration: isActivePath(pathname, "/admin/users")
-                        ? "underline"
-                        : "none",
-                      textUnderlineOffset: "3px",
-                      minHeight: "44px",
-                      display: "inline-flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    Usuários
-                  </NextLink>
-                </ChakraLink>
-              ) : null}
-            </HStack>
-          </Stack>
-        </Container>
-      </Box>
+          </Box>
 
-      <SkipNavContent
-        as="main"
-        id="main-content"
-        tabIndex={-1}
-        style={{}}
-        _focusVisible={{
-          outlineWidth: "2px",
-          outlineStyle: "solid",
-          outlineColor: "blue.500",
-          outlineOffset: "2px",
-        }}
-      >
-        <Container
-          as="div"
-          maxW="containerList"
-          px={{ base: "4", md: "6" }}
-          py={{ base: "5", md: "8" }}
-        >
-          {children}
-        </Container>
-      </SkipNavContent>
+          <SkipNavContent
+            as="main"
+            id="main-content"
+            tabIndex={-1}
+            style={{}}
+            _focusVisible={{
+              outlineWidth: "2px",
+              outlineStyle: "solid",
+              outlineColor: "blue.500",
+              outlineOffset: "2px",
+            }}
+          >
+            <Container
+              as="div"
+              maxW="containerList"
+              px={{ base: "4", md: "6" }}
+              py={{ base: "5", md: "8" }}
+            >
+              {children}
+            </Container>
+          </SkipNavContent>
+        </Box>
+      </Box>
 
       <Box
         as="nav"
@@ -223,8 +121,8 @@ export function AppShell({
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <HStack justify="space-around" align="stretch" px="1" gap="0">
-          {PRIMARY_NAV.map((item) => {
-            const active = isActivePath(pathname, item.href);
+          {MOBILE_PRIMARY_NAV.map((item) => {
+            const active = isNavPathActive(pathname, item.href);
             return (
               <ChakraLink
                 asChild
@@ -235,7 +133,7 @@ export function AppShell({
                 <NextLink
                   href={item.href}
                   aria-current={active ? "page" : undefined}
-                  data-testid={`mobile-nav-${item.href.split("/").pop()}`}
+                  data-testid={item.testId}
                   style={{
                     display: "flex",
                     flexDirection: "column",

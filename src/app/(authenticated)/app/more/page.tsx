@@ -1,14 +1,17 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Link as ChakraLink, Stack } from "@chakra-ui/react";
+import { Link as ChakraLink, Stack, Text } from "@chakra-ui/react";
 
 import { PageFrame } from "@/components/layout/page-frame";
-import { PageHeading } from "@/components/layout/page-heading";
-import { ContextualNav } from "@/components/navigation";
-import { roleLabels } from "@/features/admin/role.labels";
+import { PageHeading, SectionHeading } from "@/components/layout/page-heading";
+import {
+  ContextualNav,
+  morePageSections,
+  profileRoleLabel,
+} from "@/components/navigation";
 import { LogoutButton } from "@/features/auth/logout-button";
 import { AuthenticationError } from "@/server/auth/errors";
-import { canRunAcquisition, requireAnyRole } from "@/server/auth/guards";
+import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
 
 export default async function MorePage() {
@@ -23,72 +26,52 @@ export default async function MorePage() {
   }
 
   const user = sessionUser!;
-  const showAcquisition = canRunAcquisition(user);
-  const showUsersAdmin = user.role === "ADMIN";
+  const sections = morePageSections({
+    role: user.role,
+    canRunAcquisition: user.canRunAcquisition,
+  });
 
   return (
     <PageFrame width="list" gap="6">
       <ContextualNav items={[{ label: "Mais" }]} />
-      <PageHeading
-        title="Mais"
-        meta={`${user.name} · ${roleLabels[user.role]}`}
-      />
+      <PageHeading title="Mais" meta="Atalhos fora da operação diária." />
 
-      <Stack gap="3" fontSize="md">
-        <ChakraLink
-          asChild
-          textDecoration="underline"
-          minH="touch"
-          display="flex"
-          alignItems="center"
-        >
-          <Link href="/app/portfolio">Portfólio</Link>
-        </ChakraLink>
-        <ChakraLink
-          asChild
-          textDecoration="underline"
-          minH="touch"
-          display="flex"
-          alignItems="center"
-        >
-          <Link href="/app/leads">Lista de leads</Link>
-        </ChakraLink>
-        <ChakraLink
-          asChild
-          textDecoration="underline"
-          minH="touch"
-          display="flex"
-          alignItems="center"
-        >
-          <Link href="/app">Início</Link>
-        </ChakraLink>
-        {showAcquisition ? (
-          <ChakraLink
-            asChild
-            textDecoration="underline"
-            minH="touch"
-            display="flex"
-            alignItems="center"
-            data-testid="more-nav-acquisition"
-          >
-            <Link href="/admin/acquisition">Aquisição</Link>
-          </ChakraLink>
-        ) : null}
-        {showUsersAdmin ? (
-          <ChakraLink
-            asChild
-            textDecoration="underline"
-            minH="touch"
-            display="flex"
-            alignItems="center"
-            data-testid="more-nav-admin-users"
-          >
-            <Link href="/admin/users">Usuários</Link>
-          </ChakraLink>
-        ) : null}
+      {sections.map((section) => (
+        <Stack key={section.id} gap="3">
+          {section.label ? (
+            <SectionHeading>{section.label}</SectionHeading>
+          ) : null}
+          <Stack gap="1">
+            {section.items.map((item) => (
+              <ChakraLink
+                asChild
+                key={item.href}
+                textDecoration="underline"
+                minH="touch"
+                display="flex"
+                alignItems="center"
+                data-testid={
+                  item.id === "acquisition"
+                    ? "more-nav-acquisition"
+                    : item.id === "team"
+                      ? "more-nav-admin-users"
+                      : undefined
+                }
+              >
+                <Link href={item.href}>{item.label}</Link>
+              </ChakraLink>
+            ))}
+          </Stack>
+        </Stack>
+      ))}
+
+      <Stack gap="3">
+        <SectionHeading>Conta</SectionHeading>
+        <Text textStyle="meta">
+          {user.name} · {profileRoleLabel(user.role)}
+        </Text>
+        <LogoutButton />
       </Stack>
-
-      <LogoutButton />
     </PageFrame>
   );
 }
