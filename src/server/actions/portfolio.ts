@@ -10,6 +10,7 @@ import { getSessionUser } from "@/server/auth/session";
 import {
   PortfolioError,
   reassignLeadToOperator,
+  recycleLeadToPool,
   setOperatorWeeklyQuota,
 } from "@/server/services/portfolio.service";
 
@@ -100,5 +101,43 @@ export async function reassignLeadAction(
   revalidatePath(`/app/leads/${leadId}`);
   revalidatePath("/app/my-leads");
   revalidatePath("/admin/users");
+  revalidatePath("/admin/high-pool");
+  return { ok: true };
+}
+
+export async function recycleLeadAction(
+  _prev: PortfolioActionState,
+  formData: FormData,
+): Promise<PortfolioActionState> {
+  const sessionUser = await getSessionUser();
+  try {
+    requireRole(sessionUser, "ADMIN");
+  } catch (error) {
+    if (error instanceof AuthenticationError) {
+      redirect(loginPath("session_expired"));
+    }
+    if (error instanceof AuthorizationError) {
+      return { error: "Apenas administradores podem reciclar leads." };
+    }
+    throw error;
+  }
+
+  const leadId = formString(formData, "leadId");
+
+  try {
+    await recycleLeadToPool({
+      actorId: sessionUser!.id,
+      leadId,
+    });
+  } catch (error) {
+    if (error instanceof PortfolioError) {
+      return { error: error.message };
+    }
+    throw error;
+  }
+
+  revalidatePath(`/app/leads/${leadId}`);
+  revalidatePath("/app/my-leads");
+  revalidatePath("/admin/high-pool");
   return { ok: true };
 }

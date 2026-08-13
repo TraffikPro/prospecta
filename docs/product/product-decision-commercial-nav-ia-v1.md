@@ -32,7 +32,7 @@ Agrupar por domínio (Operação / Base comercial / Gestão) + sidebar ↓ tempo
 - Mobile: bottom nav `Fila · Inteligência · Pipeline · Mais`.
 - `Usuários` passa a se chamar **Equipe** (mesma rota `/admin/users`).
 - `/app` entra no menu como **Visão geral** (atalhos existentes; sem KPIs).
-- Permissões inalteradas: Aquisição = ADMIN ou MEMBER.`canRunAcquisition`; Equipe = ADMIN.
+- Permissões inalteradas: Aquisição = ADMIN ou MEMBER.`canRunAcquisition`; Equipe e Revisão HIGH = ADMIN.
 - MEMBER com aquisição vê Aquisição em Base comercial.
 - ContextualNav do lead permanece.
 

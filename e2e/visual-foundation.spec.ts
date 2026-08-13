@@ -22,6 +22,9 @@ test.describe("visual foundation desktop", () => {
     await expect(
       page.getByTestId("desktop-sidebar").getByRole("link", { name: "Equipe" }),
     ).toBeVisible();
+    await expect(
+      page.getByTestId("desktop-sidebar").getByRole("link", { name: "Revisão HIGH" }),
+    ).toBeVisible();
     await expect(page.getByTestId("desktop-sidebar").getByText(/operação/i)).toBeVisible();
     await expect(page.getByTestId("desktop-sidebar").getByText(/gestão/i)).toBeVisible();
     await expect(page.locator("[data-page-width]").first()).toHaveAttribute(
@@ -39,6 +42,7 @@ test.describe("visual foundation desktop", () => {
     await expect(sidebar.getByRole("link", { name: "Leads" })).toBeVisible();
     await expect(sidebar.getByRole("link", { name: "Equipe" })).toHaveCount(0);
     await expect(sidebar.getByRole("link", { name: "Aquisição" })).toHaveCount(0);
+    await expect(sidebar.getByRole("link", { name: "Revisão HIGH" })).toHaveCount(0);
   });
 
   test("pipeline first fold shows collapsible stages", async ({ page }) => {

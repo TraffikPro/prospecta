@@ -1,16 +1,21 @@
 import { prisma } from "@/lib/prisma";
 import {
+  HIGH_ASSIGNMENT_CAP,
   MAX_WEEKLY_TARGET,
   MIN_WEEKLY_TARGET,
+  RELEASE_REASON_ADMIN_REASSIGN,
+  RELEASE_REASON_RECYCLED,
+  classifyHighPoolLead,
+  countCommercialCycles,
+  isHighQualification,
+  isTerminalLeadStage,
   isValidTreatmentActivity,
 } from "@/features/portfolio/portfolio.rules";
 import {
   formatWeekRangePtBr,
   getOperationalWeek,
 } from "@/features/portfolio/week";
-import { resolveQualification } from "@/features/leads/intelligence/qualification";
-import { parseLeadIntelligence } from "@/features/leads/intelligence/parse-intelligence";
-import { Prisma, type LeadAssignmentSource } from "@prisma/client";
+import { Prisma, type LeadAssignmentSource, type LeadStage } from "@prisma/client";
 
 export class PortfolioError extends Error {
   constructor(message: string) {
@@ -32,12 +37,6 @@ export type PortfolioSummary = {
   slotsRemaining: number;
   eligibleOperator: boolean;
 };
-
-function isHighIntelligence(intelligence: unknown): boolean {
-  const parsed = parseLeadIntelligence(intelligence);
-  if (!parsed) return false;
-  return resolveQualification(parsed) === "HIGH";
-}
 
 function isUniqueViolation(error: unknown): boolean {
   return (
@@ -342,15 +341,42 @@ export async function reassignLeadToOperator(input: {
     if (!lead) {
       throw new PortfolioError("Lead não encontrado.");
     }
-    if (!isHighIntelligence(lead.intelligence)) {
+    if (!isHighQualification(lead.intelligence)) {
       throw new PortfolioError("Somente leads HIGH entram na carteira semanal.");
     }
 
     const portfolio = await getOrCreatePortfolio(tx, assignee.id, now);
 
-    const active = await tx.leadAssignment.findFirst({
-      where: { leadId: lead.id, status: "ACTIVE" },
+    const assignments = await tx.leadAssignment.findMany({
+      where: { leadId: lead.id },
+      select: {
+        id: true,
+        status: true,
+        releaseReason: true,
+        assigneeId: true,
+        portfolioId: true,
+      },
     });
+    const active =
+      assignments.find((row) => row.status === "ACTIVE") ?? null;
+
+    if (!active) {
+      if (isTerminalLeadStage(lead.stage)) {
+        throw new PortfolioError(
+          "Leads ganhos ou perdidos não entram na carteira semanal.",
+        );
+      }
+      if (countCommercialCycles(assignments) >= HIGH_ASSIGNMENT_CAP) {
+        throw new PortfolioError(
+          "Este lead já atingiu o limite de 2 ciclos comerciais.",
+        );
+      }
+      if (assignments.some((row) => row.status === "TREATED")) {
+        throw new PortfolioError(
+          "Recicle o lead antes de atribuir novamente.",
+        );
+      }
+    }
 
     if (
       active &&
@@ -372,7 +398,7 @@ export async function reassignLeadToOperator(input: {
         data: {
           status: "RELEASED",
           releasedAt: now,
-          releaseReason: "ADMIN_REASSIGN",
+          releaseReason: RELEASE_REASON_ADMIN_REASSIGN,
         },
       });
     }
@@ -399,7 +425,13 @@ export async function reassignLeadToOperator(input: {
           assignedById: actor.id,
           portfolioId: portfolio.id,
           weekStartAt: portfolio.weekStartAt,
-          source: "MANUAL_ADMIN" satisfies LeadAssignmentSource,
+          source: (
+            assignments.some(
+              (row) => row.releaseReason === RELEASE_REASON_RECYCLED,
+            )
+              ? "RECYCLED"
+              : "MANUAL_ADMIN"
+          ) satisfies LeadAssignmentSource,
           status: "ACTIVE",
           dueAt: portfolio.weekEndAt,
           previousAssigneeId:
@@ -445,6 +477,180 @@ export async function listAssignableOperators(): Promise<
     select: { id: true, name: true, email: true, role: true },
     orderBy: { name: "asc" },
   });
+}
+
+export type HighPoolReviewItem = {
+  id: string;
+  companyName: string;
+  stage: LeadStage;
+  cycles: number;
+  ownerName: string | null;
+  operatorName: string | null;
+};
+
+export type HighPoolReview = {
+  eligible: HighPoolReviewItem[];
+  assigned: HighPoolReviewItem[];
+  recyclable: HighPoolReviewItem[];
+  capped: HighPoolReviewItem[];
+};
+
+/**
+ * ADMIN-only recycle: TREATED → RELEASED/RECYCLED. Revalidates under Lead lock.
+ * TREATED never returns to the pool by itself.
+ */
+export async function recycleLeadToPool(input: {
+  actorId: string;
+  leadId: string;
+  now?: Date;
+}): Promise<{ assignmentId: string }> {
+  const now = input.now ?? new Date();
+
+  return prisma.$transaction(async (tx) => {
+    const actor = await tx.user.findUnique({
+      where: { id: input.actorId },
+      select: { id: true, role: true, isActive: true },
+    });
+    if (!actor?.isActive || actor.role !== "ADMIN") {
+      throw new PortfolioError("Apenas administradores podem reciclar leads.");
+    }
+
+    const lockedLeads = await tx.$queryRaw<Array<{ id: string }>>`
+      SELECT id FROM "Lead" WHERE id = ${input.leadId} FOR UPDATE
+    `;
+    if (lockedLeads.length === 0) {
+      throw new PortfolioError("Lead não encontrado.");
+    }
+
+    const lead = await tx.lead.findUnique({
+      where: { id: input.leadId },
+      select: { id: true, intelligence: true, stage: true },
+    });
+    if (!lead) {
+      throw new PortfolioError("Lead não encontrado.");
+    }
+
+    const assignments = await tx.leadAssignment.findMany({
+      where: { leadId: lead.id },
+      orderBy: { assignedAt: "desc" },
+    });
+    const treated = assignments.filter((row) => row.status === "TREATED");
+    const hasActive = assignments.some((row) => row.status === "ACTIVE");
+
+    if (treated.length === 0) {
+      throw new PortfolioError(
+        "Somente leads tratados podem ser reciclados.",
+      );
+    }
+    if (treated.length !== 1) {
+      throw new PortfolioError(
+        "Estado de atribuição inconsistente. Recarregue e tente novamente.",
+      );
+    }
+    if (hasActive) {
+      throw new PortfolioError("Este lead já possui atribuição ativa.");
+    }
+    if (isTerminalLeadStage(lead.stage)) {
+      throw new PortfolioError(
+        "Leads ganhos ou perdidos não voltam ao pool.",
+      );
+    }
+    if (!isHighQualification(lead.intelligence)) {
+      throw new PortfolioError("Somente leads HIGH voltam ao pool.");
+    }
+    if (countCommercialCycles(assignments) >= HIGH_ASSIGNMENT_CAP) {
+      throw new PortfolioError(
+        "Este lead já atingiu o limite de 2 ciclos comerciais.",
+      );
+    }
+
+    const treatedRow = treated[0]!;
+    await tx.leadAssignment.update({
+      where: { id: treatedRow.id },
+      data: {
+        status: "RELEASED",
+        releasedAt: now,
+        releaseReason: RELEASE_REASON_RECYCLED,
+      },
+    });
+
+    await tx.adminAuditEvent.create({
+      data: {
+        action: "lead.recycle",
+        actorId: actor.id,
+        targetUserId: treatedRow.assigneeId,
+        detail: {
+          leadId: lead.id,
+          assignmentId: treatedRow.id,
+          previousAssigneeId: treatedRow.assigneeId,
+        },
+      },
+    });
+
+    return { assignmentId: treatedRow.id };
+  });
+}
+
+export async function listHighPoolReview(actorId: string): Promise<HighPoolReview> {
+  const actor = await prisma.user.findUnique({
+    where: { id: actorId },
+    select: { id: true, role: true, isActive: true },
+  });
+  if (!actor?.isActive || actor.role !== "ADMIN") {
+    throw new PortfolioError(
+      "Apenas administradores podem revisar o pool HIGH.",
+    );
+  }
+
+  const leads = await prisma.lead.findMany({
+    select: {
+      id: true,
+      companyName: true,
+      stage: true,
+      intelligence: true,
+      owner: { select: { name: true } },
+      assignments: {
+        select: {
+          status: true,
+          releaseReason: true,
+          assignee: { select: { name: true } },
+        },
+        orderBy: { assignedAt: "desc" },
+      },
+    },
+    orderBy: { companyName: "asc" },
+  });
+
+  const review: HighPoolReview = {
+    eligible: [],
+    assigned: [],
+    recyclable: [],
+    capped: [],
+  };
+
+  for (const lead of leads) {
+    const bucket = classifyHighPoolLead({
+      intelligence: lead.intelligence,
+      stage: lead.stage,
+      assignments: lead.assignments,
+    });
+    if (!bucket) continue;
+
+    const active = lead.assignments.find((row) => row.status === "ACTIVE");
+    const treated = lead.assignments.find((row) => row.status === "TREATED");
+    const item: HighPoolReviewItem = {
+      id: lead.id,
+      companyName: lead.companyName,
+      stage: lead.stage,
+      cycles: countCommercialCycles(lead.assignments),
+      ownerName: lead.owner?.name ?? null,
+      operatorName:
+        active?.assignee.name ?? treated?.assignee.name ?? lead.owner?.name ?? null,
+    };
+    review[bucket].push(item);
+  }
+
+  return review;
 }
 
 /**

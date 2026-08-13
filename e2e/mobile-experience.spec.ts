@@ -91,9 +91,12 @@ test.describe("mobile experience v1", () => {
       page.getByRole("link", { name: /Equipe/i }),
     ).toHaveCount(0);
 
-    const response = await page.goto("/admin/users");
-    expect(response?.status()).toBe(403);
+    const usersResponse = await page.goto("/admin/users");
+    expect(usersResponse?.status()).toBe(403);
     await expect(page.getByText(/403|Acesso negado/i).first()).toBeVisible();
+
+    const highPoolResponse = await page.goto("/admin/high-pool");
+    expect(highPoolResponse?.status()).toBe(403);
   });
 
   test("pipeline accordion opens stage and lead", async ({ page }) => {
