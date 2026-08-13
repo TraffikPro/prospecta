@@ -29,6 +29,9 @@ Content-Type: application/json
   "query": "clínica odontológica",
   "limit": 18,
   "campaign": "santos-odontologia-2026-07",
+  "requestedById": "cuid…",
+  "purpose": "FREE_PULL" | "WALLET_FILL",
+  "requestedSlots": 3,
   "prospectaBaseUrl": "https://prospecta-ten-tau.vercel.app",
   "callbackUrl": "https://…/api/internal/acquisition-jobs/{jobId}"
 }
@@ -51,11 +54,17 @@ Content-Type: application/json
   "createdHigh": 11,
   "existingCount": 6,
   "failedCount": 0,
-  "errorMessage": null
+  "errorMessage": null,
+  "requestedById": "cuid…",
+  "leadIds": ["cuid…"],
+  "createdLeadIds": ["cuid…"],
+  "existingLeadIds": ["cuid…"]
 }
 ```
 
 Mensagens de erro: seguras (sem tokens, keys ou PII sensível além do necessário).
+
+F3 (`WALLET_FILL`): `leadIds` são IDs internos do Prospecta. O CRM atribui somente esses IDs ao `requestedById` do job, revalidando HIGH / cap / vagas. Pull livre (`FREE_PULL`) continua indo para a Inbox sem auto-atribuição. `requestedById` no callback, se enviado, deve coincidir com o job.
 
 ### Idempotência
 

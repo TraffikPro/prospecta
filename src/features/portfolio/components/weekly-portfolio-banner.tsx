@@ -1,12 +1,40 @@
 import { HStack, Stack, Text } from "@chakra-ui/react";
 
+import { FillWalletButton } from "@/features/portfolio/components/fill-wallet-button";
 import type { PortfolioSummary } from "@/server/services/portfolio.service";
+import type { WalletFillStatus } from "@/server/services/wallet-fill.service";
 
 type WeeklyPortfolioBannerProps = {
   summary: PortfolioSummary;
+  fillStatus?: WalletFillStatus;
 };
 
-export function WeeklyPortfolioBanner({ summary }: WeeklyPortfolioBannerProps) {
+function fillResultCopy(status: WalletFillStatus): string | null {
+  const job = status.lastJob;
+  if (!job || job.status !== "SUCCEEDED") {
+    return null;
+  }
+  const assigned = job.assignedCount ?? 0;
+  const requested = job.requestedSlots ?? 0;
+  if (assigned === 0) {
+    return "Nenhum novo lead HIGH elegível foi encontrado nesta execução.";
+  }
+  if (status.slotsRemaining <= 0 || (requested > 0 && assigned >= requested)) {
+    const noun =
+      assigned === 1
+        ? "novo lead HIGH foi atribuído"
+        : "novos leads HIGH foram atribuídos";
+    return `Carteira completada. ${assigned} ${noun}.`;
+  }
+  const assignedNoun =
+    assigned === 1 ? "lead foi atribuído" : "leads foram atribuídos";
+  return `${assigned} ${assignedNoun}. Ainda faltam ${status.slotsRemaining} para completar sua meta.`;
+}
+
+export function WeeklyPortfolioBanner({
+  summary,
+  fillStatus,
+}: WeeklyPortfolioBannerProps) {
   if (!summary.eligibleOperator) {
     return null;
   }
@@ -29,11 +57,16 @@ export function WeeklyPortfolioBanner({ summary }: WeeklyPortfolioBannerProps) {
         </Text>
         <Text fontSize="sm">
           Meta semanal ainda não configurada. Peça a um administrador para
-          definir sua meta em Usuários antes de receber leads na carteira.
+          definir sua meta em Equipe antes de completar a carteira.
         </Text>
       </Stack>
     );
   }
+
+  const resultCopy = fillStatus ? fillResultCopy(fillStatus) : null;
+  const showFill =
+    fillStatus &&
+    (fillStatus.reason === "ready" || fillStatus.reason === "running");
 
   return (
     <Stack
@@ -67,10 +100,26 @@ export function WeeklyPortfolioBanner({ summary }: WeeklyPortfolioBannerProps) {
           Vagas <strong>{summary.slotsRemaining}</strong>
         </Text>
       </HStack>
+      {showFill ? (
+        <FillWalletButton
+          disabled={fillStatus.reason !== "ready"}
+          running={fillStatus.reason === "running"}
+        />
+      ) : null}
+      {fillStatus?.reason === "running" ? (
+        <Text fontSize="sm" color="fg.muted" role="status">
+          Sua carteira já está sendo completada.
+        </Text>
+      ) : null}
+      {resultCopy && fillStatus?.reason !== "running" ? (
+        <Text fontSize="sm" color="fg.muted" role="status">
+          {resultCopy}
+        </Text>
+      ) : null}
       <Text fontSize="xs" color="fg.muted">
         Tratado = WhatsApp ou e-mail com resultado registrado após a atribuição.
-        Completar com Places entra na Fase 3. Nesta fase, somente ADMIN atribui
-        leads à carteira.
+        Completar carteira atribui somente HIGH elegíveis retornados por esta
+        execução, até a meta.
       </Text>
     </Stack>
   );

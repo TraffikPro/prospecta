@@ -5,6 +5,7 @@ import {
   acquisitionJobCallbackSchema,
   acquisitionRequestSchema,
   normalizeAcquisitionFingerprint,
+  walletFillBatchSize,
 } from "./acquisition.schema";
 
 describe("acquisition.schema", () => {
@@ -68,5 +69,26 @@ describe("acquisition.schema", () => {
     });
     assert.equal(parsed.status, "SUCCEEDED");
     assert.equal(parsed.createdHigh, 11);
+  });
+
+  it("parses callback leadIds for wallet fill", () => {
+    const parsed = acquisitionJobCallbackSchema.parse({
+      status: "SUCCEEDED",
+      requestedById: "user_1",
+      leadIds: ["lead_a", "lead_b"],
+      createdLeadIds: ["lead_a"],
+      existingLeadIds: ["lead_b"],
+    });
+    assert.deepEqual(parsed.leadIds, ["lead_a", "lead_b"]);
+    assert.equal(parsed.requestedById, "user_1");
+  });
+});
+
+describe("walletFillBatchSize", () => {
+  it("oversamples remaining slots within min/max", () => {
+    assert.equal(walletFillBatchSize(0), 0);
+    assert.equal(walletFillBatchSize(1), 4);
+    assert.equal(walletFillBatchSize(3), 6);
+    assert.equal(walletFillBatchSize(20), 30);
   });
 });

@@ -294,15 +294,116 @@ export async function reassignLeadToOperator(input: {
   expectedActiveAssigneeId?: string | null;
   now?: Date;
 }): Promise<{ assignmentId: string; idempotent: boolean }> {
+  return assignLeadToOperatorInternal({
+    ...input,
+    mode: "admin",
+  });
+}
+
+/**
+ * F3 wallet fill: assign a returned lead to the requesting operator.
+ * Never steals another operator's ACTIVE. Source is always NEW_ACQUISITION.
+ */
+export async function assignLeadFromWalletFill(input: {
+  actorId: string;
+  leadId: string;
+  now?: Date;
+}): Promise<{ assignmentId: string; idempotent: boolean }> {
+  return assignLeadToOperatorInternal({
+    actorId: input.actorId,
+    leadId: input.leadId,
+    assigneeId: input.actorId,
+    mode: "wallet-fill",
+    now: input.now,
+  });
+}
+
+/**
+ * Assigns returned internal lead IDs to the job requester, re-checking remaining
+ * before each assignment. Skips ineligible IDs. Does not fail the job on skips.
+ */
+export async function assignWalletFillLeads(input: {
+  requestedById: string;
+  leadIds: string[];
+  requestedSlots: number;
+}): Promise<{ assignedCount: number; remainingSlots: number }> {
+  const uniqueIds = [...new Set(input.leadIds.filter((id) => id.trim()))];
+  let assignedCount = 0;
+
+  for (const leadId of uniqueIds) {
+    const summary = await getPortfolioSummaryForUser(input.requestedById);
+    if (!summary.quotaConfigured || summary.slotsRemaining <= 0) {
+      break;
+    }
+    if (assignedCount >= input.requestedSlots) {
+      break;
+    }
+    try {
+      const result = await assignLeadFromWalletFill({
+        actorId: input.requestedById,
+        leadId,
+      });
+      if (!result.idempotent) {
+        assignedCount += 1;
+      }
+    } catch (error) {
+      if (error instanceof PortfolioError) {
+        continue;
+      }
+      throw error;
+    }
+  }
+
+  const after = await getPortfolioSummaryForUser(input.requestedById);
+  return {
+    assignedCount,
+    remainingSlots: after.slotsRemaining,
+  };
+}
+
+async function assignLeadToOperatorInternal(input: {
+  actorId: string;
+  leadId: string;
+  assigneeId: string;
+  expectedActiveAssigneeId?: string | null;
+  now?: Date;
+  mode: "admin" | "wallet-fill";
+}): Promise<{ assignmentId: string; idempotent: boolean }> {
   const now = input.now ?? new Date();
 
   return prisma.$transaction(async (tx) => {
     const actor = await tx.user.findUnique({
       where: { id: input.actorId },
-      select: { id: true, role: true, isActive: true },
+      select: {
+        id: true,
+        role: true,
+        isActive: true,
+        canRunAcquisition: true,
+      },
     });
-    if (!actor?.isActive || actor.role !== "ADMIN") {
-      throw new PortfolioError("Apenas administradores podem reatribuir leads.");
+    if (!actor?.isActive) {
+      throw new PortfolioError("Operador inválido ou inativo.");
+    }
+    if (input.mode === "admin") {
+      if (actor.role !== "ADMIN") {
+        throw new PortfolioError(
+          "Apenas administradores podem reatribuir leads.",
+        );
+      }
+    } else {
+      if (actor.id !== input.assigneeId) {
+        throw new PortfolioError(
+          "Só é possível completar a carteira do próprio operador.",
+        );
+      }
+      if (actor.role === "MEMBER" && !actor.canRunAcquisition) {
+        throw new PortfolioError(
+          "Operador MEMBER precisa estar autorizado para aquisição/carteira.",
+        );
+      }
+      if (actor.role !== "ADMIN" && actor.role !== "MEMBER") {
+        throw new PortfolioError("Operador sem permissão para completar carteira.");
+      }
     }
 
     // Lock order: Lead → User(assignee) to avoid deadlocks and serialize
@@ -387,6 +488,11 @@ export async function reassignLeadToOperator(input: {
     }
 
     if (active && active.assigneeId !== assignee.id) {
+      if (input.mode === "wallet-fill") {
+        throw new PortfolioError(
+          "Este lead já possui atribuição ativa.",
+        );
+      }
       const expected = input.expectedActiveAssigneeId ?? null;
       if (expected !== active.assigneeId) {
         throw new PortfolioError(
@@ -416,6 +522,15 @@ export async function reassignLeadToOperator(input: {
       data: { ownerId: assignee.id },
     });
 
+    const assignmentSource: LeadAssignmentSource =
+      input.mode === "wallet-fill"
+        ? "NEW_ACQUISITION"
+        : assignments.some(
+              (row) => row.releaseReason === RELEASE_REASON_RECYCLED,
+            )
+          ? "RECYCLED"
+          : "MANUAL_ADMIN";
+
     let created: { id: string };
     try {
       created = await tx.leadAssignment.create({
@@ -425,13 +540,7 @@ export async function reassignLeadToOperator(input: {
           assignedById: actor.id,
           portfolioId: portfolio.id,
           weekStartAt: portfolio.weekStartAt,
-          source: (
-            assignments.some(
-              (row) => row.releaseReason === RELEASE_REASON_RECYCLED,
-            )
-              ? "RECYCLED"
-              : "MANUAL_ADMIN"
-          ) satisfies LeadAssignmentSource,
+          source: assignmentSource,
           status: "ACTIVE",
           dueAt: portfolio.weekEndAt,
           previousAssigneeId:
@@ -450,7 +559,8 @@ export async function reassignLeadToOperator(input: {
 
     await tx.adminAuditEvent.create({
       data: {
-        action: "lead.reassign",
+        action:
+          input.mode === "wallet-fill" ? "lead.fill_assign" : "lead.reassign",
         actorId: actor.id,
         targetUserId: assignee.id,
         detail: {
@@ -458,6 +568,7 @@ export async function reassignLeadToOperator(input: {
           previousAssigneeId,
           assignmentId: created.id,
           assignedById: actor.id,
+          source: assignmentSource,
         },
       },
     });

@@ -12,8 +12,8 @@
 ```text
 NAV              DONE
 WEEKLY F1        DONE / production
-F2               BUILD agora
-F3               PLANNED / BUILD depois
+F2               DONE
+F3               BUILD agora
 F4               PLANNED / BUILD depois
 Dashboard/KPIs   PLANNED depois do motor
 Badges           PLANNED depois do dashboard
@@ -77,7 +77,7 @@ Sem schema/migration nova. Sem `GET /api/dashboard`. Contrato de `PortfolioSumma
 
 ## Fora desta PR
 
-- Completar carteira / runner / `AcquisitionJob.requestedBy` (F3)
+- Completar carteira / runner / IDs no callback → [product-decision-weekly-portfolio-fill-f3.md](product-decision-weekly-portfolio-fill-f3.md) (**BUILD agora**)
 - Cron de fechamento (F4)
 - Dashboard, KPIs, badges
 - Lazy enrollment / `ENROLL_OWNED`

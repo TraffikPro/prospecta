@@ -33,6 +33,8 @@ export async function createAcquisitionJobRecord(data: {
   fingerprint: string;
   requestedById: string;
   timeoutAt: Date;
+  purpose?: "FREE_PULL" | "WALLET_FILL";
+  requestedSlots?: number | null;
 }): Promise<AcquisitionJob> {
   return prisma.acquisitionJob.create({
     data: {
@@ -44,6 +46,8 @@ export async function createAcquisitionJobRecord(data: {
       requestedById: data.requestedById,
       timeoutAt: data.timeoutAt,
       status: "QUEUED",
+      purpose: data.purpose ?? "FREE_PULL",
+      requestedSlots: data.requestedSlots ?? null,
     },
   });
 }
@@ -61,6 +65,8 @@ export async function createAcquisitionJobAtomic(data: {
   fingerprint: string;
   requestedById: string;
   timeoutAt: Date;
+  purpose?: "FREE_PULL" | "WALLET_FILL";
+  requestedSlots?: number | null;
 }): Promise<
   | { kind: "created"; job: AcquisitionJob }
   | { kind: "conflict"; existing: AcquisitionJob }
@@ -80,6 +86,31 @@ export async function createAcquisitionJobAtomic(data: {
     }
     throw error;
   }
+}
+
+export async function findActiveWalletFillJob(
+  requestedById: string,
+): Promise<AcquisitionJob | null> {
+  return prisma.acquisitionJob.findFirst({
+    where: {
+      requestedById,
+      purpose: "WALLET_FILL",
+      status: { in: ["QUEUED", "RUNNING"] },
+    },
+    orderBy: { requestedAt: "desc" },
+  });
+}
+
+export async function findLatestWalletFillJob(
+  requestedById: string,
+): Promise<AcquisitionJob | null> {
+  return prisma.acquisitionJob.findFirst({
+    where: {
+      requestedById,
+      purpose: "WALLET_FILL",
+    },
+    orderBy: { requestedAt: "desc" },
+  });
 }
 
 export async function findAcquisitionJobById(
@@ -110,6 +141,8 @@ export async function updateAcquisitionJobStatus(
     createdHigh?: number | null;
     existingCount?: number | null;
     failedCount?: number | null;
+    assignedCount?: number | null;
+    requestedSlots?: number | null;
     errorMessage?: string | null;
   },
 ): Promise<AcquisitionJob> {
