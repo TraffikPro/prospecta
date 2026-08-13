@@ -10,8 +10,8 @@ import {
 
 import { Box, Stack } from "@chakra-ui/react";
 
-/** Offset below sticky AppShell header (logo + desktop nav) — ~5.5rem. */
-const STICKY_TOP_PX = 88;
+/** Offset below viewport top — desktop shell is a sidebar, no sticky header. */
+const STICKY_TOP_PX = 24;
 /** Matches desktop rail stack gap token `1` (0.25rem). */
 const GAP_PX = 4;
 

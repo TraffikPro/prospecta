@@ -9,4 +9,5 @@ export {
   type PasswordInputProps,
 } from "./password-input";
 export { Provider } from "./provider";
+export { Tooltip, type TooltipProps } from "./tooltip";
 export { notifyError, notifySuccess, toaster, Toaster } from "./toaster";

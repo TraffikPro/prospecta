@@ -94,11 +94,11 @@ test.describe("breadcrumb navigation v1", () => {
     await expect(page).toHaveURL(/\/app\/leads$/);
   });
 
-  test("ADMIN Mais → Usuários breadcrumb", async ({ page }) => {
+  test("ADMIN Mais → Equipe breadcrumb", async ({ page }) => {
     await login(page, adminEmail, adminPassword);
     await page.goto("/admin/users");
     await expect(page.getByTestId("breadcrumb-link")).toHaveText("Mais");
-    await expect(page.getByTestId("breadcrumb-current")).toHaveText("Usuários");
+    await expect(page.getByTestId("breadcrumb-current")).toHaveText("Equipe");
     await page.getByTestId("breadcrumb-link").click();
     await expect(page).toHaveURL(/\/app\/more/);
   });

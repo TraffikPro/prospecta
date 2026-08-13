@@ -88,7 +88,7 @@ test.describe("mobile experience v1", () => {
     await expect(page).toHaveURL(/\/app\/more/);
     await expect(page.getByRole("heading", { name: "Mais" })).toBeVisible();
     await expect(
-      page.getByRole("link", { name: /Usuários \(ADMIN\)/i }),
+      page.getByRole("link", { name: /Equipe/i }),
     ).toHaveCount(0);
 
     const response = await page.goto("/admin/users");
