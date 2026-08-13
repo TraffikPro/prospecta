@@ -1,14 +1,23 @@
 "use client";
 
+import { useActionState } from "react";
+
 import type { UserRole } from "@prisma/client";
 import {
   Avatar,
   Card,
   Heading,
+  HStack,
   SimpleGrid,
   Stack,
   Text,
 } from "@chakra-ui/react";
+
+import { Button } from "@/components/ui/button";
+import {
+  setAcquisitionPermissionAction,
+  type SetAcquisitionPermissionState,
+} from "@/server/actions/user-permissions";
 
 import { RoleBadge } from "./role-badge";
 import { StatusBadge } from "./status-badge";
@@ -19,11 +28,61 @@ export type AdminUserCard = {
   email: string;
   role: UserRole;
   isActive: boolean;
+  canRunAcquisition: boolean;
 };
 
 type UsersTableProps = {
   users: AdminUserCard[];
 };
+
+const initialState: SetAcquisitionPermissionState = {};
+
+function AcquisitionPermissionControls({ user }: { user: AdminUserCard }) {
+  const [state, formAction, pending] = useActionState(
+    setAcquisitionPermissionAction,
+    initialState,
+  );
+
+  if (user.role === "ADMIN") {
+    return (
+      <Text fontSize="xs" color="fg.muted">
+        Aquisição: incluída no papel Admin
+      </Text>
+    );
+  }
+
+  return (
+    <Stack gap="1">
+      <HStack gap="2" flexWrap="wrap" align="center">
+        <Text fontSize="xs" color="fg.muted">
+          Aquisição: {user.canRunAcquisition ? "autorizado" : "bloqueado"}
+        </Text>
+        <form action={formAction}>
+          <input type="hidden" name="userId" value={user.id} />
+          <input
+            type="hidden"
+            name="canRunAcquisition"
+            value={user.canRunAcquisition ? "false" : "true"}
+          />
+          <Button
+            type="submit"
+            size="xs"
+            variant="outline"
+            loading={pending}
+            disabled={pending}
+          >
+            {user.canRunAcquisition ? "Revogar" : "Autorizar"}
+          </Button>
+        </form>
+      </HStack>
+      {state.error ? (
+        <Text fontSize="xs" color="fg.error" role="alert">
+          {state.error}
+        </Text>
+      ) : null}
+    </Stack>
+  );
+}
 
 export function UsersTable({ users }: UsersTableProps) {
   if (users.length === 0) {
@@ -54,6 +113,7 @@ export function UsersTable({ users }: UsersTableProps) {
                   <RoleBadge role={user.role} />
                   <StatusBadge isActive={user.isActive} />
                 </Stack>
+                <AcquisitionPermissionControls user={user} />
               </Stack>
             </Stack>
           </Card.Body>

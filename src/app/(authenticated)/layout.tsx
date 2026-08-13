@@ -31,7 +31,11 @@ export default async function AuthenticatedLayout({
   }
 
   return (
-    <AppShell userName={user.name} userRole={user.role}>
+    <AppShell
+      userName={user.name}
+      userRole={user.role}
+      canRunAcquisition={user.canRunAcquisition}
+    >
       {children}
     </AppShell>
   );

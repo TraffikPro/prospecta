@@ -29,3 +29,20 @@ export function requireAnyRole(
   }
   return authenticated;
 }
+
+/** ADMIN always; MEMBER only with explicit canRunAcquisition. */
+export function canRunAcquisition(user: SessionUser | null): boolean {
+  if (!user) return false;
+  if (user.role === "ADMIN") return true;
+  return user.role === "MEMBER" && user.canRunAcquisition === true;
+}
+
+export function requireCanRunAcquisition(
+  user: SessionUser | null,
+): SessionUser {
+  const authenticated = requireAuth(user);
+  if (!canRunAcquisition(authenticated)) {
+    throw new AuthorizationError();
+  }
+  return authenticated;
+}

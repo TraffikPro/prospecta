@@ -8,7 +8,7 @@ import { ContextualNav } from "@/components/navigation";
 import { roleLabels } from "@/features/admin/role.labels";
 import { LogoutButton } from "@/features/auth/logout-button";
 import { AuthenticationError } from "@/server/auth/errors";
-import { requireAnyRole } from "@/server/auth/guards";
+import { canRunAcquisition, requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
 
 export default async function MorePage() {
@@ -23,6 +23,8 @@ export default async function MorePage() {
   }
 
   const user = sessionUser!;
+  const showAcquisition = canRunAcquisition(user);
+  const showUsersAdmin = user.role === "ADMIN";
 
   return (
     <PageFrame width="list" gap="6">
@@ -60,27 +62,29 @@ export default async function MorePage() {
         >
           <Link href="/app">Início</Link>
         </ChakraLink>
-        {user.role === "ADMIN" ? (
-          <>
-            <ChakraLink
-              asChild
-              textDecoration="underline"
-              minH="touch"
-              display="flex"
-              alignItems="center"
-            >
-              <Link href="/admin/acquisition">Aquisição</Link>
-            </ChakraLink>
-            <ChakraLink
-              asChild
-              textDecoration="underline"
-              minH="touch"
-              display="flex"
-              alignItems="center"
-            >
-              <Link href="/admin/users">Usuários</Link>
-            </ChakraLink>
-          </>
+        {showAcquisition ? (
+          <ChakraLink
+            asChild
+            textDecoration="underline"
+            minH="touch"
+            display="flex"
+            alignItems="center"
+            data-testid="more-nav-acquisition"
+          >
+            <Link href="/admin/acquisition">Aquisição</Link>
+          </ChakraLink>
+        ) : null}
+        {showUsersAdmin ? (
+          <ChakraLink
+            asChild
+            textDecoration="underline"
+            minH="touch"
+            display="flex"
+            alignItems="center"
+            data-testid="more-nav-admin-users"
+          >
+            <Link href="/admin/users">Usuários</Link>
+          </ChakraLink>
         ) : null}
       </Stack>
 

@@ -8,15 +8,15 @@ import { ContextualNav } from "@/components/navigation";
 import { AcquisitionJobsTable } from "@/features/acquisition/components/acquisition-jobs-table";
 import { AcquisitionRequestForm } from "@/features/acquisition/components/acquisition-request-form";
 import { AuthenticationError, AuthorizationError } from "@/server/auth/errors";
-import { requireRole } from "@/server/auth/guards";
+import { requireCanRunAcquisition } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
-import { listAcquisitionJobsForAdmin } from "@/server/services/acquisition-job.service";
+import { listAcquisitionJobsForOperator } from "@/server/services/acquisition-job.service";
 
 export default async function AdminAcquisitionPage() {
   const sessionUser = await getSessionUser();
 
   try {
-    requireRole(sessionUser, "ADMIN");
+    requireCanRunAcquisition(sessionUser);
   } catch (error) {
     if (error instanceof AuthenticationError) {
       redirect("/login");
@@ -27,7 +27,7 @@ export default async function AdminAcquisitionPage() {
     throw error;
   }
 
-  const jobs = await listAcquisitionJobsForAdmin();
+  const jobs = await listAcquisitionJobsForOperator();
 
   return (
     <PageFrame width="list" gap="8">
@@ -39,7 +39,7 @@ export default async function AdminAcquisitionPage() {
       />
       <PageHeading
         title="Aquisição"
-        meta="Solicitar pull Places via runner externo (ADMIN)."
+        meta="Solicitar pull Places via runner externo."
       />
 
       <Stack gap="4">
