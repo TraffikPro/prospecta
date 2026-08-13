@@ -39,7 +39,8 @@ import {
   listLeadsWithIntelligence,
   type LeadWithOwner,
 } from "@/server/repositories/lead.repository";
-import type { SessionUser } from "@/server/auth/types";
+import { assertCanAccessLead } from "@/server/auth/lead-access";
+import type { SessionUser, UserRole } from "@/server/auth/types";
 
 function memberScopeOwnerId(user: SessionUser): string | undefined {
   return user.role === "MEMBER" ? user.id : undefined;
@@ -176,6 +177,7 @@ export async function getLeadsGroupedByStage(
 export type MoveLeadStageCommand = {
   leadId: string;
   actorId: string;
+  actorRole: UserRole;
   stage: string;
   lostReason?: string;
 };
@@ -204,7 +206,7 @@ export async function moveLeadStage(
 
   const actor = await prisma.user.findFirst({
     where: { id: input.actorId, isActive: true },
-    select: { id: true },
+    select: { id: true, role: true },
   });
   if (!actor) {
     throw new LeadValidationError("Usuário inválido ou inativo");
@@ -213,11 +215,16 @@ export async function moveLeadStage(
   return prisma.$transaction(async (tx) => {
     const lead = await tx.lead.findUnique({
       where: { id: parsed.data.leadId },
-      select: { id: true, stage: true },
+      select: { id: true, stage: true, ownerId: true },
     });
     if (!lead) {
       throw new LeadValidationError("Lead não encontrado");
     }
+
+    assertCanAccessLead(lead, {
+      id: actor.id,
+      role: input.actorRole,
+    });
 
     if (lead.stage === parsed.data.stage) {
       throw new LeadValidationError("O lead já está neste stage");

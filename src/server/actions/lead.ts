@@ -6,7 +6,7 @@ import {
   LeadDuplicateError,
   LeadValidationError,
 } from "@/features/leads/lead.errors";
-import { AuthenticationError } from "@/server/auth/errors";
+import { AuthenticationError, AuthorizationError } from "@/server/auth/errors";
 import { loginPath } from "@/server/auth/login-redirect";
 import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
@@ -76,6 +76,7 @@ export async function createLeadAction(
 
 export type MoveLeadStageState = {
   error?: string;
+  code?: "FORBIDDEN" | "VALIDATION";
   ok?: boolean;
 };
 
@@ -101,12 +102,16 @@ export async function moveLeadStageAction(
     await moveLeadStage({
       leadId,
       actorId: user.id,
+      actorRole: user.role,
       stage: formString(formData, "stage"),
       lostReason: formString(formData, "lostReason") || undefined,
     });
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      return { error: "Acesso negado", code: "FORBIDDEN" };
+    }
     if (error instanceof LeadValidationError) {
-      return { error: error.message };
+      return { error: error.message, code: "VALIDATION" };
     }
     throw error;
   }

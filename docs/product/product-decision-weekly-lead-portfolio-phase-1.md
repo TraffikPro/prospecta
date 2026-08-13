@@ -18,7 +18,8 @@ Se cada operador tiver meta semanal de HIGH atribuídos, ownership histórico e 
 5. `ADMIN` define meta; reatribui lead; pull livre Places só `ADMIN`
 6. Operador autorizado (`canRunAcquisition` ou `ADMIN`) vê resumo da carteira na Minha fila
 7. `MEMBER` só opera leads sob sua responsabilidade (Inbox/Pipeline filtrados)
-8. Enrollment lazy: HIGH já sob ownership entram na carteira da semana até a meta (sem runner)
+8. Atribuição **manual** pelo `ADMIN` apenas (reatribuir / atribuir à carteira). Abrir Minha fila é somente leitura — não cria `LeadAssignment` nem carteira.
+9. Sem `OperatorWeeklyQuota`: estado “Meta semanal ainda não configurada”; sem carteira implícita; sem vagas; sem meta default.
 
 ## Fora (Fases 2–4)
 

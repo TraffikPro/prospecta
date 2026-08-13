@@ -11,6 +11,30 @@ export function WeeklyPortfolioBanner({ summary }: WeeklyPortfolioBannerProps) {
     return null;
   }
 
+  if (!summary.quotaConfigured) {
+    return (
+      <Stack
+        gap="2"
+        borderWidth="1px"
+        borderColor="border"
+        borderRadius="card"
+        bg="bg"
+        p="4"
+        data-testid="weekly-portfolio-banner"
+        data-quota="missing"
+      >
+        <Text fontWeight="semibold">Carteira semanal</Text>
+        <Text fontSize="sm" color="fg.muted">
+          {summary.weekLabel} · prazo domingo 23:59 (São Paulo)
+        </Text>
+        <Text fontSize="sm">
+          Meta semanal ainda não configurada. Peça a um administrador para
+          definir sua meta em Usuários antes de receber leads na carteira.
+        </Text>
+      </Stack>
+    );
+  }
+
   return (
     <Stack
       gap="2"
@@ -20,6 +44,7 @@ export function WeeklyPortfolioBanner({ summary }: WeeklyPortfolioBannerProps) {
       bg="bg"
       p="4"
       data-testid="weekly-portfolio-banner"
+      data-quota="configured"
     >
       <Text fontWeight="semibold">Carteira semanal</Text>
       <Text fontSize="sm" color="fg.muted">
@@ -44,7 +69,8 @@ export function WeeklyPortfolioBanner({ summary }: WeeklyPortfolioBannerProps) {
       </HStack>
       <Text fontSize="xs" color="fg.muted">
         Tratado = WhatsApp ou e-mail com resultado registrado após a atribuição.
-        Completar com Places entra na Fase 3.
+        Completar com Places entra na Fase 3. Nesta fase, somente ADMIN atribui
+        leads à carteira.
       </Text>
     </Stack>
   );

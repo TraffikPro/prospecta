@@ -12,7 +12,7 @@ import { AuthenticationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
 import { getMyQueueForOwner } from "@/server/services/lead.service";
-import { enrollOwnedHighLeadsIntoPortfolio } from "@/server/services/portfolio.service";
+import { getPortfolioSummaryForUser } from "@/server/services/portfolio.service";
 
 type MyLeadsPageProps = {
   searchParams: Promise<{
@@ -34,9 +34,7 @@ export default async function MyLeadsPage({ searchParams }: MyLeadsPageProps) {
   const user = sessionUser!;
   const params = await searchParams;
   const filter = parseMyQueueFilter(params.filter);
-  const { summary: portfolio } = await enrollOwnedHighLeadsIntoPortfolio({
-    userId: user.id,
-  });
+  const portfolio = await getPortfolioSummaryForUser(user.id);
   const view = await getMyQueueForOwner(user.id, filter);
 
   return (

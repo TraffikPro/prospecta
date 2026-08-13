@@ -17,6 +17,7 @@ export function isValidTreatmentActivity(input: {
   return input.activityCreatedAt.getTime() >= input.assignedAt.getTime();
 }
 
-export const DEFAULT_WEEKLY_TARGET = 10;
+/** Suggested value for ADMIN form when no quota exists yet — not an implicit meta. */
+export const SUGGESTED_WEEKLY_TARGET = 10;
 export const MAX_WEEKLY_TARGET = 50;
 export const MIN_WEEKLY_TARGET = 1;

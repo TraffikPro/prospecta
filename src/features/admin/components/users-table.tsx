@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 
 import { Button } from "@/components/ui/button";
-import { DEFAULT_WEEKLY_TARGET } from "@/features/portfolio/portfolio.rules";
+import { SUGGESTED_WEEKLY_TARGET } from "@/features/portfolio/portfolio.rules";
 import {
   setWeeklyQuotaAction,
   type PortfolioActionState,
@@ -96,13 +96,14 @@ function WeeklyQuotaControls({ user }: { user: AdminUserCard }) {
     setWeeklyQuotaAction,
     quotaInitial,
   );
-  const current = user.weeklyTarget ?? DEFAULT_WEEKLY_TARGET;
+  const formDefault = user.weeklyTarget ?? SUGGESTED_WEEKLY_TARGET;
 
   return (
     <form action={formAction}>
       <Stack gap="1">
         <Text fontSize="xs" color="fg.muted">
           Meta semanal (HIGH)
+          {user.weeklyTarget == null ? " — ainda não configurada" : ""}
         </Text>
         <HStack gap="2" flexWrap="wrap" align="center">
           <input type="hidden" name="userId" value={user.id} />
@@ -111,7 +112,7 @@ function WeeklyQuotaControls({ user }: { user: AdminUserCard }) {
             name="weeklyTarget"
             min={1}
             max={50}
-            defaultValue={current}
+            defaultValue={formDefault}
             disabled={pending}
             style={{ minHeight: 36, width: 72, padding: "0.25rem 0.5rem" }}
             aria-label={`Meta semanal de ${user.name}`}

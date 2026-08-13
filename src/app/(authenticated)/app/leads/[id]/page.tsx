@@ -74,7 +74,10 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
     query.filter,
   );
 
-  const activities = await getActivitiesForLead(lead.id);
+  const activities = await getActivitiesForLead(lead.id, {
+    id: sessionUser!.id,
+    role: sessionUser!.role,
+  });
   const intelligence = parseLeadIntelligence(lead.intelligence);
   const displayNotes = sanitizeLeadNotes(lead.notes, {
     signals: intelligence?.signals,

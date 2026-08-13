@@ -2,15 +2,15 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
-  DEFAULT_WEEKLY_TARGET,
   MAX_WEEKLY_TARGET,
   MIN_WEEKLY_TARGET,
+  SUGGESTED_WEEKLY_TARGET,
   isValidTreatmentActivity,
 } from "./portfolio.rules";
 
 describe("weekly target constants", () => {
-  it("exposes DEFAULT / MIN / MAX", () => {
-    assert.equal(DEFAULT_WEEKLY_TARGET, 10);
+  it("exposes SUGGESTED / MIN / MAX (suggested is form-only, not implicit meta)", () => {
+    assert.equal(SUGGESTED_WEEKLY_TARGET, 10);
     assert.equal(MIN_WEEKLY_TARGET, 1);
     assert.equal(MAX_WEEKLY_TARGET, 50);
   });

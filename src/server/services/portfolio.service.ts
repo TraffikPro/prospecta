@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import {
-  DEFAULT_WEEKLY_TARGET,
   MAX_WEEKLY_TARGET,
   MIN_WEEKLY_TARGET,
   isValidTreatmentActivity,
@@ -24,6 +23,8 @@ export type PortfolioSummary = {
   weekLabel: string;
   weekStartAt: Date;
   weekEndAt: Date;
+  /** False when OperatorWeeklyQuota is missing — no portfolio / no slots. */
+  quotaConfigured: boolean;
   target: number;
   assigned: number;
   treated: number;
@@ -38,12 +39,21 @@ function isHighIntelligence(intelligence: unknown): boolean {
   return resolveQualification(parsed) === "HIGH";
 }
 
-export async function getWeeklyTargetForUser(userId: string): Promise<number> {
+function isUniqueViolation(error: unknown): boolean {
+  return (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === "P2002"
+  );
+}
+
+export async function getConfiguredWeeklyTarget(
+  userId: string,
+): Promise<number | null> {
   const row = await prisma.operatorWeeklyQuota.findUnique({
     where: { userId },
     select: { weeklyTarget: true },
   });
-  return row?.weeklyTarget ?? DEFAULT_WEEKLY_TARGET;
+  return row?.weeklyTarget ?? null;
 }
 
 export async function setOperatorWeeklyQuota(input: {
@@ -110,33 +120,57 @@ export async function setOperatorWeeklyQuota(input: {
   });
 }
 
+/**
+ * Requires OperatorWeeklyQuota. Serializes on User row so concurrent
+ * get-or-create of the same WeeklyPortfolio is idempotent without catching
+ * SQL errors inside an aborted PostgreSQL transaction.
+ */
 async function getOrCreatePortfolio(
   tx: Prisma.TransactionClient,
   userId: string,
   now = new Date(),
 ) {
+  await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${userId} FOR UPDATE`;
+
   const week = getOperationalWeek(now);
-  const target = await tx.operatorWeeklyQuota.findUnique({
+  const quota = await tx.operatorWeeklyQuota.findUnique({
     where: { userId },
     select: { weeklyTarget: true },
   });
-  const targetSnapshot = target?.weeklyTarget ?? DEFAULT_WEEKLY_TARGET;
+  if (!quota) {
+    throw new PortfolioError("Meta semanal ainda não configurada.");
+  }
 
   const existing = await tx.weeklyPortfolio.findUnique({
     where: {
       userId_weekStartAt: { userId, weekStartAt: week.weekStartAt },
     },
   });
-  if (existing) return existing;
+  if (existing) {
+    await tx.$queryRaw`SELECT id FROM "WeeklyPortfolio" WHERE id = ${existing.id} FOR UPDATE`;
+    return existing;
+  }
 
-  return tx.weeklyPortfolio.create({
-    data: {
-      userId,
-      weekStartAt: week.weekStartAt,
-      weekEndAt: week.weekEndAt,
-      targetSnapshot,
-    },
-  });
+  try {
+    return await tx.weeklyPortfolio.create({
+      data: {
+        userId,
+        weekStartAt: week.weekStartAt,
+        weekEndAt: week.weekEndAt,
+        targetSnapshot: quota.weeklyTarget,
+      },
+    });
+  } catch (error) {
+    // Only expected race: unique (userId, weekStartAt). User row lock should
+    // prevent this; if it still happens, surface clearly (do not continue on
+    // an aborted transaction).
+    if (isUniqueViolation(error)) {
+      throw new PortfolioError(
+        "Conflito ao criar a carteira semanal. Tente novamente.",
+      );
+    }
+    throw error;
+  }
 }
 
 export async function countAssignedTowardQuota(
@@ -149,80 +183,6 @@ export async function countAssignedTowardQuota(
       status: { in: ["ACTIVE", "TREATED"] },
     },
   });
-}
-
-export async function enrollOwnedHighLeadsIntoPortfolio(input: {
-  userId: string;
-  now?: Date;
-}): Promise<{ enrolled: number; summary: PortfolioSummary }> {
-  const now = input.now ?? new Date();
-  let enrolled = 0;
-
-  await prisma.$transaction(async (tx) => {
-    const user = await tx.user.findUnique({
-      where: { id: input.userId },
-      select: {
-        id: true,
-        role: true,
-        isActive: true,
-        canRunAcquisition: true,
-      },
-    });
-    if (!user?.isActive) {
-      return;
-    }
-    const eligible =
-      user.role === "ADMIN" ||
-      (user.role === "MEMBER" && user.canRunAcquisition);
-    if (!eligible) {
-      return;
-    }
-
-    const portfolio = await getOrCreatePortfolio(tx, user.id, now);
-    const assigned = await countAssignedTowardQuota(tx, portfolio.id);
-    let slots = portfolio.targetSnapshot - assigned;
-    if (slots <= 0) return;
-
-    const owned = await tx.lead.findMany({
-      where: {
-        ownerId: user.id,
-        stage: { notIn: ["WON", "LOST"] },
-        NOT: { intelligence: { equals: Prisma.DbNull } },
-        assignments: { none: { status: "ACTIVE" } },
-      },
-      select: { id: true, intelligence: true },
-      orderBy: { updatedAt: "desc" },
-      take: 100,
-    });
-
-    for (const lead of owned) {
-      if (slots <= 0) break;
-      if (!isHighIntelligence(lead.intelligence)) continue;
-
-      try {
-        await tx.leadAssignment.create({
-          data: {
-            leadId: lead.id,
-            assigneeId: user.id,
-            portfolioId: portfolio.id,
-            weekStartAt: portfolio.weekStartAt,
-            source: "ENROLL_OWNED",
-            status: "ACTIVE",
-            dueAt: portfolio.weekEndAt,
-          },
-        });
-        slots -= 1;
-        enrolled += 1;
-      } catch {
-        // Unique ACTIVE race — skip
-      }
-    }
-  });
-
-  return {
-    enrolled,
-    summary: await getPortfolioSummaryForUser(input.userId, now),
-  };
 }
 
 export async function getPortfolioSummaryForUser(
@@ -245,30 +205,48 @@ export async function getPortfolioSummaryForUser(
   );
 
   const week = getOperationalWeek(now);
+  const quota = await prisma.operatorWeeklyQuota.findUnique({
+    where: { userId },
+    select: { weeklyTarget: true },
+  });
+
+  if (!quota) {
+    return {
+      weekLabel: formatWeekRangePtBr(week),
+      weekStartAt: week.weekStartAt,
+      weekEndAt: week.weekEndAt,
+      quotaConfigured: false,
+      target: 0,
+      assigned: 0,
+      treated: 0,
+      pending: 0,
+      slotsRemaining: 0,
+      eligibleOperator,
+    };
+  }
+
   const portfolio = await prisma.weeklyPortfolio.findUnique({
     where: {
       userId_weekStartAt: { userId, weekStartAt: week.weekStartAt },
     },
   });
 
-  const target =
-    portfolio?.targetSnapshot ?? (await getWeeklyTargetForUser(userId));
-
   if (!portfolio) {
     return {
       weekLabel: formatWeekRangePtBr(week),
       weekStartAt: week.weekStartAt,
       weekEndAt: week.weekEndAt,
-      target,
+      quotaConfigured: true,
+      target: quota.weeklyTarget,
       assigned: 0,
       treated: 0,
       pending: 0,
-      slotsRemaining: target,
+      slotsRemaining: quota.weeklyTarget,
       eligibleOperator,
     };
   }
 
-  const [assignedActiveOrTreated, treated] = await Promise.all([
+  const [assignedActiveOrTreated, treated, pending] = await Promise.all([
     prisma.leadAssignment.count({
       where: {
         portfolioId: portfolio.id,
@@ -278,21 +256,24 @@ export async function getPortfolioSummaryForUser(
     prisma.leadAssignment.count({
       where: { portfolioId: portfolio.id, status: "TREATED" },
     }),
+    prisma.leadAssignment.count({
+      where: { portfolioId: portfolio.id, status: "ACTIVE" },
+    }),
   ]);
-
-  const pending = await prisma.leadAssignment.count({
-    where: { portfolioId: portfolio.id, status: "ACTIVE" },
-  });
 
   return {
     weekLabel: formatWeekRangePtBr(week),
     weekStartAt: portfolio.weekStartAt,
     weekEndAt: portfolio.weekEndAt,
+    quotaConfigured: true,
     target: portfolio.targetSnapshot,
     assigned: assignedActiveOrTreated,
     treated,
     pending,
-    slotsRemaining: Math.max(0, portfolio.targetSnapshot - assignedActiveOrTreated),
+    slotsRemaining: Math.max(
+      0,
+      portfolio.targetSnapshot - assignedActiveOrTreated,
+    ),
     eligibleOperator,
   };
 }
@@ -314,6 +295,15 @@ export async function reassignLeadToOperator(input: {
       throw new PortfolioError("Apenas administradores podem reatribuir leads.");
     }
 
+    // Lock order: Lead → User(assignee) to avoid deadlocks and serialize
+    // same-lead + last-slot races.
+    const lockedLeads = await tx.$queryRaw<Array<{ id: string }>>`
+      SELECT id FROM "Lead" WHERE id = ${input.leadId} FOR UPDATE
+    `;
+    if (lockedLeads.length === 0) {
+      throw new PortfolioError("Lead não encontrado.");
+    }
+
     const assignee = await tx.user.findUnique({
       where: { id: input.assigneeId },
       select: {
@@ -326,14 +316,13 @@ export async function reassignLeadToOperator(input: {
     if (!assignee?.isActive) {
       throw new PortfolioError("Destinatário inválido ou inativo.");
     }
-    if (
-      assignee.role === "MEMBER" &&
-      !assignee.canRunAcquisition
-    ) {
+    if (assignee.role === "MEMBER" && !assignee.canRunAcquisition) {
       throw new PortfolioError(
         "Destinatário MEMBER precisa estar autorizado para aquisição/carteira.",
       );
     }
+
+    await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${assignee.id} FOR UPDATE`;
 
     const lead = await tx.lead.findUnique({
       where: { id: input.leadId },
@@ -374,20 +363,30 @@ export async function reassignLeadToOperator(input: {
       data: { ownerId: assignee.id },
     });
 
-    const created = await tx.leadAssignment.create({
-      data: {
-        leadId: lead.id,
-        assigneeId: assignee.id,
-        portfolioId: portfolio.id,
-        weekStartAt: portfolio.weekStartAt,
-        source: "MANUAL_ADMIN" satisfies LeadAssignmentSource,
-        status: "ACTIVE",
-        dueAt: portfolio.weekEndAt,
-        previousAssigneeId:
-          previousAssigneeId !== assignee.id ? previousAssigneeId : null,
-      },
-      select: { id: true },
-    });
+    let created: { id: string };
+    try {
+      created = await tx.leadAssignment.create({
+        data: {
+          leadId: lead.id,
+          assigneeId: assignee.id,
+          portfolioId: portfolio.id,
+          weekStartAt: portfolio.weekStartAt,
+          source: "MANUAL_ADMIN" satisfies LeadAssignmentSource,
+          status: "ACTIVE",
+          dueAt: portfolio.weekEndAt,
+          previousAssigneeId:
+            previousAssigneeId !== assignee.id ? previousAssigneeId : null,
+        },
+        select: { id: true },
+      });
+    } catch (error) {
+      if (isUniqueViolation(error)) {
+        throw new PortfolioError(
+          "Este lead já possui atribuição ativa. Tente novamente.",
+        );
+      }
+      throw error;
+    }
 
     await tx.adminAuditEvent.create({
       data: {
@@ -419,15 +418,23 @@ export async function listAssignableOperators(): Promise<
   });
 }
 
-export async function markAssignmentTreatedFromActivity(input: {
-  leadId: string;
-  activityId: string;
-  authorId: string;
-  type: string;
-  outcome: string | null | undefined;
-  activityCreatedAt: Date;
-}): Promise<boolean> {
-  const active = await prisma.leadAssignment.findFirst({
+/**
+ * Marks ACTIVE assignment as TREATED inside the caller's transaction.
+ * When the activity is a valid treatment, update must succeed or the whole
+ * transaction should abort (caller throws).
+ */
+export async function markAssignmentTreatedInTx(
+  tx: Prisma.TransactionClient,
+  input: {
+    leadId: string;
+    activityId: string;
+    authorId: string;
+    type: string;
+    outcome: string | null | undefined;
+    activityCreatedAt: Date;
+  },
+): Promise<boolean> {
+  const active = await tx.leadAssignment.findFirst({
     where: { leadId: input.leadId, status: "ACTIVE" },
   });
   if (!active) return false;
@@ -445,13 +452,20 @@ export async function markAssignmentTreatedFromActivity(input: {
     return false;
   }
 
-  await prisma.leadAssignment.update({
-    where: { id: active.id },
+  const updated = await tx.leadAssignment.updateMany({
+    where: { id: active.id, status: "ACTIVE" },
     data: {
       status: "TREATED",
       treatedAt: input.activityCreatedAt,
       treatedActivityId: input.activityId,
     },
   });
+
+  if (updated.count !== 1) {
+    throw new PortfolioError(
+      "Não foi possível marcar o tratamento na carteira.",
+    );
+  }
+
   return true;
 }
