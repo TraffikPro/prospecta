@@ -9,3 +9,10 @@ export {
 export type { BreadcrumbItemModel, LeadNavOrigin } from "./breadcrumb.types";
 export { ContextualNav } from "./contextual-nav";
 export { MobileContextBack } from "./mobile-context-back";
+export {
+  morePageSections,
+  profileRoleLabel,
+  visibleNavGroups,
+  visibleNavItems,
+} from "./nav-config";
+export type { AppNavItem, NavAccess, NavGroup } from "./nav-config";
