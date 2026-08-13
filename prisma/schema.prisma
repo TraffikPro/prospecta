@@ -56,6 +56,12 @@ enum AcquisitionJobStatus {
   FAILED
 }
 
+/// FREE_PULL = ADMIN Places pull to Inbox. WALLET_FILL = Completar carteira (F3).
+enum AcquisitionJobPurpose {
+  FREE_PULL
+  WALLET_FILL
+}
+
 enum LeadAssignmentSource {
   ENROLL_OWNED
   MANUAL_ADMIN
@@ -253,22 +259,25 @@ model LeadAssignment {
 }
 
 /// Places acquisition via external runner (ADR 0014).
-/// Free Places pull (UI /admin/acquisition) is ADMIN only (weekly portfolio Fase 1).
-/// MEMBER with canRunAcquisition remains portfolio-eligible; adaptive fill is Fase 3.
+/// Free Places pull (UI /admin/acquisition) is ADMIN only.
+/// WALLET_FILL (F3): Completar carteira — requestedBy is the operator whose slots are filled.
 model AcquisitionJob {
-  id              String               @id @default(cuid())
-  status          AcquisitionJobStatus @default(QUEUED)
+  id              String                 @id @default(cuid())
+  status          AcquisitionJobStatus   @default(QUEUED)
+  purpose         AcquisitionJobPurpose  @default(FREE_PULL)
   city            String
   query           String
   limit           Int
   campaign        String
   fingerprint     String
   requestedById   String
-  requestedBy     User                 @relation(fields: [requestedById], references: [id])
-  requestedAt     DateTime             @default(now())
+  requestedBy     User                   @relation(fields: [requestedById], references: [id])
+  requestedAt     DateTime               @default(now())
   startedAt       DateTime?
   finishedAt      DateTime?
   timeoutAt       DateTime
+  requestedSlots  Int?
+  assignedCount   Int?
   foundCount      Int?
   qualifiedCount  Int?
   createdTotal    Int?
@@ -276,13 +285,14 @@ model AcquisitionJob {
   existingCount   Int?
   failedCount     Int?
   errorMessage    String?
-  createdAt       DateTime             @default(now())
-  updatedAt       DateTime             @updatedAt
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
 
   @@index([status])
   @@index([fingerprint, status])
   @@index([requestedAt])
   @@index([requestedById])
+  @@index([requestedById, purpose, status])
   // Partial unique index (QUEUED|RUNNING only) lives in migration SQL —
   // AcquisitionJob_active_fingerprint_key — Prisma schema cannot express WHERE.
 }

@@ -44,8 +44,8 @@ export default async function AdminAcquisitionPage() {
 
       <Stack gap="4">
         <Text fontSize="sm" color="fg.muted">
-          Places API fica no lead-generator. Operadores MEMBER autorizados usam
-          a carteira semanal na Minha fila (completar com Places na Fase 3).
+          Places API fica no lead-generator. Completar carteira (F3) é ação
+          explícita na Minha fila; o pull livre nesta tela permanece ADMIN.
         </Text>
         <AcquisitionRequestForm />
       </Stack>

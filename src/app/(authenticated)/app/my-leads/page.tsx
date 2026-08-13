@@ -13,6 +13,7 @@ import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
 import { getMyQueueForOwner } from "@/server/services/lead.service";
 import { getPortfolioSummaryForUser } from "@/server/services/portfolio.service";
+import { getWalletFillStatus } from "@/server/services/wallet-fill.service";
 
 type MyLeadsPageProps = {
   searchParams: Promise<{
@@ -35,6 +36,7 @@ export default async function MyLeadsPage({ searchParams }: MyLeadsPageProps) {
   const params = await searchParams;
   const filter = parseMyQueueFilter(params.filter);
   const portfolio = await getPortfolioSummaryForUser(user.id);
+  const fillStatus = await getWalletFillStatus(user.id);
   const view = await getMyQueueForOwner(user.id, filter);
 
   return (
@@ -45,7 +47,7 @@ export default async function MyLeadsPage({ searchParams }: MyLeadsPageProps) {
         meta="Abra a fila e ataque o próximo passo — atrasados e follow-ups primeiro."
       />
 
-      <WeeklyPortfolioBanner summary={portfolio} />
+      <WeeklyPortfolioBanner summary={portfolio} fillStatus={fillStatus} />
       <MyQueueSummaryCards summary={view.summary} activeFilter={filter} />
       <MyQueueFilters active={filter} summary={view.summary} />
       <MyQueueList view={view} />

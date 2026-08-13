@@ -65,6 +65,8 @@ export function AcquisitionJobsTable({ jobs }: AcquisitionJobsTableProps) {
                 </Stack>
 
                 <Text fontSize="sm" color="fg.muted">
+                  {job.purpose === "WALLET_FILL" ? "Carteira" : "Pull livre"}
+                  {" · "}
                   Campanha <Text as="span" fontFamily="mono">{job.campaign}</Text>
                   {" · "}
                   limite {job.limit}
@@ -72,6 +74,9 @@ export function AcquisitionJobsTable({ jobs }: AcquisitionJobsTableProps) {
                   {formatWhen(job.requestedAt)}
                   {" · "}
                   {job.requestedBy.name}
+                  {job.purpose === "WALLET_FILL" && job.assignedCount != null
+                    ? ` · atribuídos ${job.assignedCount}`
+                    : ""}
                 </Text>
 
                 {job.status === "SUCCEEDED" || job.status === "RUNNING" ? (

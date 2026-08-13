@@ -31,6 +31,10 @@ export async function GET(request: Request, context: RouteContext) {
     id: job.id,
     status: job.status,
     fingerprint: job.fingerprint,
+    requestedById: job.requestedById,
+    purpose: job.purpose,
+    requestedSlots: job.requestedSlots,
+    limit: job.limit,
   });
 }
 

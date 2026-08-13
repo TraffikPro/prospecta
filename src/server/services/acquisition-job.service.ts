@@ -13,6 +13,7 @@ import {
   updateAcquisitionJobStatus,
   type AcquisitionJobWithRequester,
 } from "@/server/repositories/acquisition-job.repository";
+import { assignWalletFillLeads } from "@/server/services/portfolio.service";
 
 export class AcquisitionValidationError extends Error {
   constructor(message: string) {
@@ -66,12 +67,15 @@ export function parseAcquisitionRequest(
   return parsed.data;
 }
 
-async function dispatchJobToRunner(job: {
+export async function dispatchJobToRunner(job: {
   id: string;
   city: string;
   query: string;
   limit: number;
   campaign: string;
+  requestedById?: string;
+  purpose?: "FREE_PULL" | "WALLET_FILL";
+  requestedSlots?: number | null;
 }): Promise<void> {
   const runnerUrl = process.env.ACQUISITION_RUNNER_URL?.trim().replace(/\/$/, "");
   const token = process.env.ACQUISITION_JOB_TOKEN?.trim();
@@ -96,6 +100,9 @@ async function dispatchJobToRunner(job: {
       query: job.query,
       limit: job.limit,
       campaign: job.campaign,
+      requestedById: job.requestedById,
+      purpose: job.purpose,
+      requestedSlots: job.requestedSlots ?? undefined,
       prospectaBaseUrl: appUrl,
       callbackUrl,
     }),
@@ -106,6 +113,17 @@ async function dispatchJobToRunner(job: {
       "Não foi possível acionar o runner de aquisição. Tente novamente mais tarde.",
     );
   }
+}
+
+export async function updateFailedDispatch(
+  jobId: string,
+  message: string,
+): Promise<void> {
+  await updateAcquisitionJobStatus(jobId, {
+    status: "FAILED",
+    finishedAt: new Date(),
+    errorMessage: sanitizeErrorMessage(message),
+  });
 }
 
 export async function requestAcquisitionJob(input: {
@@ -136,17 +154,17 @@ export async function requestAcquisitionJob(input: {
   const job = created.job;
 
   try {
-    await dispatchJobToRunner(job);
+    await dispatchJobToRunner({
+      ...job,
+      requestedById: job.requestedById,
+      purpose: "FREE_PULL",
+    });
   } catch (error) {
     const message =
       error instanceof AcquisitionDispatchError
         ? error.message
         : "Falha ao acionar o runner de aquisição.";
-    await updateAcquisitionJobStatus(job.id, {
-      status: "FAILED",
-      finishedAt: new Date(),
-      errorMessage: sanitizeErrorMessage(message),
-    });
+    await updateFailedDispatch(job.id, message);
     throw error instanceof AcquisitionDispatchError
       ? error
       : new AcquisitionDispatchError(message);
@@ -209,6 +227,33 @@ export async function applyAcquisitionJobCallback(
   const now = new Date();
   const terminal = payload.status === "SUCCEEDED" || payload.status === "FAILED";
 
+  if (
+    payload.requestedById &&
+    payload.requestedById !== job.requestedById
+  ) {
+    throw new AcquisitionValidationError(
+      "requestedById do callback não confere com o job.",
+    );
+  }
+
+  let assignedCount = job.assignedCount;
+  if (
+    payload.status === "SUCCEEDED" &&
+    job.purpose === "WALLET_FILL" &&
+    job.requestedById
+  ) {
+    const fill = await assignWalletFillLeads({
+      requestedById: job.requestedById,
+      leadIds: payload.leadIds ?? [],
+      requestedSlots: job.requestedSlots ?? 0,
+    });
+    assignedCount = fill.assignedCount;
+  }
+
+  if (payload.status === "FAILED") {
+    assignedCount = job.assignedCount ?? 0;
+  }
+
   const updated = await updateAcquisitionJobStatus(jobId, {
     status: payload.status,
     startedAt:
@@ -220,6 +265,7 @@ export async function applyAcquisitionJobCallback(
     createdHigh: payload.createdHigh ?? job.createdHigh,
     existingCount: payload.existingCount ?? job.existingCount,
     failedCount: payload.failedCount ?? job.failedCount,
+    assignedCount,
     errorMessage:
       payload.status === "FAILED"
         ? sanitizeErrorMessage(payload.errorMessage)
