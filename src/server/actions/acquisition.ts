@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { AuthenticationError, AuthorizationError } from "@/server/auth/errors";
-import { requireRole } from "@/server/auth/guards";
+import { requireCanRunAcquisition } from "@/server/auth/guards";
 import { loginPath } from "@/server/auth/login-redirect";
 import { getSessionUser } from "@/server/auth/session";
 import {
@@ -32,14 +32,14 @@ export async function requestAcquisitionAction(
   const sessionUser = await getSessionUser();
 
   try {
-    requireRole(sessionUser, "ADMIN");
+    requireCanRunAcquisition(sessionUser);
   } catch (error) {
     if (error instanceof AuthenticationError) {
       redirect(loginPath("session_expired"));
     }
     if (error instanceof AuthorizationError) {
       return {
-        error: "Apenas administradores podem solicitar aquisição.",
+        error: "Você não tem permissão para solicitar aquisição.",
         code: "FORBIDDEN",
       };
     }

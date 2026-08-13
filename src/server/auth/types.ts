@@ -5,5 +5,6 @@ export type SessionUser = {
   name: string;
   email: string;
   role: UserRole;
+  canRunAcquisition: boolean;
   mustChangePassword: boolean;
 };

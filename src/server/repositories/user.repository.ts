@@ -8,6 +8,7 @@ export type AdminUserRow = {
   email: string;
   role: UserRole;
   isActive: boolean;
+  canRunAcquisition: boolean;
 };
 
 export async function listUsersForAdmin(): Promise<AdminUserRow[]> {
@@ -18,6 +19,7 @@ export async function listUsersForAdmin(): Promise<AdminUserRow[]> {
       email: true,
       role: true,
       isActive: true,
+      canRunAcquisition: true,
     },
     orderBy: [{ role: "asc" }, { name: "asc" }],
   });

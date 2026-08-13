@@ -6,6 +6,7 @@ import { PageFrame } from "@/components/layout/page-frame";
 import { PageHeading } from "@/components/layout/page-heading";
 import { ContextualNav } from "@/components/navigation";
 import { Button } from "@/components/ui/button";
+import { canRunAcquisition } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
 
 type Shortcut = {
@@ -46,23 +47,27 @@ export default async function AppHomePage() {
   ];
 
   if (user.role === "ADMIN") {
-    shortcuts.push(
-      {
-        href: "/app/leads",
-        label: "Leads",
-        description: "Lista completa e cadastro manual.",
-      },
-      {
-        href: "/admin/acquisition",
-        label: "Aquisição",
-        description: "Puxar leads Places via runner externo.",
-      },
-      {
-        href: "/admin/users",
-        label: "Usuários",
-        description: "Visão administrativa da equipe.",
-      },
-    );
+    shortcuts.push({
+      href: "/app/leads",
+      label: "Leads",
+      description: "Lista completa e cadastro manual.",
+    });
+  }
+
+  if (canRunAcquisition(user)) {
+    shortcuts.push({
+      href: "/admin/acquisition",
+      label: "Aquisição",
+      description: "Puxar leads Places via runner externo.",
+    });
+  }
+
+  if (user.role === "ADMIN") {
+    shortcuts.push({
+      href: "/admin/users",
+      label: "Usuários",
+      description: "Visão administrativa da equipe.",
+    });
   } else {
     shortcuts.push({
       href: "/app/leads/new",

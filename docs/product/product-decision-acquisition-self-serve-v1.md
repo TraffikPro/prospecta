@@ -9,13 +9,14 @@
 ## Product Decision
 
 ```text
-DEFER (Places no monólito) → BUILD Fase 1
-ADMIN dispara pull no Prospecta
+DEFER (Places no monólito) → BUILD Fase 1 (+ operadores autorizados)
+ADMIN ou MEMBER com canRunAcquisition
   → AcquisitionJob
   → runner externo (collect → qualify → sync)
   → status no CRM
   → Intelligence Inbox
 Places API permanece fora do Next.js
+MEMBER comum permanece sem acesso; ADMIN concede/revoga em /admin/users
 ```
 
 ## Problema
@@ -43,7 +44,7 @@ Se o `ADMIN` solicitar cidade + nicho + limite no Prospecta e o runner externo e
 
 ## Escopo autorizado (Fase 1)
 
-1. Rota `/admin/acquisition` — **somente `ADMIN`**
+1. Rota `/admin/acquisition` — `ADMIN` **ou** `MEMBER` com `canRunAcquisition`
 2. Campos: cidade, query/nicho, limite, campaign slug
 3. Confirmação explícita antes de executar
 4. Estados: `QUEUED` | `RUNNING` | `SUCCEEDED` | `FAILED`
@@ -52,11 +53,14 @@ Se o `ADMIN` solicitar cidade + nicho + limite no Prospecta e o runner externo e
 7. Idempotência (sem job ativo duplicado para o mesmo fingerprint)
 8. Timeout / erro seguro (sem secrets na UI)
 9. Leads via sync existente → Intelligence Inbox
+10. Flag `User.canRunAcquisition` (default `false`) + grant/revoke só por `ADMIN` em `/admin/users`
+11. Trilha `AdminAuditEvent` para mudanças de permissão
 
 ## Fora
 
 - Places API no Next.js / chave Google no browser
-- Scraper / auto-WhatsApp / acesso `MEMBER`
+- Scraper / auto-WhatsApp / liberar aquisição para **todos** os `MEMBER`
+- RBAC genérico / permissões além de aquisição
 - Cancelamento / reprocessamento sofisticado
 - Entidade Campaign / dashboard analítico
 

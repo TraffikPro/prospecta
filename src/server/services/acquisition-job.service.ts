@@ -161,6 +161,13 @@ export async function listAcquisitionJobsForAdmin(): Promise<
   return listAcquisitionJobs(40);
 }
 
+/** Alias for callers authorized via canRunAcquisition (ADMIN or opted-in MEMBER). */
+export async function listAcquisitionJobsForOperator(): Promise<
+  AcquisitionJobWithRequester[]
+> {
+  return listAcquisitionJobsForAdmin();
+}
+
 export function parseAcquisitionCallback(
   body: unknown,
 ): AcquisitionJobCallbackInput {
