@@ -5,14 +5,14 @@ import {
   ActivityValidationError,
   LeadNotFoundError,
 } from "@/features/activities/activity.errors";
-import { AuthenticationError } from "@/server/auth/errors";
+import { AuthenticationError, AuthorizationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
 import { createActivityForLead } from "@/server/services/activity.service";
 
 export type CreateActivityState = {
   error?: string;
-  code?: "VALIDATION" | "LEAD_NOT_FOUND";
+  code?: "VALIDATION" | "LEAD_NOT_FOUND" | "FORBIDDEN";
   ok?: boolean;
 };
 
@@ -49,6 +49,9 @@ export async function createActivityAction(
       nextFollowUpAt: formString(formData, "nextFollowUpAt") || undefined,
     });
   } catch (error) {
+    if (error instanceof AuthorizationError) {
+      return { error: "Acesso negado", code: "FORBIDDEN" };
+    }
     if (error instanceof ActivityValidationError) {
       return { error: error.message, code: "VALIDATION" };
     }

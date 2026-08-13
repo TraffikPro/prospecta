@@ -8,15 +8,15 @@ import { ContextualNav } from "@/components/navigation";
 import { AcquisitionJobsTable } from "@/features/acquisition/components/acquisition-jobs-table";
 import { AcquisitionRequestForm } from "@/features/acquisition/components/acquisition-request-form";
 import { AuthenticationError, AuthorizationError } from "@/server/auth/errors";
-import { requireCanRunAcquisition } from "@/server/auth/guards";
+import { requireRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
-import { listAcquisitionJobsForOperator } from "@/server/services/acquisition-job.service";
+import { listAcquisitionJobsForAdmin } from "@/server/services/acquisition-job.service";
 
 export default async function AdminAcquisitionPage() {
   const sessionUser = await getSessionUser();
 
   try {
-    requireCanRunAcquisition(sessionUser);
+    requireRole(sessionUser, "ADMIN");
   } catch (error) {
     if (error instanceof AuthenticationError) {
       redirect("/login");
@@ -27,7 +27,7 @@ export default async function AdminAcquisitionPage() {
     throw error;
   }
 
-  const jobs = await listAcquisitionJobsForOperator();
+  const jobs = await listAcquisitionJobsForAdmin();
 
   return (
     <PageFrame width="list" gap="8">
@@ -39,13 +39,13 @@ export default async function AdminAcquisitionPage() {
       />
       <PageHeading
         title="Aquisição"
-        meta="Solicitar pull Places via runner externo."
+        meta="Pull livre Places via runner externo (somente ADMIN)."
       />
 
       <Stack gap="4">
         <Text fontSize="sm" color="fg.muted">
-          Places API fica no lead-generator. O Prospecta só cria o job, acompanha
-          o status e recebe os leads na Intelligence Inbox.
+          Places API fica no lead-generator. Operadores MEMBER autorizados usam
+          a carteira semanal na Minha fila (completar com Places na Fase 3).
         </Text>
         <AcquisitionRequestForm />
       </Stack>

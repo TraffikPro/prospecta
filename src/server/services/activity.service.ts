@@ -1,4 +1,4 @@
-import type { ActivityOutcome, LeadStage } from "@prisma/client";
+import type { ActivityOutcome, LeadStage, UserRole } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
   ActivityValidationError,
@@ -10,12 +10,14 @@ import {
   shouldRequireNextFollowUp,
 } from "@/features/activities/activity.rules";
 import { createActivityFormSchema } from "@/features/activities/activity.schema";
+import { assertCanAccessLead } from "@/server/auth/lead-access";
 import {
   countOutreachByLeadId,
   createActivity,
   listActivitiesByLeadId,
   type ActivityWithAuthor,
 } from "@/server/repositories/activity.repository";
+import { markAssignmentTreatedInTx } from "@/server/services/portfolio.service";
 
 export type CreateActivityCommand = {
   leadId: string;
@@ -75,7 +77,7 @@ export async function createActivityForLead(
 
   const author = await prisma.user.findFirst({
     where: { id: input.authorId, isActive: true },
-    select: { id: true },
+    select: { id: true, role: true },
   });
   if (!author) {
     throw new ActivityValidationError("Autor inválido ou inativo");
@@ -84,11 +86,16 @@ export async function createActivityForLead(
   return prisma.$transaction(async (tx) => {
     const lead = await tx.lead.findUnique({
       where: { id: parsed.data.leadId },
-      select: { id: true, stage: true },
+      select: { id: true, stage: true, ownerId: true },
     });
     if (!lead) {
       throw new LeadNotFoundError(parsed.data.leadId);
     }
+
+    assertCanAccessLead(lead, {
+      id: author.id,
+      role: author.role,
+    });
 
     const activity = await createActivity(
       {
@@ -132,6 +139,15 @@ export async function createActivityForLead(
       });
     }
 
+    await markAssignmentTreatedInTx(tx, {
+      leadId: lead.id,
+      activityId: activity.id,
+      authorId: author.id,
+      type: parsed.data.type,
+      outcome: (parsed.data.outcome as ActivityOutcome | undefined) ?? null,
+      activityCreatedAt: activity.createdAt,
+    });
+
     const updated = await tx.lead.findUniqueOrThrow({
       where: { id: lead.id },
       select: { stage: true, nextFollowUpAt: true },
@@ -148,6 +164,17 @@ export async function createActivityForLead(
 
 export async function getActivitiesForLead(
   leadId: string,
+  actor?: { id: string; role: UserRole },
 ): Promise<ActivityWithAuthor[]> {
+  if (actor) {
+    const lead = await prisma.lead.findUnique({
+      where: { id: leadId },
+      select: { ownerId: true },
+    });
+    if (!lead) {
+      throw new LeadNotFoundError(leadId);
+    }
+    assertCanAccessLead(lead, actor);
+  }
   return listActivitiesByLeadId(leadId);
 }

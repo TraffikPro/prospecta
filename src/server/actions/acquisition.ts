@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { AuthenticationError, AuthorizationError } from "@/server/auth/errors";
-import { requireCanRunAcquisition } from "@/server/auth/guards";
+import { requireRole } from "@/server/auth/guards";
 import { loginPath } from "@/server/auth/login-redirect";
 import { getSessionUser } from "@/server/auth/session";
 import {
@@ -16,7 +16,12 @@ import {
 
 export type RequestAcquisitionState = {
   error?: string;
-  code?: "VALIDATION" | "CONFLICT" | "DISPATCH" | "FORBIDDEN" | "UNAUTHENTICATED";
+  code?:
+    | "VALIDATION"
+    | "CONFLICT"
+    | "DISPATCH"
+    | "FORBIDDEN"
+    | "UNAUTHENTICATED";
   existingJobId?: string;
 };
 
@@ -32,14 +37,16 @@ export async function requestAcquisitionAction(
   const sessionUser = await getSessionUser();
 
   try {
-    requireCanRunAcquisition(sessionUser);
+    // Fase 1: free Places pull is ADMIN-only. MEMBER uses carteira (Fase 3).
+    requireRole(sessionUser, "ADMIN");
   } catch (error) {
     if (error instanceof AuthenticationError) {
       redirect(loginPath("session_expired"));
     }
     if (error instanceof AuthorizationError) {
       return {
-        error: "Você não tem permissão para solicitar aquisição.",
+        error:
+          "Apenas administradores podem solicitar pull livre de aquisição.",
         code: "FORBIDDEN",
       };
     }

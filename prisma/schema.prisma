@@ -56,6 +56,19 @@ enum AcquisitionJobStatus {
   FAILED
 }
 
+enum LeadAssignmentSource {
+  ENROLL_OWNED
+  MANUAL_ADMIN
+  NEW_ACQUISITION
+  RECYCLED
+}
+
+enum LeadAssignmentStatus {
+  ACTIVE
+  TREATED
+  RELEASED
+}
+
 model User {
   id                  String               @id @default(cuid())
   email               String               @unique
@@ -63,6 +76,7 @@ model User {
   passwordHash        String
   role                UserRole             @default(MEMBER)
   /// Explicit opt-in for Places acquisition pulls. ADMIN ignores this flag.
+  /// Also gates weekly portfolio eligibility for MEMBER (carteira Fase 1).
   canRunAcquisition   Boolean              @default(false)
   isActive            Boolean              @default(true)
   mustChangePassword  Boolean              @default(false)
@@ -74,6 +88,12 @@ model User {
   passwordResetTokens PasswordResetToken[]
   acquisitionJobs     AcquisitionJob[]
   adminAuditEvents    AdminAuditEvent[]    @relation("AdminAuditActor")
+  weeklyQuota         OperatorWeeklyQuota?
+  quotasUpdated       OperatorWeeklyQuota[] @relation("QuotaUpdatedBy")
+  weeklyPortfolios    WeeklyPortfolio[]
+  leadAssignments     LeadAssignment[]     @relation("LeadAssignee")
+  previousAssignments LeadAssignment[]     @relation("PreviousAssignee")
+  assignmentsCreated  LeadAssignment[]     @relation("AssignmentAssignedBy")
 }
 
 /// Minimal durable trail for sensitive ADMIN mutations (not a full RBAC system).
@@ -133,10 +153,11 @@ model Lead {
   lostReason     String?
   wonNote        String?
   ownerId        String
-  owner          User       @relation("LeadOwner", fields: [ownerId], references: [id])
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
-  activities     Activity[]
+  owner           User             @relation("LeadOwner", fields: [ownerId], references: [id])
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  activities      Activity[]
+  assignments     LeadAssignment[]
 
   @@unique([source, externalId])
   @@index([stage])
@@ -148,22 +169,92 @@ model Lead {
 }
 
 model Activity {
-  id              String           @id @default(cuid())
-  leadId          String
-  lead            Lead             @relation(fields: [leadId], references: [id], onDelete: Cascade)
-  authorId        String
-  author          User             @relation(fields: [authorId], references: [id])
-  type            ActivityType
-  outcome         ActivityOutcome?
-  body            String?
-  templateSnapshot String?
-  createdAt       DateTime         @default(now())
+  id                 String           @id @default(cuid())
+  leadId             String
+  lead               Lead             @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  authorId           String
+  author             User             @relation(fields: [authorId], references: [id])
+  type               ActivityType
+  outcome            ActivityOutcome?
+  body               String?
+  templateSnapshot   String?
+  createdAt          DateTime         @default(now())
+  treatedAssignments LeadAssignment[] @relation("TreatedByActivity")
 
   @@index([leadId, createdAt])
   @@index([authorId])
 }
 
-/// Places acquisition via external runner (ADR 0014). Triggered by ADMIN or MEMBER with canRunAcquisition.
+/// Per-operator weekly HIGH assignment meta (ADMIN-configurable).
+model OperatorWeeklyQuota {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  weeklyTarget Int      @default(10)
+  updatedById  String?
+  updatedBy    User?    @relation("QuotaUpdatedBy", fields: [updatedById], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([updatedById])
+}
+
+/// One open portfolio per operator per operational week (Mon–Sun SP → UTC).
+model WeeklyPortfolio {
+  id             String           @id @default(cuid())
+  userId         String
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// Monday 00:00 America/Sao_Paulo as UTC instant.
+  weekStartAt    DateTime
+  /// Sunday 23:59:59.999 America/Sao_Paulo as UTC instant.
+  weekEndAt      DateTime
+  targetSnapshot Int
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  assignments    LeadAssignment[]
+
+  @@unique([userId, weekStartAt])
+  @@index([weekStartAt])
+}
+
+/// Historical HIGH assignment. Lead.ownerId is the current owner pointer.
+model LeadAssignment {
+  id                 String               @id @default(cuid())
+  leadId             String
+  lead               Lead                 @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  assigneeId         String
+  assignee           User                 @relation("LeadAssignee", fields: [assigneeId], references: [id])
+  /// ADMIN (or system actor) who performed the assignment. Null only for pre-field rows.
+  assignedById       String?
+  assignedBy         User?                @relation("AssignmentAssignedBy", fields: [assignedById], references: [id], onDelete: SetNull)
+  portfolioId        String
+  portfolio          WeeklyPortfolio      @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  weekStartAt        DateTime
+  source             LeadAssignmentSource
+  status             LeadAssignmentStatus @default(ACTIVE)
+  assignedAt         DateTime             @default(now())
+  dueAt              DateTime
+  treatedAt          DateTime?
+  treatedActivityId  String?
+  treatedActivity    Activity?            @relation("TreatedByActivity", fields: [treatedActivityId], references: [id])
+  releasedAt         DateTime?
+  releaseReason      String?
+  previousAssigneeId String?
+  previousAssignee   User?                @relation("PreviousAssignee", fields: [previousAssigneeId], references: [id])
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  @@index([assigneeId, weekStartAt, status])
+  @@index([leadId, status])
+  @@index([portfolioId])
+  @@index([assignedById])
+  // Partial unique (one ACTIVE per lead) lives in migration SQL —
+  // LeadAssignment_active_lead_key — Prisma schema cannot express WHERE.
+}
+
+/// Places acquisition via external runner (ADR 0014).
+/// Free Places pull (UI /admin/acquisition) is ADMIN only (weekly portfolio Fase 1).
+/// MEMBER with canRunAcquisition remains portfolio-eligible; adaptive fill is Fase 3.
 model AcquisitionJob {
   id              String               @id @default(cuid())
   status          AcquisitionJobStatus @default(QUEUED)

@@ -35,9 +35,16 @@ import {
   findLeadBySourceExternalId,
   listLeads,
   listLeadsForOwnerQueue,
+  listLeadsScoped,
   listLeadsWithIntelligence,
   type LeadWithOwner,
 } from "@/server/repositories/lead.repository";
+import { assertCanAccessLead } from "@/server/auth/lead-access";
+import type { SessionUser } from "@/server/auth/types";
+
+function memberScopeOwnerId(user: SessionUser): string | undefined {
+  return user.role === "MEMBER" ? user.id : undefined;
+}
 
 export type CreateLeadCommand = {
   companyName: string;
@@ -131,8 +138,12 @@ export type IntelligenceInboxResult = {
 
 export async function getIntelligenceInbox(
   filters: IntelligenceInboxFilters,
+  viewer?: SessionUser | null,
 ): Promise<IntelligenceInboxResult> {
-  const leads = await listLeadsWithIntelligence();
+  const ownerId = viewer ? memberScopeOwnerId(viewer) : undefined;
+  const leads = await listLeadsWithIntelligence(
+    ownerId ? { ownerId } : undefined,
+  );
   const allItems = buildIntelligenceInbox(leads, {
     qualification: "ALL",
     source: "ALL",
@@ -146,8 +157,13 @@ export async function getIntelligenceInbox(
 
 export type LeadsByStage = Record<LeadStage, LeadWithOwner[]>;
 
-export async function getLeadsGroupedByStage(): Promise<LeadsByStage> {
-  const leads = await listLeads();
+export async function getLeadsGroupedByStage(
+  viewer?: SessionUser | null,
+): Promise<LeadsByStage> {
+  const ownerId = viewer ? memberScopeOwnerId(viewer) : undefined;
+  const leads = ownerId
+    ? await listLeadsScoped({ ownerId })
+    : await listLeads();
   const grouped = Object.fromEntries(
     LEAD_STAGE_ORDER.map((stage) => [stage, [] as LeadWithOwner[]]),
   ) as LeadsByStage;
@@ -189,7 +205,7 @@ export async function moveLeadStage(
 
   const actor = await prisma.user.findFirst({
     where: { id: input.actorId, isActive: true },
-    select: { id: true },
+    select: { id: true, role: true },
   });
   if (!actor) {
     throw new LeadValidationError("Usuário inválido ou inativo");
@@ -198,11 +214,16 @@ export async function moveLeadStage(
   return prisma.$transaction(async (tx) => {
     const lead = await tx.lead.findUnique({
       where: { id: parsed.data.leadId },
-      select: { id: true, stage: true },
+      select: { id: true, stage: true, ownerId: true },
     });
     if (!lead) {
       throw new LeadValidationError("Lead não encontrado");
     }
+
+    assertCanAccessLead(lead, {
+      id: actor.id,
+      role: actor.role,
+    });
 
     if (lead.stage === parsed.data.stage) {
       throw new LeadValidationError("O lead já está neste stage");

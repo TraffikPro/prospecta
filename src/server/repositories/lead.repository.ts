@@ -145,11 +145,28 @@ export async function listLeadsForOwnerQueue(
 }
 
 /** Leads that may carry Lead Intelligence JSON (inbox candidates). */
-export async function listLeadsWithIntelligence(): Promise<LeadWithOwner[]> {
+export async function listLeadsWithIntelligence(options?: {
+  ownerId?: string;
+}): Promise<LeadWithOwner[]> {
   return prisma.lead.findMany({
     where: {
       intelligence: { not: Prisma.DbNull },
+      ...(options?.ownerId ? { ownerId: options.ownerId } : {}),
     },
+    include: {
+      owner: {
+        select: { id: true, name: true, email: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function listLeadsScoped(options?: {
+  ownerId?: string;
+}): Promise<LeadWithOwner[]> {
+  return prisma.lead.findMany({
+    where: options?.ownerId ? { ownerId: options.ownerId } : undefined,
     include: {
       owner: {
         select: { id: true, name: true, email: true },

@@ -38,7 +38,7 @@ export default async function IntelligenceInboxPage({ searchParams }: PageProps)
 
   const params = await searchParams;
   const filters = parseInboxFilters(params);
-  const { items, counts } = await getIntelligenceInbox(filters);
+  const { items, counts } = await getIntelligenceInbox(filters, sessionUser!);
 
   return (
     <PageFrame width="list" gap="6">
