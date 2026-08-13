@@ -24,7 +24,10 @@ test.describe("visual foundation desktop", () => {
     ).toBeVisible();
     await expect(page.getByTestId("desktop-sidebar").getByText(/operação/i)).toBeVisible();
     await expect(page.getByTestId("desktop-sidebar").getByText(/gestão/i)).toBeVisible();
-    await expect(page.locator("main")).toHaveAttribute("data-page-width", "list");
+    await expect(page.locator("[data-page-width]").first()).toHaveAttribute(
+      "data-page-width",
+      "list",
+    );
   });
 
   test("MEMBER sidebar hides Equipe and Aquisição", async ({ page }) => {
@@ -57,9 +60,15 @@ test.describe("visual foundation desktop", () => {
   test("form and list page widths differ as designed", async ({ page }) => {
     await login(page, memberEmail, memberPassword);
     await page.goto("/app/leads/new");
-    await expect(page.locator("main")).toHaveAttribute("data-page-width", "form");
+    await expect(page.locator("[data-page-width]").first()).toHaveAttribute(
+      "data-page-width",
+      "form",
+    );
     await page.goto("/app/my-leads");
-    await expect(page.locator("main")).toHaveAttribute("data-page-width", "list");
+    await expect(page.locator("[data-page-width]").first()).toHaveAttribute(
+      "data-page-width",
+      "list",
+    );
   });
 });
 

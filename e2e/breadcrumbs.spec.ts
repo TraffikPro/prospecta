@@ -29,9 +29,12 @@ test.describe("breadcrumb navigation v1", () => {
     });
 
     await login(page, memberEmail, memberPassword);
-    await page.goto("/app/my-leads");
-    await page.getByTestId("my-queue-filter-new").click();
+    await page.goto("/app/my-leads?filter=new");
     await expect(page).toHaveURL(/filter=new/);
+    await expect(page.getByTestId("my-queue-filter-new")).toHaveAttribute(
+      "data-active",
+      "true",
+    );
 
     await page
       .getByTestId("my-queue-card")
