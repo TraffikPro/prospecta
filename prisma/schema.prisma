@@ -93,6 +93,7 @@ model User {
   weeklyPortfolios    WeeklyPortfolio[]
   leadAssignments     LeadAssignment[]     @relation("LeadAssignee")
   previousAssignments LeadAssignment[]     @relation("PreviousAssignee")
+  assignmentsCreated  LeadAssignment[]     @relation("AssignmentAssignedBy")
 }
 
 /// Minimal durable trail for sensitive ADMIN mutations (not a full RBAC system).
@@ -223,6 +224,9 @@ model LeadAssignment {
   lead               Lead                 @relation(fields: [leadId], references: [id], onDelete: Cascade)
   assigneeId         String
   assignee           User                 @relation("LeadAssignee", fields: [assigneeId], references: [id])
+  /// ADMIN (or system actor) who performed the assignment. Null only for pre-field rows.
+  assignedById       String?
+  assignedBy         User?                @relation("AssignmentAssignedBy", fields: [assignedById], references: [id], onDelete: SetNull)
   portfolioId        String
   portfolio          WeeklyPortfolio      @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
   weekStartAt        DateTime
@@ -243,6 +247,7 @@ model LeadAssignment {
   @@index([assigneeId, weekStartAt, status])
   @@index([leadId, status])
   @@index([portfolioId])
+  @@index([assignedById])
   // Partial unique (one ACTIVE per lead) lives in migration SQL —
   // LeadAssignment_active_lead_key — Prisma schema cannot express WHERE.
 }

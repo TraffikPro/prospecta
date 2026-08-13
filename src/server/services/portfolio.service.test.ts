@@ -236,6 +236,12 @@ describe("portfolio.service", { skip: !hasDatabase }, () => {
       assigneeId: memberId,
     });
     assert.ok(result.assignmentId);
+    assert.equal(result.idempotent, false);
+
+    const stored = await prisma.leadAssignment.findUniqueOrThrow({
+      where: { id: result.assignmentId },
+    });
+    assert.equal(stored.assignedById, adminId);
 
     const summary = await getPortfolioSummaryForUser(memberId);
     assert.equal(summary.assigned, 1);
@@ -252,11 +258,39 @@ describe("portfolio.service", { skip: !hasDatabase }, () => {
     );
   });
 
+  it("rejects weekly quota for inactive target user", async () => {
+    const inactive = await prisma.user.create({
+      data: {
+        email: `pf-inactive-${stamp}@prospecta.test`,
+        name: "PF Inactive",
+        role: "MEMBER",
+        canRunAcquisition: true,
+        passwordHash: await hashPassword("PortfolioInactive123!"),
+        isActive: false,
+      },
+    });
+
+    try {
+      await assert.rejects(
+        () =>
+          setOperatorWeeklyQuota({
+            actorId: adminId,
+            targetUserId: inactive.id,
+            weeklyTarget: 5,
+          }),
+        (err: unknown) =>
+          err instanceof PortfolioError &&
+          err.message.includes("usuário inativo"),
+      );
+    } finally {
+      await prisma.user.delete({ where: { id: inactive.id } });
+    }
+  });
+
   it("createActivityForLead treats assignment atomically", async () => {
     const result = await createActivityForLead({
       leadId: leadHighId,
       authorId: memberId,
-      actorRole: "MEMBER",
       type: "WHATSAPP",
       outcome: "NOT_INTERESTED",
       body: "Contato carteira",
@@ -426,7 +460,54 @@ describe("portfolio.service", { skip: !hasDatabase }, () => {
     }
   });
 
-  it("concurrent assign of the same lead yields a single ACTIVE assignment", async () => {
+  it("double-click same assignee is idempotent: one historical assignment and one audit", async () => {
+    await setOperatorWeeklyQuota({
+      actorId: adminId,
+      targetUserId: memberId,
+      weeklyTarget: 20,
+    });
+    const lead = await createHighLead(adminId, "dbl-click");
+
+    const outcomes = await Promise.all([
+      reassignLeadToOperator({
+        actorId: adminId,
+        leadId: lead.id,
+        assigneeId: memberId,
+        expectedActiveAssigneeId: adminId,
+      }),
+      reassignLeadToOperator({
+        actorId: adminId,
+        leadId: lead.id,
+        assigneeId: memberId,
+        expectedActiveAssigneeId: adminId,
+      }),
+    ]);
+
+    assert.equal(outcomes[0]?.assignmentId, outcomes[1]?.assignmentId);
+    assert.equal(
+      outcomes.filter((o) => o.idempotent).length +
+        outcomes.filter((o) => !o.idempotent).length,
+      2,
+    );
+    assert.ok(outcomes.some((o) => !o.idempotent));
+    assert.ok(outcomes.some((o) => o.idempotent));
+
+    const history = await prisma.leadAssignment.findMany({
+      where: { leadId: lead.id },
+    });
+    assert.equal(history.length, 1);
+
+    const audits = await prisma.adminAuditEvent.findMany({
+      where: { action: "lead.reassign", actorId: adminId },
+    });
+    const forLead = audits.filter((event) => {
+      const detail = event.detail as { leadId?: string } | null;
+      return detail?.leadId === lead.id;
+    });
+    assert.equal(forLead.length, 1);
+  });
+
+  it("concurrent assign to different assignees conflicts instead of last-write-wins", async () => {
     await setOperatorWeeklyQuota({
       actorId: adminId,
       targetUserId: memberId,
@@ -445,21 +526,67 @@ describe("portfolio.service", { skip: !hasDatabase }, () => {
         actorId: adminId,
         leadId: shared.id,
         assigneeId: memberId,
+        expectedActiveAssigneeId: adminId,
       }),
       reassignLeadToOperator({
         actorId: adminId,
         leadId: shared.id,
         assigneeId: otherId,
+        expectedActiveAssigneeId: adminId,
       }),
     ]);
 
     const fulfilled = outcomes.filter((o) => o.status === "fulfilled");
-    assert.ok(fulfilled.length >= 1);
+    const rejected = outcomes.filter((o) => o.status === "rejected");
+    assert.equal(fulfilled.length, 1);
+    assert.equal(rejected.length, 1);
+    assert.ok(
+      rejected[0]?.status === "rejected" &&
+        rejected[0].reason instanceof PortfolioError &&
+        String(rejected[0].reason.message).includes("Recarregue"),
+    );
+
+    const history = await prisma.leadAssignment.findMany({
+      where: { leadId: shared.id },
+    });
+    assert.equal(history.length, 1);
+    assert.equal(history[0]?.status, "ACTIVE");
+  });
+
+  it("explicit reassign with matching expectedActiveAssigneeId moves the lead", async () => {
+    await setOperatorWeeklyQuota({
+      actorId: adminId,
+      targetUserId: memberId,
+      weeklyTarget: 20,
+    });
+    await setOperatorWeeklyQuota({
+      actorId: adminId,
+      targetUserId: otherId,
+      weeklyTarget: 20,
+    });
+    const lead = await createHighLead(adminId, "explicit");
+    const first = await reassignLeadToOperator({
+      actorId: adminId,
+      leadId: lead.id,
+      assigneeId: memberId,
+    });
+    assert.equal(first.idempotent, false);
+
+    const second = await reassignLeadToOperator({
+      actorId: adminId,
+      leadId: lead.id,
+      assigneeId: otherId,
+      expectedActiveAssigneeId: memberId,
+    });
+    assert.equal(second.idempotent, false);
+    assert.notEqual(second.assignmentId, first.assignmentId);
 
     const active = await prisma.leadAssignment.findMany({
-      where: { leadId: shared.id, status: "ACTIVE" },
+      where: { leadId: lead.id, status: "ACTIVE" },
     });
     assert.equal(active.length, 1);
+    assert.equal(active[0]?.assigneeId, otherId);
+    assert.equal(active[0]?.assignedById, adminId);
   });
 
   it("rejects LOW intelligence reassignment", async () => {
@@ -492,7 +619,6 @@ describe("portfolio.service", { skip: !hasDatabase }, () => {
         createActivityForLead({
           leadId: ownedByOther.id,
           authorId: memberId,
-          actorRole: "MEMBER",
           type: "NOTE",
           body: "tentativa indevida",
         }),
@@ -504,7 +630,6 @@ describe("portfolio.service", { skip: !hasDatabase }, () => {
         moveLeadStage({
           leadId: ownedByOther.id,
           actorId: memberId,
-          actorRole: "MEMBER",
           stage: "QUALIFIED",
         }),
       AuthorizationError,
@@ -513,7 +638,6 @@ describe("portfolio.service", { skip: !hasDatabase }, () => {
     const adminActivity = await createActivityForLead({
       leadId: ownedByOther.id,
       authorId: adminId,
-      actorRole: "ADMIN",
       type: "NOTE",
       body: "ADMIN pode operar",
     });
@@ -522,9 +646,43 @@ describe("portfolio.service", { skip: !hasDatabase }, () => {
     const stage = await moveLeadStage({
       leadId: ownedByOther.id,
       actorId: adminId,
-      actorRole: "ADMIN",
       stage: "QUALIFIED",
     });
     assert.equal(stage.to, "QUALIFIED");
+  });
+
+  it("MEMBER cannot escalate privileges by calling services with a forged ADMIN role", async () => {
+    const ownedByOther = await createHighLead(otherId, "spoof");
+    await setOperatorWeeklyQuota({
+      actorId: adminId,
+      targetUserId: otherId,
+      weeklyTarget: 10,
+    });
+    await reassignLeadToOperator({
+      actorId: adminId,
+      leadId: ownedByOther.id,
+      assigneeId: otherId,
+    });
+
+    // Role comes from DB for authorId/actorId — there is no actorRole input to forge.
+    await assert.rejects(
+      () =>
+        createActivityForLead({
+          leadId: ownedByOther.id,
+          authorId: memberId,
+          type: "NOTE",
+          body: "spoof attempt",
+        }),
+      AuthorizationError,
+    );
+    await assert.rejects(
+      () =>
+        moveLeadStage({
+          leadId: ownedByOther.id,
+          actorId: memberId,
+          stage: "CONTACTED",
+        }),
+      AuthorizationError,
+    );
   });
 });

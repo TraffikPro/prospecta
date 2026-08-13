@@ -22,7 +22,6 @@ import { markAssignmentTreatedInTx } from "@/server/services/portfolio.service";
 export type CreateActivityCommand = {
   leadId: string;
   authorId: string;
-  actorRole: UserRole;
   type: string;
   outcome?: string;
   body: string;
@@ -95,7 +94,7 @@ export async function createActivityForLead(
 
     assertCanAccessLead(lead, {
       id: author.id,
-      role: input.actorRole,
+      role: author.role,
     });
 
     const activity = await createActivity(

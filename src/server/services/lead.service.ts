@@ -40,7 +40,7 @@ import {
   type LeadWithOwner,
 } from "@/server/repositories/lead.repository";
 import { assertCanAccessLead } from "@/server/auth/lead-access";
-import type { SessionUser, UserRole } from "@/server/auth/types";
+import type { SessionUser } from "@/server/auth/types";
 
 function memberScopeOwnerId(user: SessionUser): string | undefined {
   return user.role === "MEMBER" ? user.id : undefined;
@@ -177,7 +177,6 @@ export async function getLeadsGroupedByStage(
 export type MoveLeadStageCommand = {
   leadId: string;
   actorId: string;
-  actorRole: UserRole;
   stage: string;
   lostReason?: string;
 };
@@ -223,7 +222,7 @@ export async function moveLeadStage(
 
     assertCanAccessLead(lead, {
       id: actor.id,
-      role: input.actorRole,
+      role: actor.role,
     });
 
     if (lead.stage === parsed.data.stage) {

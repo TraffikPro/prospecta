@@ -87,6 +87,11 @@ export async function setOperatorWeeklyQuota(input: {
     if (!target) {
       throw new PortfolioError("Usuário não encontrado.");
     }
+    if (!target.isActive) {
+      throw new PortfolioError(
+        "Não é possível definir meta para usuário inativo.",
+      );
+    }
     if (target.role === "MEMBER" && !target.canRunAcquisition) {
       throw new PortfolioError(
         "Autorize a aquisição do MEMBER antes de definir a meta semanal.",
@@ -282,8 +287,14 @@ export async function reassignLeadToOperator(input: {
   actorId: string;
   leadId: string;
   assigneeId: string;
+  /**
+   * Snapshot of who currently holds the ACTIVE assignment (or lead owner when
+   * the form loaded). Required to change an existing ACTIVE assignee; concurrent
+   * conflicting targets get a conflict instead of silent last-write-wins.
+   */
+  expectedActiveAssigneeId?: string | null;
   now?: Date;
-}): Promise<{ assignmentId: string }> {
+}): Promise<{ assignmentId: string; idempotent: boolean }> {
   const now = input.now ?? new Date();
 
   return prisma.$transaction(async (tx) => {
@@ -335,11 +346,27 @@ export async function reassignLeadToOperator(input: {
       throw new PortfolioError("Somente leads HIGH entram na carteira semanal.");
     }
 
-    const previousAssigneeId = lead.ownerId;
+    const portfolio = await getOrCreatePortfolio(tx, assignee.id, now);
+
     const active = await tx.leadAssignment.findFirst({
       where: { leadId: lead.id, status: "ACTIVE" },
     });
-    if (active) {
+
+    if (
+      active &&
+      active.assigneeId === assignee.id &&
+      active.portfolioId === portfolio.id
+    ) {
+      return { assignmentId: active.id, idempotent: true };
+    }
+
+    if (active && active.assigneeId !== assignee.id) {
+      const expected = input.expectedActiveAssigneeId ?? null;
+      if (expected !== active.assigneeId) {
+        throw new PortfolioError(
+          "Lead já atribuído a outro operador. Recarregue o estado e reatribua explicitamente.",
+        );
+      }
       await tx.leadAssignment.update({
         where: { id: active.id },
         data: {
@@ -350,7 +377,7 @@ export async function reassignLeadToOperator(input: {
       });
     }
 
-    const portfolio = await getOrCreatePortfolio(tx, assignee.id, now);
+    const previousAssigneeId = active?.assigneeId ?? lead.ownerId;
     const assigned = await countAssignedTowardQuota(tx, portfolio.id);
     if (assigned >= portfolio.targetSnapshot) {
       throw new PortfolioError(
@@ -369,6 +396,7 @@ export async function reassignLeadToOperator(input: {
         data: {
           leadId: lead.id,
           assigneeId: assignee.id,
+          assignedById: actor.id,
           portfolioId: portfolio.id,
           weekStartAt: portfolio.weekStartAt,
           source: "MANUAL_ADMIN" satisfies LeadAssignmentSource,
@@ -397,11 +425,12 @@ export async function reassignLeadToOperator(input: {
           leadId: lead.id,
           previousAssigneeId,
           assignmentId: created.id,
+          assignedById: actor.id,
         },
       },
     });
 
-    return { assignmentId: created.id };
+    return { assignmentId: created.id, idempotent: false };
   });
 }
 

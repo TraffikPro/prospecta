@@ -52,7 +52,6 @@ describe("createActivityForLead", { skip: !hasDatabase }, () => {
     const result = await createActivityForLead({
       leadId,
       authorId: ownerId,
-      actorRole: "MEMBER",
       type: "WHATSAPP",
       outcome: "INTERESTED",
       body: "Falou com responsável comercial",

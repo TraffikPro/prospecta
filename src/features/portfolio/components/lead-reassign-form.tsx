@@ -52,6 +52,11 @@ export function LeadReassignForm({
           destinatário.
         </Text>
         <input type="hidden" name="leadId" value={leadId} />
+        <input
+          type="hidden"
+          name="expectedActiveAssigneeId"
+          value={currentOwnerId}
+        />
         <select
           name="assigneeId"
           defaultValue={currentOwnerId}

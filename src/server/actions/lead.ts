@@ -102,7 +102,6 @@ export async function moveLeadStageAction(
     await moveLeadStage({
       leadId,
       actorId: user.id,
-      actorRole: user.role,
       stage: formString(formData, "stage"),
       lostReason: formString(formData, "lostReason") || undefined,
     });

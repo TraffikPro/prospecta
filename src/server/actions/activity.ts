@@ -43,7 +43,6 @@ export async function createActivityAction(
     await createActivityForLead({
       leadId,
       authorId: user.id,
-      actorRole: user.role,
       type: formString(formData, "type"),
       outcome: formString(formData, "outcome") || undefined,
       body: formString(formData, "body"),

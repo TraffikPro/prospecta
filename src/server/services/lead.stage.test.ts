@@ -52,7 +52,6 @@ describe("moveLeadStage", { skip: !hasDatabase }, () => {
     const result = await moveLeadStage({
       leadId,
       actorId: ownerId,
-      actorRole: "MEMBER",
       stage: "QUALIFIED",
     });
 
@@ -78,7 +77,6 @@ describe("moveLeadStage", { skip: !hasDatabase }, () => {
         moveLeadStage({
           leadId,
           actorId: ownerId,
-          actorRole: "MEMBER",
           stage: "QUALIFIED",
         }),
       LeadValidationError,
@@ -91,7 +89,6 @@ describe("moveLeadStage", { skip: !hasDatabase }, () => {
         moveLeadStage({
           leadId,
           actorId: ownerId,
-          actorRole: "MEMBER",
           stage: "LOST",
         }),
       LeadValidationError,
@@ -100,7 +97,6 @@ describe("moveLeadStage", { skip: !hasDatabase }, () => {
     const result = await moveLeadStage({
       leadId,
       actorId: ownerId,
-      actorRole: "MEMBER",
       stage: "LOST",
       lostReason: "Perdeu para concorrente",
     });

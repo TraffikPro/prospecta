@@ -79,12 +79,16 @@ export async function reassignLeadAction(
 
   const leadId = formString(formData, "leadId");
   const assigneeId = formString(formData, "assigneeId");
+  const expectedRaw = formString(formData, "expectedActiveAssigneeId");
+  const expectedActiveAssigneeId =
+    expectedRaw.trim() === "" ? null : expectedRaw;
 
   try {
     await reassignLeadToOperator({
       actorId: sessionUser!.id,
       leadId,
       assigneeId,
+      expectedActiveAssigneeId,
     });
   } catch (error) {
     if (error instanceof PortfolioError) {

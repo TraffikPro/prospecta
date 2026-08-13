@@ -20,6 +20,7 @@ Se cada operador tiver meta semanal de HIGH atribuídos, ownership histórico e 
 7. `MEMBER` só opera leads sob sua responsabilidade (Inbox/Pipeline filtrados)
 8. Atribuição **manual** pelo `ADMIN` apenas (reatribuir / atribuir à carteira). Abrir Minha fila é somente leitura — não cria `LeadAssignment` nem carteira.
 9. Sem `OperatorWeeklyQuota`: estado “Meta semanal ainda não configurada”; sem carteira implícita; sem vagas; sem meta default.
+10. `LeadAssignment.assignedById` identifica quem atribuiu (migration aditiva); auditoria `lead.reassign` permanece atômica na mesma transação.
 
 ## Fora (Fases 2–4)
 
