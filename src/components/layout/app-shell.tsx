@@ -58,9 +58,9 @@ export function AppShell({
   children,
 }: AppShellProps) {
   const pathname = usePathname();
-  const showAcquisition =
-    userRole === "ADMIN" || (userRole === "MEMBER" && canRunAcquisition);
+  const showAcquisition = userRole === "ADMIN";
   const showUsersAdmin = userRole === "ADMIN";
+  void canRunAcquisition;
 
   return (
     <Box minH="100vh" bg="bg.subtle" pb={{ base: "20", md: "0" }} overflowX="hidden">

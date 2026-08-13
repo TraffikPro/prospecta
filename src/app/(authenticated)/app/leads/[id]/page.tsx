@@ -1,5 +1,5 @@
 import { Heading, Stack } from "@chakra-ui/react";
-import { notFound, redirect } from "next/navigation";
+import { forbidden, notFound, redirect } from "next/navigation";
 
 import { ActivityTimeline } from "@/features/activities/activity-timeline";
 import { CreateActivityForm } from "@/features/activities/create-activity-form";
@@ -20,11 +20,13 @@ import { parseLeadIntelligence } from "@/features/leads/intelligence/parse-intel
 import { sanitizeLeadNotes } from "@/features/leads/intelligence/sanitize-notes";
 import { getNextAction, pickLatestOutcome } from "@/features/leads/next-action";
 import { MoveStageForm } from "@/features/leads/move-stage-form";
+import { LeadReassignForm } from "@/features/portfolio/components/lead-reassign-form";
 import { AuthenticationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
 import { getActivitiesForLead } from "@/server/services/activity.service";
 import { getLeadById } from "@/server/services/lead.service";
+import { listAssignableOperators } from "@/server/services/portfolio.service";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -58,6 +60,13 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
   if (!lead) {
     notFound();
   }
+
+  if (sessionUser!.role === "MEMBER" && lead.ownerId !== sessionUser!.id) {
+    forbidden();
+  }
+
+  const assignableOperators =
+    sessionUser!.role === "ADMIN" ? await listAssignableOperators() : [];
 
   const { items: crumbItems, returnHref } = leadBreadcrumbItems(
     lead.companyName,
@@ -155,13 +164,22 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
           </Stack>
         }
         stage={
-          <section aria-labelledby="move-stage-heading">
-            <MoveStageForm
-              key={lead.stage}
-              leadId={lead.id}
-              currentStage={lead.stage}
-            />
-          </section>
+          <Stack gap="4">
+            <section aria-labelledby="move-stage-heading">
+              <MoveStageForm
+                key={lead.stage}
+                leadId={lead.id}
+                currentStage={lead.stage}
+              />
+            </section>
+            {sessionUser!.role === "ADMIN" ? (
+              <LeadReassignForm
+                leadId={lead.id}
+                currentOwnerId={lead.ownerId}
+                operators={assignableOperators}
+              />
+            ) : null}
+          </Stack>
         }
         origin={
           <LeadOriginDetails

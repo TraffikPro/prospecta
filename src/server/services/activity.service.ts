@@ -142,6 +142,28 @@ export async function createActivityForLead(
       leadId: lead.id,
       stage: updated.stage,
       nextFollowUpAt: updated.nextFollowUpAt,
+      type: parsed.data.type,
+      outcome: (parsed.data.outcome as ActivityOutcome | undefined) ?? null,
+      authorId: author.id,
+      createdAt: activity.createdAt,
+    };
+  }).then(async (result) => {
+    const { markAssignmentTreatedFromActivity } = await import(
+      "@/server/services/portfolio.service"
+    );
+    await markAssignmentTreatedFromActivity({
+      leadId: result.leadId,
+      activityId: result.activityId,
+      authorId: result.authorId,
+      type: result.type,
+      outcome: result.outcome,
+      activityCreatedAt: result.createdAt,
+    });
+    return {
+      activityId: result.activityId,
+      leadId: result.leadId,
+      stage: result.stage,
+      nextFollowUpAt: result.nextFollowUpAt,
     };
   });
 }

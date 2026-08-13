@@ -9,10 +9,11 @@ export type AdminUserRow = {
   role: UserRole;
   isActive: boolean;
   canRunAcquisition: boolean;
+  weeklyTarget: number | null;
 };
 
 export async function listUsersForAdmin(): Promise<AdminUserRow[]> {
-  return prisma.user.findMany({
+  const users = await prisma.user.findMany({
     select: {
       id: true,
       name: true,
@@ -20,7 +21,20 @@ export async function listUsersForAdmin(): Promise<AdminUserRow[]> {
       role: true,
       isActive: true,
       canRunAcquisition: true,
+      weeklyQuota: {
+        select: { weeklyTarget: true },
+      },
     },
     orderBy: [{ role: "asc" }, { name: "asc" }],
   });
+
+  return users.map((user) => ({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    isActive: user.isActive,
+    canRunAcquisition: user.canRunAcquisition,
+    weeklyTarget: user.weeklyQuota?.weeklyTarget ?? null,
+  }));
 }

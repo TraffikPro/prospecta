@@ -36,7 +36,7 @@ export default async function AdminUsersPage() {
       />
       <PageHeading
         title="Usuários"
-        meta="Gerencie a equipe e a autorização de aquisição."
+        meta="Gerencie a equipe, autorização de carteira e meta semanal."
       />
 
       <UsersTable users={users} />

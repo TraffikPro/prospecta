@@ -27,6 +27,9 @@ const userSelect = {
   role: true,
   isActive: true,
   canRunAcquisition: true,
+  weeklyQuota: {
+    select: { weeklyTarget: true },
+  },
 } satisfies Prisma.UserSelect;
 
 type UserRow = Prisma.UserGetPayload<{ select: typeof userSelect }>;
@@ -44,6 +47,7 @@ function toAdminUserRow(user: UserRow): AdminUserRow {
     role: user.role,
     isActive: user.isActive,
     canRunAcquisition: user.canRunAcquisition,
+    weeklyTarget: user.weeklyQuota?.weeklyTarget ?? null,
   };
 }
 

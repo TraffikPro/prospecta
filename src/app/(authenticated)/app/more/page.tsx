@@ -8,7 +8,7 @@ import { ContextualNav } from "@/components/navigation";
 import { roleLabels } from "@/features/admin/role.labels";
 import { LogoutButton } from "@/features/auth/logout-button";
 import { AuthenticationError } from "@/server/auth/errors";
-import { canRunAcquisition, requireAnyRole } from "@/server/auth/guards";
+import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
 
 export default async function MorePage() {
@@ -23,7 +23,7 @@ export default async function MorePage() {
   }
 
   const user = sessionUser!;
-  const showAcquisition = canRunAcquisition(user);
+  const showAcquisition = user.role === "ADMIN";
   const showUsersAdmin = user.role === "ADMIN";
 
   return (

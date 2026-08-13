@@ -6,11 +6,13 @@ import { ContextualNav } from "@/components/navigation";
 import { MyQueueFilters } from "@/features/leads/components/my-queue-filters";
 import { MyQueueList } from "@/features/leads/components/my-queue-list";
 import { MyQueueSummaryCards } from "@/features/leads/components/my-queue-summary";
+import { WeeklyPortfolioBanner } from "@/features/portfolio/components/weekly-portfolio-banner";
 import { parseMyQueueFilter } from "@/features/leads/my-queue";
 import { AuthenticationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
 import { getMyQueueForOwner } from "@/server/services/lead.service";
+import { enrollOwnedHighLeadsIntoPortfolio } from "@/server/services/portfolio.service";
 
 type MyLeadsPageProps = {
   searchParams: Promise<{
@@ -32,6 +34,9 @@ export default async function MyLeadsPage({ searchParams }: MyLeadsPageProps) {
   const user = sessionUser!;
   const params = await searchParams;
   const filter = parseMyQueueFilter(params.filter);
+  const { summary: portfolio } = await enrollOwnedHighLeadsIntoPortfolio({
+    userId: user.id,
+  });
   const view = await getMyQueueForOwner(user.id, filter);
 
   return (
@@ -42,6 +47,7 @@ export default async function MyLeadsPage({ searchParams }: MyLeadsPageProps) {
         meta="Abra a fila e ataque o próximo passo — atrasados e follow-ups primeiro."
       />
 
+      <WeeklyPortfolioBanner summary={portfolio} />
       <MyQueueSummaryCards summary={view.summary} activeFilter={filter} />
       <MyQueueFilters active={filter} summary={view.summary} />
       <MyQueueList view={view} />

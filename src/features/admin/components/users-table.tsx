@@ -14,6 +14,11 @@ import {
 } from "@chakra-ui/react";
 
 import { Button } from "@/components/ui/button";
+import { DEFAULT_WEEKLY_TARGET } from "@/features/portfolio/portfolio.rules";
+import {
+  setWeeklyQuotaAction,
+  type PortfolioActionState,
+} from "@/server/actions/portfolio";
 import {
   setAcquisitionPermissionAction,
   type SetAcquisitionPermissionState,
@@ -29,18 +34,20 @@ export type AdminUserCard = {
   role: UserRole;
   isActive: boolean;
   canRunAcquisition: boolean;
+  weeklyTarget: number | null;
 };
 
 type UsersTableProps = {
   users: AdminUserCard[];
 };
 
-const initialState: SetAcquisitionPermissionState = {};
+const acquisitionInitial: SetAcquisitionPermissionState = {};
+const quotaInitial: PortfolioActionState = {};
 
 function AcquisitionPermissionControls({ user }: { user: AdminUserCard }) {
   const [state, formAction, pending] = useActionState(
     setAcquisitionPermissionAction,
-    initialState,
+    acquisitionInitial,
   );
 
   if (user.role === "ADMIN") {
@@ -84,6 +91,56 @@ function AcquisitionPermissionControls({ user }: { user: AdminUserCard }) {
   );
 }
 
+function WeeklyQuotaControls({ user }: { user: AdminUserCard }) {
+  const [state, formAction, pending] = useActionState(
+    setWeeklyQuotaAction,
+    quotaInitial,
+  );
+  const current = user.weeklyTarget ?? DEFAULT_WEEKLY_TARGET;
+
+  return (
+    <form action={formAction}>
+      <Stack gap="1">
+        <Text fontSize="xs" color="fg.muted">
+          Meta semanal (HIGH)
+        </Text>
+        <HStack gap="2" flexWrap="wrap" align="center">
+          <input type="hidden" name="userId" value={user.id} />
+          <input
+            type="number"
+            name="weeklyTarget"
+            min={1}
+            max={50}
+            defaultValue={current}
+            disabled={pending}
+            style={{ minHeight: 36, width: 72, padding: "0.25rem 0.5rem" }}
+            aria-label={`Meta semanal de ${user.name}`}
+          />
+          <Button
+            type="submit"
+            size="xs"
+            variant="outline"
+            loading={pending}
+            disabled={pending}
+          >
+            Salvar meta
+          </Button>
+        </HStack>
+        {state.error ? (
+          <Text fontSize="xs" color="fg.error" role="alert">
+            {state.error}
+          </Text>
+        ) : null}
+        {state.ok ? (
+          <Text fontSize="xs" color="fg.muted">
+            Meta atualizada.
+          </Text>
+        ) : null}
+      </Stack>
+    </form>
+  );
+}
+
 export function UsersTable({ users }: UsersTableProps) {
   if (users.length === 0) {
     return (
@@ -114,6 +171,7 @@ export function UsersTable({ users }: UsersTableProps) {
                   <StatusBadge isActive={user.isActive} />
                 </Stack>
                 <AcquisitionPermissionControls user={user} />
+                <WeeklyQuotaControls user={user} />
               </Stack>
             </Stack>
           </Card.Body>

@@ -35,9 +35,15 @@ import {
   findLeadBySourceExternalId,
   listLeads,
   listLeadsForOwnerQueue,
+  listLeadsScoped,
   listLeadsWithIntelligence,
   type LeadWithOwner,
 } from "@/server/repositories/lead.repository";
+import type { SessionUser } from "@/server/auth/types";
+
+function memberScopeOwnerId(user: SessionUser): string | undefined {
+  return user.role === "MEMBER" ? user.id : undefined;
+}
 
 export type CreateLeadCommand = {
   companyName: string;
@@ -131,8 +137,12 @@ export type IntelligenceInboxResult = {
 
 export async function getIntelligenceInbox(
   filters: IntelligenceInboxFilters,
+  viewer?: SessionUser | null,
 ): Promise<IntelligenceInboxResult> {
-  const leads = await listLeadsWithIntelligence();
+  const ownerId = viewer ? memberScopeOwnerId(viewer) : undefined;
+  const leads = await listLeadsWithIntelligence(
+    ownerId ? { ownerId } : undefined,
+  );
   const allItems = buildIntelligenceInbox(leads, {
     qualification: "ALL",
     source: "ALL",
@@ -146,8 +156,13 @@ export async function getIntelligenceInbox(
 
 export type LeadsByStage = Record<LeadStage, LeadWithOwner[]>;
 
-export async function getLeadsGroupedByStage(): Promise<LeadsByStage> {
-  const leads = await listLeads();
+export async function getLeadsGroupedByStage(
+  viewer?: SessionUser | null,
+): Promise<LeadsByStage> {
+  const ownerId = viewer ? memberScopeOwnerId(viewer) : undefined;
+  const leads = ownerId
+    ? await listLeadsScoped({ ownerId })
+    : await listLeads();
   const grouped = Object.fromEntries(
     LEAD_STAGE_ORDER.map((stage) => [stage, [] as LeadWithOwner[]]),
   ) as LeadsByStage;

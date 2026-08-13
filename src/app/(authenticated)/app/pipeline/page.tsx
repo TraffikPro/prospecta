@@ -25,7 +25,7 @@ export default async function PipelinePage() {
     throw error;
   }
 
-  const grouped = await getLeadsGroupedByStage();
+  const grouped = await getLeadsGroupedByStage(sessionUser!);
   const totalLeads = LEAD_STAGE_ORDER.reduce(
     (sum, stage) => sum + grouped[stage].length,
     0,
