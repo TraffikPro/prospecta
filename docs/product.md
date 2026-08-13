@@ -143,11 +143,13 @@ Cumpridos na [decisão do MVP](product/product-decision-mvp-technical.md) (fluxo
 ## Estágio atual
 
 ```text
-MVP técnico em produção (Auth → Lead → Activity → Pipeline → Intelligence → Lead Detail) = DONE
-→ VALIDATE — piloto fundador / lote Santos (Activity → resposta → reunião)
-→ Dashboard / Campaign entity / CSV UI / polish = só com product-grill após evidência
+NAV comercial = DONE (PR #55)
+WEEKLY PORTFOLIO F1 = DONE / produção (PR #56, e54f85e)
+F2–F4 / dashboard / KPIs / badges = DEFER
+→ próxima fase = operação semanal real (não expansão de features)
 ```
 
+Sequência oficial: [product/product-decision-operational-sequence-after-nav.md](product/product-decision-operational-sequence-after-nav.md).  
 Status canônico pós-MVP: [product/status-post-mvp.md](product/status-post-mvp.md).  
 Piloto comercial: [product/founder-pilot.md](product/founder-pilot.md).  
 Lote oficial: [product/campaign-santos-odonto-batch-1.md](product/campaign-santos-odonto-batch-1.md).
@@ -160,6 +162,7 @@ Checklist societário segue **em paralelo** e não bloqueia a operação do pilo
 | --- | --- |
 | `docs/product.md` | Este documento (resumo normativo V1) |
 | `docs/product/status-post-mvp.md` | Status canônico pós-MVP (estágio atual) |
+| `docs/product/product-decision-operational-sequence-after-nav.md` | NAV/F1 DONE · F2–F4 e dashboard DEFER |
 | `docs/product/product-decision-mvp-technical.md` | Grill + decisões detalhadas |
 | `docs/product/pilot-validation-plan.md` | Validação técnica/operacional do piloto |
 | `docs/product/founder-pilot.md` | Piloto comercial (tese, métricas, DEFER Maps) |
