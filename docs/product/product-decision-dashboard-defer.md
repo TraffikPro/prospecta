@@ -1,9 +1,10 @@
 # Dashboard v1 — Decision DEFER
 
 - **Data:** 2026-07-24
-- **Decisão:** **DEFER**
+- **Atualização:** 2026-08-13
+- **Decisão:** **DEFER** (mantida)
 - **Classificação:** PLATFORM (quando reabrir)
-- **Relacionado:** [campaign-santos-odonto-batch-1.md](campaign-santos-odonto-batch-1.md)
+- **Relacionado:** [sequência operacional](product-decision-operational-sequence-after-nav.md), [carteira Fase 1](product-decision-weekly-lead-portfolio-phase-1.md)
 
 ## Status
 
@@ -11,45 +12,31 @@
 
 ## Motivo
 
-O produto já tem infraestrutura para medir conversão (Lead → Activity → stage), mas ainda **não há volume de eventos comerciais reais**. Um painel agora mostraria zeros e não melhoraria a decisão além da tabela do lote Santos.
+Um painel deve responder uma pergunta operacional **existente**. Com a carteira Fase 1 em produção, essa pergunta só pode aparecer depois de **uma semana operacional real**. Construir `/app` rico ou API de snapshot agora mediria o vazio e desviaria da operação.
 
-## Contexto atual
-
-```text
-Lead Intelligence ✅
-Pipeline ✅
-Activity ✅
-
-Conversão:
-em validação (lote Santos)
-```
-
-Estado típico no momento da decisão:
+## Trava
 
 ```text
-Leads:        5
-Activities:   0
-Responses:    0
-Meetings:     0
+PortfolioSummary é suficiente para F1.
+Não criar snapshot/API de dashboard sem novo grill.
 ```
 
-## Hipótese futura
-
-Um painel operacional pode reduzir o tempo para responder:
-
-- quantos leads foram trabalhados;
-- taxa de resposta;
-- reuniões geradas;
-- campanhas vencedoras.
+`/app` permanece Visão geral simples até um BUILD futuro.
 
 ## Condições para reabrir o grill
 
-Qualquer uma:
+Reavaliar **após uma semana operacional completa** com:
 
-- 5 contatos concluídos no lote Santos; **ou**
-- ≥3 Activities reais registradas; **ou**
-- segunda campanha em execução; **ou**
-- sócios sentem dificuldade real em acompanhar a operação
+- meta configurada;
+- atribuições reais;
+- tratamentos reais.
+
+**Não** reabre por merge, deploy, calendário, lote Santos isolado, nem contagem de Activities.
+
+Reabrir somente se, depois dessa semana, o problema observado for:
+
+- MEMBER não sabe o que atacar; **ou**
+- ADMIN não sabe quem está ocioso.
 
 ## Regra de produto
 
@@ -57,27 +44,41 @@ Qualquer uma:
 
 | Evitar | Preferir |
 | --- | --- |
-| “Vamos fazer gráficos porque SaaS tem dashboard.” | “Temos duas campanhas e precisamos saber qual gera reuniões.” |
+| “Vamos fazer gráficos porque SaaS tem dashboard.” | “Depois da semana, o ADMIN não vê quem está ocioso.” |
 
 ## Primeira versão esperada (quando BUILD)
 
-Não começar com gráficos.
+Não autoriza implementação agora. Não começar com gráficos. Não criar `GET /api/dashboard/weekly`. Derivar das entidades já usadas em `PortfolioSummary`.
 
-**Fatia 1:** KPIs numéricos — Leads, Contatados, Respostas, Reuniões, WON.
+**Fatia 1 candidata:**
 
-**Depois (só com uso comprovado):** gráficos, comparações, campanhas, tendências.
+```text
+meta / atribuídos / tratados / pendentes
+```
 
-Fora da primeira fatia: BI completo, filtros complexos, previsão de receita, IA analítica, cohorts.
+**Não** começar por:
+
+```text
+Leads / Contatados / Reuniões / WON
+```
+
+Também fora: conversão, receita, CAC, ROI, forecast, win rate, velocity, BI, filtros complexos, IA analítica.
+
+**Depois (só com uso comprovado da fatia 1):** gráficos, comparações, campanhas, tendências.
 
 ## Próximo passo agora
 
 ```text
-Inbox → Contato → Activity → Resultado
+Operar uma semana real da carteira Fase 1
 ```
 
-Operar o lote Santos. O próximo grill (Dashboard / Workspace / Campaign / score) usa o gargalo real.
+O grill de dashboard usa o gargalo observado nessa semana — não o merge do PR #56.
+
+## Histórico (2026-07-24)
+
+DEFER original por falta de volume no lote Santos (Leads 5 / Activities 0). Gatilhos daquela data (5 contatos Santos, ≥3 Activities, segunda campanha) **estão aposentados** e não reabrem o grill.
 
 ## Owner / revisão
 
 - Owner: produto (Gustavo) + comercial
-- Revisão: ao fechar o lote ou ao atingir condição de reabertura
+- Revisão: ao completar a primeira semana operacional real da Fase 1, se o problema observado for o da seção de reabertura

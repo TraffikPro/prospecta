@@ -1,9 +1,10 @@
 # Product Decision — Weekly Lead Portfolio Fase 1
 
 - **Data:** 2026-08-13
-- **Decisão:** **BUILD Fase 1**
-- **Classificação:** PLATFORM (carteira/assignment) · WORKSPACE (Minha fila / Usuários)
+- **Decisão:** **BUILD Fase 1** → **DONE** em produção (PR [#56](https://github.com/TraffikPro/prospecta/pull/56), `e54f85e`)
+- **Classificação:** PLATFORM (carteira/assignment) · WORKSPACE (Minha fila / Equipe)
 - **Contrato runner:** **REFINAR antes da Fase 3** (IDs no callback; ownership via `AcquisitionJob.requestedBy` no CRM)
+- **Sequência:** [após a navegação](product-decision-operational-sequence-after-nav.md) — F2–F4 continuam **DEFER**
 
 ## Hipótese
 
@@ -22,12 +23,15 @@ Se cada operador tiver meta semanal de HIGH atribuídos, ownership histórico e 
 9. Sem `OperatorWeeklyQuota`: estado “Meta semanal ainda não configurada”; sem carteira implícita; sem vagas; sem meta default.
 10. `LeadAssignment.assignedById` identifica quem atribuiu (migration aditiva); auditoria `lead.reassign` permanece atômica na mesma transação.
 
-## Fora (Fases 2–4)
+## Fora (Fases 2–4) — direção fechada, **DEFER** até grill próprio
 
-- Reciclagem / pool / cap 2 → revisão
+Não misturar no próximo PR. Hipóteses independentes: ver [sequência](product-decision-operational-sequence-after-nav.md).
+
+- Reciclagem / pool / cap 2 → revisão ADMIN
 - “Completar minha carteira” com runner adaptativo
 - Cron de fechamento
 - Mudança de contrato do generator
+- Lazy enrollment (não faz parte da Fase 1; exige nova decisão)
 
 ## Métricas Fase 1
 
