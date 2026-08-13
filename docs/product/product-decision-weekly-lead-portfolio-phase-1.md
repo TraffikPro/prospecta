@@ -22,11 +22,12 @@ Se cada operador tiver meta semanal de HIGH atribuídos, ownership histórico e 
 9. Sem `OperatorWeeklyQuota`: estado “Meta semanal ainda não configurada”; sem carteira implícita; sem vagas; sem meta default.
 10. `LeadAssignment.assignedById` identifica quem atribuiu (migration aditiva); auditoria `lead.reassign` permanece atômica na mesma transação.
 
-## Fora (Fases 2–4)
+## Fora (Fases 3–4 e depois do motor)
 
-- Reciclagem / pool / cap 2 → revisão
-- “Completar minha carteira” com runner adaptativo
-- Cron de fechamento
+- F2 pool / recycle / cap 2 → [product-decision-weekly-high-pool-recycle-f2.md](product-decision-weekly-high-pool-recycle-f2.md) (**BUILD agora**)
+- Completar carteira com runner adaptativo (F3) → **PLANNED / BUILD depois de F2**
+- Cron de fechamento (F4) → **PLANNED / BUILD depois de F3**
+- Dashboard / KPIs / badges → depois do motor operacional
 - Mudança de contrato do generator
 
 ## Métricas Fase 1

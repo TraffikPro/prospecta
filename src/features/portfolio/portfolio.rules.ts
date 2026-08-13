@@ -1,6 +1,8 @@
-import type { ActivityOutcome, ActivityType } from "@prisma/client";
+import type { ActivityOutcome, ActivityType, LeadStage } from "@prisma/client";
 
 import { isOutreachType } from "@/features/activities/activity.rules";
+import { parseLeadIntelligence } from "@/features/leads/intelligence/parse-intelligence";
+import { resolveQualification } from "@/features/leads/intelligence/qualification";
 
 /** Fase 1: treated = WhatsApp/e-mail with outcome after assignment. */
 export function isValidTreatmentActivity(input: {
@@ -21,3 +23,95 @@ export function isValidTreatmentActivity(input: {
 export const SUGGESTED_WEEKLY_TARGET = 10;
 export const MAX_WEEKLY_TARGET = 50;
 export const MIN_WEEKLY_TARGET = 1;
+
+/** Max commercial assignment cycles per lead (F2). */
+export const HIGH_ASSIGNMENT_CAP = 2;
+export const RELEASE_REASON_ADMIN_REASSIGN = "ADMIN_REASSIGN";
+export const RELEASE_REASON_RECYCLED = "RECYCLED";
+
+export type AssignmentCycleInput = {
+  status: "ACTIVE" | "TREATED" | "RELEASED";
+  releaseReason: string | null;
+};
+
+/**
+ * One LeadAssignment row is one commercial cycle, except F1 ADMIN_REASSIGN
+ * leftovers (transfer of the same attempt).
+ */
+export function countsAsCommercialCycle(
+  assignment: AssignmentCycleInput,
+): boolean {
+  return !(
+    assignment.status === "RELEASED" &&
+    assignment.releaseReason === RELEASE_REASON_ADMIN_REASSIGN
+  );
+}
+
+export function countCommercialCycles(
+  assignments: AssignmentCycleInput[],
+): number {
+  return assignments.filter(countsAsCommercialCycle).length;
+}
+
+export function isHighQualification(intelligence: unknown): boolean {
+  const parsed = parseLeadIntelligence(intelligence);
+  if (!parsed) return false;
+  return resolveQualification(parsed) === "HIGH";
+}
+
+export function isTerminalLeadStage(stage: LeadStage | string): boolean {
+  return stage === "WON" || stage === "LOST";
+}
+
+export type HighPoolBucket =
+  | "eligible"
+  | "assigned"
+  | "recyclable"
+  | "capped";
+
+export function classifyHighPoolLead(input: {
+  intelligence: unknown;
+  stage: LeadStage | string;
+  assignments: AssignmentCycleInput[];
+}): HighPoolBucket | null {
+  const cycles = countCommercialCycles(input.assignments);
+  const hasActive = input.assignments.some(
+    (assignment) => assignment.status === "ACTIVE",
+  );
+  const hasTreated = input.assignments.some(
+    (assignment) => assignment.status === "TREATED",
+  );
+
+  if (hasActive) {
+    return "assigned";
+  }
+  if (cycles >= HIGH_ASSIGNMENT_CAP) {
+    return "capped";
+  }
+  if (hasTreated) {
+    return "recyclable";
+  }
+  if (
+    isHighQualification(input.intelligence) &&
+    !isTerminalLeadStage(input.stage)
+  ) {
+    return "eligible";
+  }
+  return null;
+}
+
+export function isEligibleHighPool(input: {
+  intelligence: unknown;
+  stage: LeadStage | string;
+  assignments: AssignmentCycleInput[];
+}): boolean {
+  return classifyHighPoolLead(input) === "eligible";
+}
+
+export function isRecyclableHigh(input: {
+  intelligence: unknown;
+  stage: LeadStage | string;
+  assignments: AssignmentCycleInput[];
+}): boolean {
+  return classifyHighPoolLead(input) === "recyclable";
+}

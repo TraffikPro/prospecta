@@ -25,6 +25,7 @@ describe("visibleNavItems", () => {
         "leads",
         "portfolio",
         "acquisition",
+        "high-pool",
         "team",
       ],
     );
@@ -75,7 +76,7 @@ describe("visibleNavGroups", () => {
     const management = groups.find((group) => group.id === "management");
     assert.deepEqual(
       management?.items.map((item) => item.label),
-      ["Aquisição", "Equipe"],
+      ["Aquisição", "Revisão HIGH", "Equipe"],
     );
   });
 
@@ -98,7 +99,7 @@ describe("morePageSections", () => {
       })),
       [
         { label: "Geral", ids: ["overview", "leads", "portfolio"] },
-        { label: "Gestão", ids: ["acquisition", "team"] },
+        { label: "Gestão", ids: ["acquisition", "high-pool", "team"] },
       ],
     );
   });

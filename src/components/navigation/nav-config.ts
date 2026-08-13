@@ -12,6 +12,7 @@ export type NavIconId =
   | "leads"
   | "portfolio"
   | "acquisition"
+  | "high-pool"
   | "team";
 
 export type AppNavItem = {
@@ -104,6 +105,16 @@ export const APP_NAV_ITEMS: readonly AppNavItem[] = [
     testId: "nav-acquisition",
   },
   {
+    id: "high-pool",
+    href: "/admin/high-pool",
+    label: "Revisão HIGH",
+    icon: "high-pool",
+    group: "management",
+    visibility: "admin",
+    match: "prefix",
+    testId: "nav-high-pool",
+  },
+  {
     id: "team",
     href: "/admin/users",
     label: "Equipe",
@@ -151,7 +162,7 @@ export const profileRoleLabels: Record<"ADMIN" | "MEMBER", string> = {
 };
 
 const MORE_GENERAL_IDS = new Set(["overview", "leads", "portfolio"]);
-const MORE_MANAGEMENT_IDS = new Set(["acquisition", "team"]);
+const MORE_MANAGEMENT_IDS = new Set(["acquisition", "high-pool", "team"]);
 
 export function canSeeNavItem(item: AppNavItem, access: NavAccess): boolean {
   if (item.visibility === "all") {

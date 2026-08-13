@@ -10,10 +10,17 @@ import { moveLeadStage } from "./lead.service";
 import {
   PortfolioError,
   getPortfolioSummaryForUser,
+  listHighPoolReview,
   markAssignmentTreatedInTx,
   reassignLeadToOperator,
+  recycleLeadToPool,
   setOperatorWeeklyQuota,
 } from "./portfolio.service";
+import {
+  RELEASE_REASON_ADMIN_REASSIGN,
+  RELEASE_REASON_RECYCLED,
+  countCommercialCycles,
+} from "@/features/portfolio/portfolio.rules";
 
 const prisma = new PrismaClient();
 const hasDatabase = Boolean(process.env.DATABASE_URL);
@@ -214,7 +221,7 @@ describe("portfolio.service", { skip: !hasDatabase }, () => {
     await setOperatorWeeklyQuota({
       actorId: adminId,
       targetUserId: memberId,
-      weeklyTarget: 3,
+      weeklyTarget: 20,
     });
 
     const beforeAssign = await prisma.leadAssignment.count({
@@ -222,7 +229,7 @@ describe("portfolio.service", { skip: !hasDatabase }, () => {
     });
     const summaryBefore = await getPortfolioSummaryForUser(memberId);
     assert.equal(summaryBefore.quotaConfigured, true);
-    assert.equal(summaryBefore.target, 3);
+    assert.equal(summaryBefore.target, 20);
     assert.equal(summaryBefore.assigned, 0);
 
     const afterReadAssignments = await prisma.leadAssignment.count({
@@ -245,7 +252,7 @@ describe("portfolio.service", { skip: !hasDatabase }, () => {
 
     const summary = await getPortfolioSummaryForUser(memberId);
     assert.equal(summary.assigned, 1);
-    assert.equal(summary.slotsRemaining, 2);
+    assert.equal(summary.slotsRemaining, 19);
 
     await assert.rejects(
       () =>
@@ -683,6 +690,371 @@ describe("portfolio.service", { skip: !hasDatabase }, () => {
           stage: "CONTACTED",
         }),
       AuthorizationError,
+    );
+  });
+
+  async function treatLead(leadId: string, authorId: string) {
+    return createActivityForLead({
+      leadId,
+      authorId,
+      type: "WHATSAPP",
+      outcome: "NOT_INTERESTED",
+      body: `f2-treat-${stamp}-${Math.random().toString(36).slice(2, 8)}`,
+    });
+  }
+
+  async function ensureQuota(userId: string, weeklyTarget = 50) {
+    await setOperatorWeeklyQuota({
+      actorId: adminId,
+      targetUserId: userId,
+      weeklyTarget,
+    });
+    await prisma.weeklyPortfolio.updateMany({
+      where: { userId },
+      data: { targetSnapshot: weeklyTarget },
+    });
+  }
+
+  it("F2: HIGH eligible enters pool; TREATED stays recyclable not eligible", async () => {
+    await ensureQuota(memberId);
+    const eligible = await createHighLead(adminId, "f2-elig");
+    const treatedLead = await createHighLead(adminId, "f2-treated");
+    await reassignLeadToOperator({
+      actorId: adminId,
+      leadId: treatedLead.id,
+      assigneeId: memberId,
+    });
+    await treatLead(treatedLead.id, memberId);
+
+    await assert.rejects(
+      () =>
+        reassignLeadToOperator({
+          actorId: adminId,
+          leadId: treatedLead.id,
+          assigneeId: memberId,
+        }),
+      (err: unknown) =>
+        err instanceof PortfolioError &&
+        err.message.includes("Recicle o lead"),
+    );
+
+    const medium = await prisma.lead.create({
+      data: {
+        companyName: `PF f2-med ${stamp}`,
+        email: `pf-f2-med-${stamp}@acme.example`,
+        stage: "NEW",
+        ownerId: memberId,
+        intelligence: {
+          score: 55,
+          qualification: "MEDIUM",
+          signals: [],
+        },
+      },
+    });
+    createdLeadIds.push(medium.id);
+
+    const won = await createHighLead(adminId, "f2-won");
+    await prisma.lead.update({
+      where: { id: won.id },
+      data: { stage: "WON" },
+    });
+
+    const review = await listHighPoolReview(adminId);
+    const eligibleIds = review.eligible.map((item) => item.id);
+    const recyclableIds = review.recyclable.map((item) => item.id);
+    const assignedIds = review.assigned.map((item) => item.id);
+
+    assert.ok(eligibleIds.includes(eligible.id));
+    assert.equal(eligibleIds.includes(treatedLead.id), false);
+    assert.ok(recyclableIds.includes(treatedLead.id));
+    assert.equal(eligibleIds.includes(medium.id), false);
+    assert.equal(eligibleIds.includes(won.id), false);
+    assert.equal(assignedIds.includes(treatedLead.id), false);
+  });
+
+  it("F2: assign allowed under cap; third commercial cycle is blocked", async () => {
+    await ensureQuota(memberId);
+    const lead = await createHighLead(adminId, "f2-cap");
+
+    const first = await reassignLeadToOperator({
+      actorId: adminId,
+      leadId: lead.id,
+      assigneeId: memberId,
+    });
+    await treatLead(lead.id, memberId);
+    await recycleLeadToPool({ actorId: adminId, leadId: lead.id });
+
+    const second = await reassignLeadToOperator({
+      actorId: adminId,
+      leadId: lead.id,
+      assigneeId: memberId,
+    });
+    assert.notEqual(second.assignmentId, first.assignmentId);
+    const secondRow = await prisma.leadAssignment.findUniqueOrThrow({
+      where: { id: second.assignmentId },
+    });
+    assert.equal(secondRow.source, "RECYCLED");
+
+    await treatLead(lead.id, memberId);
+    await assert.rejects(
+      () =>
+        reassignLeadToOperator({
+          actorId: adminId,
+          leadId: lead.id,
+          assigneeId: memberId,
+        }),
+      (err: unknown) =>
+        err instanceof PortfolioError &&
+        err.message.includes("limite de 2 ciclos"),
+    );
+    await assert.rejects(
+      () => recycleLeadToPool({ actorId: adminId, leadId: lead.id }),
+      (err: unknown) =>
+        err instanceof PortfolioError &&
+        err.message.includes("limite de 2 ciclos"),
+    );
+
+    const history = await prisma.leadAssignment.findMany({
+      where: { leadId: lead.id },
+    });
+    assert.equal(countCommercialCycles(history), 2);
+    assert.equal(history.filter((row) => row.status === "TREATED").length, 1);
+    assert.equal(
+      history.filter(
+        (row) =>
+          row.status === "RELEASED" &&
+          row.releaseReason === RELEASE_REASON_RECYCLED,
+      ).length,
+      1,
+    );
+
+    const review = await listHighPoolReview(adminId);
+    assert.ok(review.capped.some((item) => item.id === lead.id));
+    assert.equal(
+      review.eligible.some((item) => item.id === lead.id),
+      false,
+    );
+    assert.equal(
+      review.recyclable.some((item) => item.id === lead.id),
+      false,
+    );
+  });
+
+  it("F2: race on last cycle of the same lead yields one ACTIVE", async () => {
+    await ensureQuota(memberId);
+    await ensureQuota(otherId);
+    const lead = await createHighLead(adminId, "f2-race");
+    await reassignLeadToOperator({
+      actorId: adminId,
+      leadId: lead.id,
+      assigneeId: memberId,
+    });
+    await treatLead(lead.id, memberId);
+    await recycleLeadToPool({ actorId: adminId, leadId: lead.id });
+
+    const outcomes = await Promise.allSettled([
+      reassignLeadToOperator({
+        actorId: adminId,
+        leadId: lead.id,
+        assigneeId: memberId,
+      }),
+      reassignLeadToOperator({
+        actorId: adminId,
+        leadId: lead.id,
+        assigneeId: otherId,
+      }),
+    ]);
+
+    const fulfilled = outcomes.filter((o) => o.status === "fulfilled");
+    const rejected = outcomes.filter((o) => o.status === "rejected");
+    assert.equal(fulfilled.length, 1);
+    assert.equal(rejected.length, 1);
+    assert.ok(
+      rejected[0]?.status === "rejected" &&
+        rejected[0].reason instanceof PortfolioError,
+    );
+
+    const active = await prisma.leadAssignment.findMany({
+      where: { leadId: lead.id, status: "ACTIVE" },
+    });
+    assert.equal(active.length, 1);
+  });
+
+  it("F2: recycle preserves history and returns to pool when still eligible", async () => {
+    await ensureQuota(memberId);
+    const lead = await createHighLead(adminId, "f2-recycle");
+    const assigned = await reassignLeadToOperator({
+      actorId: adminId,
+      leadId: lead.id,
+      assigneeId: memberId,
+    });
+    await treatLead(lead.id, memberId);
+
+    const recycled = await recycleLeadToPool({
+      actorId: adminId,
+      leadId: lead.id,
+    });
+    assert.equal(recycled.assignmentId, assigned.assignmentId);
+
+    const history = await prisma.leadAssignment.findMany({
+      where: { leadId: lead.id },
+    });
+    assert.equal(history.length, 1);
+    assert.equal(history[0]?.status, "RELEASED");
+    assert.equal(history[0]?.releaseReason, RELEASE_REASON_RECYCLED);
+
+    const audits = await prisma.adminAuditEvent.findMany({
+      where: { action: "lead.recycle", actorId: adminId },
+    });
+    assert.ok(
+      audits.some((event) => {
+        const detail = event.detail as { leadId?: string } | null;
+        return detail?.leadId === lead.id;
+      }),
+    );
+
+    const review = await listHighPoolReview(adminId);
+    assert.ok(review.eligible.some((item) => item.id === lead.id));
+    assert.equal(
+      review.recyclable.some((item) => item.id === lead.id),
+      false,
+    );
+  });
+
+  it("F2: ADMIN_REASSIGN does not consume a commercial cycle", async () => {
+    await ensureQuota(memberId);
+    await ensureQuota(otherId);
+    const lead = await createHighLead(adminId, "f2-reassign");
+    await reassignLeadToOperator({
+      actorId: adminId,
+      leadId: lead.id,
+      assigneeId: memberId,
+    });
+    await reassignLeadToOperator({
+      actorId: adminId,
+      leadId: lead.id,
+      assigneeId: otherId,
+      expectedActiveAssigneeId: memberId,
+    });
+
+    const afterTransfer = await prisma.leadAssignment.findMany({
+      where: { leadId: lead.id },
+    });
+    assert.equal(countCommercialCycles(afterTransfer), 1);
+    assert.equal(
+      afterTransfer.filter(
+        (row) =>
+          row.status === "RELEASED" &&
+          row.releaseReason === RELEASE_REASON_ADMIN_REASSIGN,
+      ).length,
+      1,
+    );
+
+    await treatLead(lead.id, otherId);
+    await recycleLeadToPool({ actorId: adminId, leadId: lead.id });
+    await reassignLeadToOperator({
+      actorId: adminId,
+      leadId: lead.id,
+      assigneeId: memberId,
+    });
+
+    const afterSecondCycle = await prisma.leadAssignment.findMany({
+      where: { leadId: lead.id },
+    });
+    assert.equal(countCommercialCycles(afterSecondCycle), 2);
+    assert.equal(
+      afterSecondCycle.filter((row) => row.status === "ACTIVE").length,
+      1,
+    );
+  });
+
+  it("F2: stale recycle rejects WON/LOST, lost HIGH, or ACTIVE", async () => {
+    await ensureQuota(memberId);
+
+    const wonLead = await createHighLead(adminId, "f2-stale-won");
+    await reassignLeadToOperator({
+      actorId: adminId,
+      leadId: wonLead.id,
+      assigneeId: memberId,
+    });
+    await treatLead(wonLead.id, memberId);
+    await prisma.lead.update({
+      where: { id: wonLead.id },
+      data: { stage: "WON" },
+    });
+    await assert.rejects(
+      () => recycleLeadToPool({ actorId: adminId, leadId: wonLead.id }),
+      (err: unknown) =>
+        err instanceof PortfolioError &&
+        err.message.includes("ganhos ou perdidos"),
+    );
+
+    const lowLead = await createHighLead(adminId, "f2-stale-low");
+    await reassignLeadToOperator({
+      actorId: adminId,
+      leadId: lowLead.id,
+      assigneeId: memberId,
+    });
+    await treatLead(lowLead.id, memberId);
+    await prisma.lead.update({
+      where: { id: lowLead.id },
+      data: {
+        intelligence: {
+          score: 40,
+          qualification: "LOW",
+          signals: [],
+        },
+      },
+    });
+    await assert.rejects(
+      () => recycleLeadToPool({ actorId: adminId, leadId: lowLead.id }),
+      (err: unknown) =>
+        err instanceof PortfolioError && err.message.includes("HIGH"),
+    );
+
+    const activeLead = await createHighLead(adminId, "f2-stale-active");
+    await reassignLeadToOperator({
+      actorId: adminId,
+      leadId: activeLead.id,
+      assigneeId: memberId,
+    });
+    await treatLead(activeLead.id, memberId);
+    await recycleLeadToPool({ actorId: adminId, leadId: activeLead.id });
+    await reassignLeadToOperator({
+      actorId: adminId,
+      leadId: activeLead.id,
+      assigneeId: memberId,
+    });
+    await assert.rejects(
+      () => recycleLeadToPool({ actorId: adminId, leadId: activeLead.id }),
+      (err: unknown) =>
+        err instanceof PortfolioError &&
+        (err.message.includes("atribuição ativa") ||
+          err.message.includes("tratados")),
+    );
+  });
+
+  it("F2: MEMBER cannot recycle or list the HIGH pool", async () => {
+    await ensureQuota(memberId);
+    const lead = await createHighLead(adminId, "f2-member");
+    await reassignLeadToOperator({
+      actorId: adminId,
+      leadId: lead.id,
+      assigneeId: memberId,
+    });
+    await treatLead(lead.id, memberId);
+
+    await assert.rejects(
+      () => recycleLeadToPool({ actorId: memberId, leadId: lead.id }),
+      (err: unknown) =>
+        err instanceof PortfolioError &&
+        err.message.includes("administradores"),
+    );
+    await assert.rejects(
+      () => listHighPoolReview(memberId),
+      (err: unknown) =>
+        err instanceof PortfolioError &&
+        err.message.includes("administradores"),
     );
   });
 });

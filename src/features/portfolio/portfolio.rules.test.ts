@@ -2,9 +2,16 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  HIGH_ASSIGNMENT_CAP,
   MAX_WEEKLY_TARGET,
   MIN_WEEKLY_TARGET,
+  RELEASE_REASON_ADMIN_REASSIGN,
+  RELEASE_REASON_RECYCLED,
   SUGGESTED_WEEKLY_TARGET,
+  classifyHighPoolLead,
+  countCommercialCycles,
+  isEligibleHighPool,
+  isRecyclableHigh,
   isValidTreatmentActivity,
 } from "./portfolio.rules";
 
@@ -105,5 +112,142 @@ describe("isValidTreatmentActivity", () => {
       }),
       false,
     );
+  });
+});
+
+const highIntelligence = {
+  score: 90,
+  qualification: "HIGH" as const,
+  signals: ["NO_WEBSITE"],
+};
+const mediumIntelligence = {
+  score: 55,
+  qualification: "MEDIUM" as const,
+  signals: [],
+};
+
+describe("countCommercialCycles", () => {
+  it("counts one assignment as one cycle", () => {
+    assert.equal(
+      countCommercialCycles([{ status: "ACTIVE", releaseReason: null }]),
+      1,
+    );
+    assert.equal(
+      countCommercialCycles([{ status: "TREATED", releaseReason: null }]),
+      1,
+    );
+  });
+
+  it("does not count ADMIN_REASSIGN leftovers as a new cycle", () => {
+    assert.equal(
+      countCommercialCycles([
+        {
+          status: "RELEASED",
+          releaseReason: RELEASE_REASON_ADMIN_REASSIGN,
+        },
+        { status: "ACTIVE", releaseReason: null },
+      ]),
+      1,
+    );
+  });
+
+  it("counts recycled history toward the cap", () => {
+    assert.equal(
+      countCommercialCycles([
+        {
+          status: "RELEASED",
+          releaseReason: RELEASE_REASON_RECYCLED,
+        },
+        { status: "TREATED", releaseReason: null },
+      ]),
+      2,
+    );
+    assert.equal(HIGH_ASSIGNMENT_CAP, 2);
+  });
+});
+
+describe("classifyHighPoolLead", () => {
+  it("puts HIGH without assignment in the eligible pool", () => {
+    assert.equal(
+      classifyHighPoolLead({
+        intelligence: highIntelligence,
+        stage: "NEW",
+        assignments: [],
+      }),
+      "eligible",
+    );
+    assert.equal(
+      isEligibleHighPool({
+        intelligence: highIntelligence,
+        stage: "NEW",
+        assignments: [],
+      }),
+      true,
+    );
+  });
+
+  it("keeps ineligible leads out of the pool", () => {
+    assert.equal(
+      classifyHighPoolLead({
+        intelligence: mediumIntelligence,
+        stage: "NEW",
+        assignments: [],
+      }),
+      null,
+    );
+    assert.equal(
+      classifyHighPoolLead({
+        intelligence: highIntelligence,
+        stage: "WON",
+        assignments: [],
+      }),
+      null,
+    );
+    assert.equal(
+      classifyHighPoolLead({
+        intelligence: highIntelligence,
+        stage: "LOST",
+        assignments: [],
+      }),
+      null,
+    );
+    assert.equal(
+      classifyHighPoolLead({
+        intelligence: highIntelligence,
+        stage: "NEW",
+        assignments: [{ status: "ACTIVE", releaseReason: null }],
+      }),
+      "assigned",
+    );
+    assert.equal(
+      isEligibleHighPool({
+        intelligence: highIntelligence,
+        stage: "NEW",
+        assignments: [{ status: "TREATED", releaseReason: null }],
+      }),
+      false,
+    );
+    assert.equal(
+      classifyHighPoolLead({
+        intelligence: highIntelligence,
+        stage: "NEW",
+        assignments: [
+          { status: "RELEASED", releaseReason: RELEASE_REASON_RECYCLED },
+          { status: "TREATED", releaseReason: null },
+        ],
+      }),
+      "capped",
+    );
+  });
+
+  it("does not list TREATED as eligible before explicit recycle", () => {
+    const treated = {
+      intelligence: highIntelligence,
+      stage: "CONTACTED" as const,
+      assignments: [{ status: "TREATED" as const, releaseReason: null }],
+    };
+    assert.equal(classifyHighPoolLead(treated), "recyclable");
+    assert.equal(isRecyclableHigh(treated), true);
+    assert.equal(isEligibleHighPool(treated), false);
   });
 });

@@ -78,6 +78,15 @@ export function NavIcon({ id, size }: { id: NavIconId } & IconProps) {
           <path d="M13 3 4 14h7l-1 7 9-11h-7l1-7Z" />
         </SvgIcon>
       );
+    case "high-pool":
+      return (
+        <SvgIcon size={size}>
+          <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
+          <path d="M21 3v5h-5" />
+          <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+          <path d="M8 16H3v5" />
+        </SvgIcon>
+      );
     case "team":
       return (
         <SvgIcon size={size}>

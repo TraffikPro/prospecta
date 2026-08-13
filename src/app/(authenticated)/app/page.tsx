@@ -63,6 +63,11 @@ export default async function AppHomePage() {
 
   if (user.role === "ADMIN") {
     shortcuts.push({
+      href: "/admin/high-pool",
+      label: "Revisão HIGH",
+      description: "Pool de HIGH, reciclagem e limite de ciclos.",
+    });
+    shortcuts.push({
       href: "/admin/users",
       label: "Equipe",
       description: "Operadores, permissões e autorização de aquisição.",
