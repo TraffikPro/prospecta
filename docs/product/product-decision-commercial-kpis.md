@@ -2,17 +2,17 @@
 
 - **Data:** 2026-08-14
 - **Decisão:** **BUILD**
-- **Classificação:** PLATFORM (contrato de métricas) · WORKSPACE (consumo futuro em `/app` e badges)
+- **Classificação:** PLATFORM (contrato de métricas) · WORKSPACE (consumo em `/app` e badges futuros)
 - **Branch:** `feat/commercial-weekly-kpis`
 - **Pré-requisito:** motor semanal F1–F4 em produção
-- **Não autoriza:** dashboard, cards, gráficos, badges, alertas, ranking, forecast, snapshot persistido, export
+- **Não autoriza:** gráficos, badges, alertas, ranking, forecast, snapshot persistido, export
 
 ## Sequência canônica
 
 ```text
 F1–F4 = DONE / PRODUÇÃO
-KPIs = BUILD agora
-DASHBOARD = NEXT
+KPIs = DONE
+DASHBOARD = BUILD → [product-decision-operational-dashboard.md](product-decision-operational-dashboard.md)
 BADGES = DEPOIS
 ```
 
@@ -77,9 +77,11 @@ Sem quota e sem snapshot: `quotaConfigured = false`, `target = 0`. Sem default.
 
 Job mede sync do runner, não o que entrou na carteira (F3 pode devolver IDs e atribuir menos). `Lead.stage` é pipeline do lead, não execução da carteira semanal.
 
-## Fora desta PR
+## Fora desta PR (KPI)
 
-Dashboard `/app`, badges, gráficos, persistir snapshot, KPI composto / score.
+Badges, gráficos, persistir snapshot, KPI composto / score.
+
+Consumo em `/app`: [product-decision-operational-dashboard.md](product-decision-operational-dashboard.md).
 
 ## Métrica
 
