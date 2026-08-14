@@ -124,6 +124,7 @@ Até a demo e a evidência comercial, a decisão correta é **VALIDATE / operar*
 | Doc | Uso |
 | --- | --- |
 | [founder-pilot.md](founder-pilot.md) | Tese do piloto |
+| [../commercial/playbook-v1.md](../commercial/playbook-v1.md) | Playbook comercial V1 (ICP + WhatsApp) |
 | [founder-pilot-execution.md](founder-pilot-execution.md) | Manual dos sócios |
 | [campaign-santos-odonto-batch-1.md](campaign-santos-odonto-batch-1.md) | Lote oficial VALIDATE |
 | [product-decision-operational-dashboard.md](product-decision-operational-dashboard.md) | Visão operacional `/app` DONE |

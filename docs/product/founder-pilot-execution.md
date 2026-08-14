@@ -129,30 +129,17 @@ Responder no fim do dia (chat interno / nota compartilhada):
 
 ## 5. Roteiro comercial
 
+Fonte canônica da abordagem: [Commercial Playbook V1](../commercial/playbook-v1.md).
+
 Objetivo do primeiro contato: **resposta → conversa → reunião**.  
-Não vender o projeto no primeiro ping.
+Não vender o projeto no primeiro ping. Não usar um texto genérico para qualquer clínica.
 
-### 5.1 Primeiro contato (WhatsApp / e-mail)
+```text
+Sinal observado → hipótese → mensagem curta → pergunta fácil → conversa
+```
 
-> Olá, tudo bem? Encontrei a empresa de vocês e percebi que a presença digital poderia transmitir mais autoridade e gerar mais oportunidades. Vocês já possuem algum projeto de atualização do site?
-
-### 5.2 Se responderem com interesse
-
-> Perfeito — posso te mostrar em 15 min o que eu vi no site/presença de vocês e uma direção objetiva de melhoria? Qual horário funciona essa semana?
-
-### 5.3 Se disserem que já têm alguém / não é prioridade
-
-Registrar Activity (`NOT_INTERESTED` ou `OTHER`) + `lostReason` se for para `LOST`, **ou** follow-up futuro se fizer sentido. Não insistir no mesmo dia.
-
-### 5.4 Cadência sugerida de follow-up
-
-| Tentativa | Quando | Ação |
-| --- | --- | --- |
-| 1 | Dia do cadastro (ou D+0) | Primeiro contato |
-| 2 | D+2 / D+3 | Follow-up curto (Activity) |
-| 3 | D+7 | Último toque do ciclo ou `LOST` com motivo |
-
-Ajustar no check-in semanal com base na resposta real do nicho.
+O roteiro antigo (“presença digital / projeto de atualização do site”) está **aposentado**.  
+WhatsApp D0 / D+2 / D+5 / D+9 e respostas: playbook capítulos 03–04.
 
 ---
 
@@ -267,7 +254,7 @@ Resumo mínimo:
 - [ ] Nicho, região e hipótese preenchidos (seção 2)
 - [ ] Três sócios com login e papel certo (`ADMIN` / `MEMBER`)
 - [ ] Deploy em produção smoke-testado
-- [ ] Roteiro de primeiro contato alinhado (seção 5)
+- [ ] Roteiro de primeiro contato alinhado ([playbook-v1](../commercial/playbook-v1.md))
 - [ ] Combinado: zero lead fora do Prospecta
 - [ ] Data de início e fim definidas
 - [ ] Canal do check-in diário/semanal definido
