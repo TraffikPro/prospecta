@@ -23,8 +23,9 @@ Depois do merge e validação:
 F1 = DONE
 F2 = DONE
 F3 = DONE
-F4 = DONE
-DASHBOARD / KPIs / BADGES = NEXT
+F4 = DONE / PRODUÇÃO / CRON VALIDADO
+KPIs = BUILD agora
+DASHBOARD / KPIs / BADGES = NEXT → dashboard depois desta camada
 ```
 
 ## Hipótese
