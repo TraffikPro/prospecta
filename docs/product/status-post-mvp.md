@@ -80,9 +80,9 @@ CSV deixou de ser o hub (ADR 0009). Só reabre com sintoma real do piloto.
 
 ### 5. Métricas de uso e conversão
 
-- **Dashboard = DEFER** — [product-decision-dashboard-defer.md](product-decision-dashboard-defer.md).
-- Observação operacional já possível via Inbox, Minha fila, stages e follow-ups.
-- Reabrir grill de dashboard só com volume/dor reais (critérios no defer).
+- **Visão operacional semanal `/app` = BUILD** — [product-decision-operational-dashboard.md](product-decision-operational-dashboard.md). Consome KPIs canônicos; sem ranking nem gráfico histórico.
+- **Dashboard de conversão / campanha = DEFER** — [product-decision-dashboard-defer.md](product-decision-dashboard-defer.md).
+- Observação operacional: `/app`, Inbox, Minha fila, stages e follow-ups.
 
 ### 6. Currículo / case GitHub
 
@@ -96,7 +96,7 @@ CSV deixou de ser o hub (ADR 0009). Só reabre com sintoma real do piloto.
 
 - Reabrir auth/login como “próxima fatia”
 - Nova polish de Lead Detail sem sintoma
-- Dashboard / entidade Campaign / Workspace completo
+- Dashboard de conversão / entidade Campaign / Workspace completo
 - CSV UI sem fricção observada
 - Features sob freeze do lote Santos
 
@@ -125,7 +125,8 @@ Até a demo e a evidência comercial, a decisão correta é **VALIDATE / operar*
 | [founder-pilot.md](founder-pilot.md) | Tese do piloto |
 | [founder-pilot-execution.md](founder-pilot-execution.md) | Manual dos sócios |
 | [campaign-santos-odonto-batch-1.md](campaign-santos-odonto-batch-1.md) | Lote oficial VALIDATE |
-| [product-decision-dashboard-defer.md](product-decision-dashboard-defer.md) | Dashboard DEFER |
+| [product-decision-operational-dashboard.md](product-decision-operational-dashboard.md) | Visão operacional `/app` BUILD |
+| [product-decision-dashboard-defer.md](product-decision-dashboard-defer.md) | Dashboard de conversão DEFER |
 | [prospecta-lead-detail-commercial-clarity.md](prospecta-lead-detail-commercial-clarity.md) | Gate técnico ACCEPTED 5/5 · demo PENDING |
 | [product-decision-lead-detail-states-v1.md](product-decision-lead-detail-states-v1.md) | Lead Detail States v1 DONE |
 | [`docs/product.md`](../product.md) | Normas V1 |
