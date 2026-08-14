@@ -94,6 +94,17 @@ export type OperationalWeek = {
   weekEndAt: Date;
 };
 
+export function isOperationalWeekExpired(
+  weekEndAt: Date,
+  now: Date = new Date(),
+): boolean {
+  return weekEndAt.getTime() < now.getTime();
+}
+
+export function isSameWeekStart(a: Date, b: Date): boolean {
+  return a.getTime() === b.getTime();
+}
+
 /** Monday 00:00:00.000 SP → Sunday 23:59:59.999 SP, as UTC instants. */
 export function getOperationalWeek(now: Date = new Date()): OperationalWeek {
   const parts = spParts(now);

@@ -7,6 +7,7 @@ import {
   MIN_WEEKLY_TARGET,
   RELEASE_REASON_ADMIN_REASSIGN,
   RELEASE_REASON_RECYCLED,
+  RELEASE_REASON_WEEK_CLOSED,
   SUGGESTED_WEEKLY_TARGET,
   classifyHighPoolLead,
   countCommercialCycles,
@@ -151,7 +152,20 @@ describe("countCommercialCycles", () => {
     );
   });
 
-  it("counts recycled history toward the cap", () => {
+  it("does not count WEEK_CLOSED leftovers as a commercial cycle", () => {
+    assert.equal(
+      countCommercialCycles([
+        {
+          status: "RELEASED",
+          releaseReason: RELEASE_REASON_WEEK_CLOSED,
+        },
+        { status: "ACTIVE", releaseReason: null },
+      ]),
+      1,
+    );
+  });
+
+  it("still counts recycled history toward the cap", () => {
     assert.equal(
       countCommercialCycles([
         {
@@ -249,5 +263,62 @@ describe("classifyHighPoolLead", () => {
     assert.equal(classifyHighPoolLead(treated), "recyclable");
     assert.equal(isRecyclableHigh(treated), true);
     assert.equal(isEligibleHighPool(treated), false);
+  });
+
+  it("lets HIGH released by WEEK_CLOSED return to the eligible pool", () => {
+    assert.equal(
+      classifyHighPoolLead({
+        intelligence: highIntelligence,
+        stage: "NEW",
+        assignments: [
+          {
+            status: "RELEASED",
+            releaseReason: RELEASE_REASON_WEEK_CLOSED,
+          },
+        ],
+      }),
+      "eligible",
+    );
+    assert.equal(
+      isEligibleHighPool({
+        intelligence: mediumIntelligence,
+        stage: "NEW",
+        assignments: [
+          {
+            status: "RELEASED",
+            releaseReason: RELEASE_REASON_WEEK_CLOSED,
+          },
+        ],
+      }),
+      false,
+    );
+    assert.equal(
+      classifyHighPoolLead({
+        intelligence: highIntelligence,
+        stage: "WON",
+        assignments: [
+          {
+            status: "RELEASED",
+            releaseReason: RELEASE_REASON_WEEK_CLOSED,
+          },
+        ],
+      }),
+      null,
+    );
+    assert.equal(
+      classifyHighPoolLead({
+        intelligence: highIntelligence,
+        stage: "NEW",
+        assignments: [
+          { status: "RELEASED", releaseReason: RELEASE_REASON_RECYCLED },
+          { status: "RELEASED", releaseReason: RELEASE_REASON_RECYCLED },
+          {
+            status: "RELEASED",
+            releaseReason: RELEASE_REASON_WEEK_CLOSED,
+          },
+        ],
+      }),
+      "capped",
+    );
   });
 });

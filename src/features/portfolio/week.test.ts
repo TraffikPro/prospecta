@@ -4,6 +4,8 @@ import { describe, it } from "node:test";
 import {
   formatWeekRangePtBr,
   getOperationalWeek,
+  isOperationalWeekExpired,
+  isSameWeekStart,
   zonedSaoPauloToUtc,
 } from "./week";
 
@@ -54,6 +56,23 @@ describe("getOperationalWeek", () => {
     const week = getOperationalWeek(new Date("2026-08-17T03:00:00.000Z"));
     assert.equal(week.weekStartAt.toISOString(), "2026-08-17T03:00:00.000Z");
     assert.equal(week.weekEndAt.toISOString(), "2026-08-24T02:59:59.999Z");
+  });
+
+  it("treats Sunday 23:59:59.999 SP as still inside the week", () => {
+    const sundayEnd = new Date("2026-08-17T02:59:59.999Z");
+    const week = getOperationalWeek(sundayEnd);
+    assert.equal(week.weekStartAt.toISOString(), "2026-08-10T03:00:00.000Z");
+    assert.equal(week.weekEndAt.toISOString(), "2026-08-17T02:59:59.999Z");
+    assert.equal(isOperationalWeekExpired(week.weekEndAt, sundayEnd), false);
+  });
+
+  it("treats Monday 00:00:00 SP as the next week", () => {
+    const mondayStart = new Date("2026-08-17T03:00:00.000Z");
+    const previous = getOperationalWeek(new Date("2026-08-17T02:59:59.999Z"));
+    const next = getOperationalWeek(mondayStart);
+    assert.equal(isSameWeekStart(previous.weekStartAt, next.weekStartAt), false);
+    assert.equal(isOperationalWeekExpired(previous.weekEndAt, mondayStart), true);
+    assert.equal(isOperationalWeekExpired(next.weekEndAt, mondayStart), false);
   });
 });
 

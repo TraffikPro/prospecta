@@ -5,7 +5,9 @@ import {
   acquisitionJobCallbackSchema,
   acquisitionRequestSchema,
   normalizeAcquisitionFingerprint,
+  parseWalletFillWeekStart,
   walletFillBatchSize,
+  walletFillFingerprint,
 } from "./acquisition.schema";
 
 describe("acquisition.schema", () => {
@@ -90,5 +92,21 @@ describe("walletFillBatchSize", () => {
     assert.equal(walletFillBatchSize(1), 4);
     assert.equal(walletFillBatchSize(3), 6);
     assert.equal(walletFillBatchSize(20), 30);
+  });
+});
+
+describe("walletFillFingerprint week start", () => {
+  it("round-trips an ISO week start", () => {
+    const weekStartAt = new Date("2026-08-10T03:00:00.000Z");
+    const fingerprint = walletFillFingerprint("user_1", weekStartAt);
+    const parsed = parseWalletFillWeekStart(fingerprint);
+    assert.equal(fingerprint, "fill|user_1|2026-08-10T03:00:00.000Z");
+    assert.ok(parsed);
+    assert.equal(parsed.toISOString(), weekStartAt.toISOString());
+  });
+
+  it("returns null for non-ISO fingerprints used in F3 tests", () => {
+    assert.equal(parseWalletFillWeekStart("fill|user_1|callback-abc"), null);
+    assert.equal(parseWalletFillWeekStart("free-pull-fp"), null);
   });
 });

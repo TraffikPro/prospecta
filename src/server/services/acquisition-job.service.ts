@@ -3,9 +3,11 @@ import {
   acquisitionJobCallbackSchema,
   acquisitionRequestSchema,
   normalizeAcquisitionFingerprint,
+  parseWalletFillWeekStart,
   type AcquisitionJobCallbackInput,
   type AcquisitionRequestInput,
 } from "@/features/acquisition/acquisition.schema";
+import { getOperationalWeek, isSameWeekStart } from "@/features/portfolio/week";
 import {
   createAcquisitionJobAtomic,
   findAcquisitionJobById,
@@ -209,6 +211,7 @@ const allowedTransitions: Record<
 export async function applyAcquisitionJobCallback(
   jobId: string,
   body: unknown,
+  now = new Date(),
 ): Promise<{ id: string; status: string }> {
   const payload = parseAcquisitionCallback(body);
   const job = await findAcquisitionJobById(jobId);
@@ -223,8 +226,6 @@ export async function applyAcquisitionJobCallback(
       job.id,
     );
   }
-
-  const now = new Date();
   const terminal = payload.status === "SUCCEEDED" || payload.status === "FAILED";
 
   if (
@@ -242,12 +243,22 @@ export async function applyAcquisitionJobCallback(
     job.purpose === "WALLET_FILL" &&
     job.requestedById
   ) {
-    const fill = await assignWalletFillLeads({
-      requestedById: job.requestedById,
-      leadIds: payload.leadIds ?? [],
-      requestedSlots: job.requestedSlots ?? 0,
-    });
-    assignedCount = fill.assignedCount;
+    const jobWeekStartAt = parseWalletFillWeekStart(job.fingerprint);
+    const currentWeek = getOperationalWeek(now);
+    if (
+      jobWeekStartAt &&
+      !isSameWeekStart(jobWeekStartAt, currentWeek.weekStartAt)
+    ) {
+      assignedCount = 0;
+    } else {
+      const fill = await assignWalletFillLeads({
+        requestedById: job.requestedById,
+        leadIds: payload.leadIds ?? [],
+        requestedSlots: job.requestedSlots ?? 0,
+        now,
+      });
+      assignedCount = fill.assignedCount;
+    }
   }
 
   if (payload.status === "FAILED") {
