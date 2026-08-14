@@ -168,6 +168,7 @@ Checklist societário segue **em paralelo** e não bloqueia a operação do pilo
 | `docs/product/pilot-validation-plan.md` | Validação técnica/operacional do piloto |
 | `docs/product/founder-pilot.md` | Piloto comercial (tese, métricas, DEFER Maps) |
 | `docs/commercial/playbook-v1.md` | Playbook comercial (ICP, sinais, WhatsApp) |
+| `docs/product/product-decision-commercial-playbook-ui.md` | UI do playbook no detalhe do lead (VALIDATE UI) |
 | `docs/product/founder-pilot-execution.md` | Manual operacional dos sócios (14 dias) |
 | `docs/product/campaign-santos-odonto-batch-1.md` | Lote Santos (VALIDATE) |
 | `docs/product/pilot-day-1-checklist.md` | Checklist pré–dia 1 / Pilot Day 1 Ready |

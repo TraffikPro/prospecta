@@ -10,12 +10,17 @@ type CreateIntelligenceLeadInput = {
   phone: string;
   ownerEmail: string;
   externalId: string;
+  contactName?: string | null;
+  website?: string | null;
   intelligence: {
     score: number;
     qualification: "HIGH" | "MEDIUM" | "LOW";
     signals: string[];
-    diagnostic: string;
-    pitch: string;
+    diagnostic?: string;
+    pitch?: string;
+    campaign?: string;
+    rating?: number;
+    reviews?: number;
   };
 };
 
@@ -41,13 +46,15 @@ export async function createIntelligenceLead(
     const lead = await prisma.lead.create({
       data: {
         companyName: input.companyName,
+        contactName: input.contactName ?? null,
         phone: input.phone,
+        website: input.website ?? null,
         source: "GOOGLE_PLACES",
         externalId: input.externalId,
         stage: "NEW",
         ownerId: owner.id,
         intelligence: input.intelligence,
-        notes: input.intelligence.diagnostic,
+        notes: input.intelligence.diagnostic ?? null,
       },
       select: { id: true },
     });

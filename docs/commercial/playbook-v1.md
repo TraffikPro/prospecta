@@ -1,11 +1,12 @@
 # Commercial Playbook — Prospecta
 
 - **Data:** 2026-08-14
-- **Status:** **VALIDATE** (execução comercial) — não autoriza código, schema, IA de mensagem nem automação de canal
+- **Status:** **VALIDATE** (execução comercial) — UI operacional no detalhe do lead; sem IA, auto-send, schema de cadência ou novos sinais
 - **Classificação:** PILOT_SPECIFIC (ICP/oferta do time fundador) · WORKSPACE (como operar no CRM)
 - **Owner ICP / abordagem:** Sócio Comercial
 - **Owner disciplina no app:** Sócio de Operações
 - **Este corte (V1):** `01 ICP` · `02 Oferta (mínimo)` · `03 Gatilhos` · `04 WhatsApp`
+- **UI operacional:** disponível no Prospecta (Minha fila → lead → **Abordagem comercial**). Scripts estáticos em `src/features/commercial/playbook-v1.ts`. Este Markdown continua sendo a explicação da estratégia.
 - **Critério de saída do V1:** usar a cadência em leads HIGH reais e registrar o que aconteceu (resposta, silêncio, objeção, encaminhamento, interesse, reunião) — não “ter os scripts escritos”
 - **Próximo corte:** só depois desse uso real, escolhido pelo gargalo observado (e-mail / objeções / discovery). Sem roadmap antecipado de canal.
 
@@ -293,6 +294,27 @@ Activity persistida  =  verdade
 Não use `NOTE` para “marcar tratado”.  
 Não recicle HIGH você mesmo: recycle é **ADMIN** na Revisão HIGH.  
 Não complete carteira pelo playbook: isso é F3 na Minha fila.
+
+### UI operacional no Prospecta
+
+**Operational UI available in Prospecta** — seção **Abordagem comercial** no detalhe do lead (entrada: Minha fila).
+
+```text
+Lead autorizado
+↓
+sinais canônicos existentes
+↓
+template estático aprovado
+↓
+operador copia / abre WhatsApp
+↓
+registra Activity
+```
+
+Copiar mensagem e abrir WhatsApp **não** criam Activity, **não** marcam TREATED e **não** avançam cadência.
+
+Decisão: [product-decision-commercial-playbook-ui.md](../product/product-decision-commercial-playbook-ui.md).  
+Runtime: `src/features/commercial/playbook-v1.ts` (não gerar copy em runtime).
 
 ---
 
