@@ -163,7 +163,8 @@ Checklist societário segue **em paralelo** e não bloqueia a operação do pilo
 | `docs/product/product-decision-mvp-technical.md` | Grill + decisões detalhadas |
 | `docs/product/product-decision-weekly-portfolio-close-f4.md` | F4 fechamento semanal + cron (DONE) |
 | `docs/product/product-decision-commercial-kpis.md` | KPIs semanais canônicos (DONE) |
-| `docs/product/product-decision-operational-dashboard.md` | Visão operacional `/app` (BUILD) |
+| `docs/product/product-decision-operational-dashboard.md` | Visão operacional `/app` (DONE) |
+| `docs/product/product-decision-navigation-badges.md` | Badges de ação na navegação (BUILD) |
 | `docs/product/pilot-validation-plan.md` | Validação técnica/operacional do piloto |
 | `docs/product/founder-pilot.md` | Piloto comercial (tese, métricas, DEFER Maps) |
 | `docs/product/founder-pilot-execution.md` | Manual operacional dos sócios (14 dias) |

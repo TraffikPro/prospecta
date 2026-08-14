@@ -6,6 +6,10 @@ import {
   loginPath,
 } from "@/server/auth/login-redirect";
 import { resolveSession } from "@/server/auth/session";
+import {
+  EMPTY_NAV_BADGES,
+  getNavigationBadgesCached,
+} from "@/server/navigation/get-navigation-badges";
 
 export const dynamic = "force-dynamic";
 
@@ -30,11 +34,19 @@ export default async function AuthenticatedLayout({
     redirect(CHANGE_PASSWORD_PATH);
   }
 
+  let badges = EMPTY_NAV_BADGES;
+  try {
+    badges = await getNavigationBadgesCached({ actorId: user.id });
+  } catch {
+    console.error("Failed to load navigation badges");
+  }
+
   return (
     <AppShell
       userName={user.name}
       userRole={user.role}
       canRunAcquisition={user.canRunAcquisition}
+      badges={badges}
     >
       {children}
     </AppShell>

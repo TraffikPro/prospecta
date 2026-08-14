@@ -118,5 +118,6 @@ export async function moveLeadStageAction(
   revalidatePath(`/app/leads/${leadId}`);
   revalidatePath("/app/pipeline");
   revalidatePath("/app/my-leads");
+  revalidatePath("/", "layout");
   return { ok: true };
 }

@@ -5,15 +5,15 @@
 - **Classificação:** WORKSPACE (visão operacional) · PLATFORM (consome o contrato KPI)
 - **Branch:** `feat/operational-dashboard-app`
 - **Pré-requisito:** [KPIs semanais canônicos](product-decision-commercial-kpis.md) em `main`
-- **Não autoriza:** badges, ranking, gráficos históricos, Recharts, filtros de período, forecast, alertas, export, snapshot persistido, `/api/kpis`, Completar carteira no dashboard
+- **Não autoriza:** ranking, gráficos históricos, Recharts, filtros de período, forecast, alertas, export, snapshot persistido, `/api/kpis`, Completar carteira no dashboard. Badges: [product-decision-navigation-badges.md](product-decision-navigation-badges.md).
 
 ## Sequência canônica
 
 ```text
 F1–F4 = DONE / PRODUÇÃO
 KPIs = DONE
-DASHBOARD = BUILD agora
-BADGES = NEXT
+DASHBOARD = DONE
+BADGES = BUILD → [product-decision-navigation-badges.md](product-decision-navigation-badges.md)
 ```
 
 Depois do merge:

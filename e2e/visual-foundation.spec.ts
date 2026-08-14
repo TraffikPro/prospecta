@@ -87,7 +87,7 @@ test.describe("visual foundation mobile critical", () => {
     await page.goto("/app/my-leads");
     await expect(page.getByRole("heading", { name: "Minha operação" })).toBeVisible();
     await expect(page.getByTestId("mobile-nav-my-leads")).toBeVisible();
-    await expect(page.getByTestId("mobile-nav-my-leads")).toHaveText("Fila");
+    await expect(page.getByTestId("mobile-nav-my-leads")).toContainText("Fila");
 
     const overflow = await page.evaluate(() => {
       const doc = document.documentElement;
