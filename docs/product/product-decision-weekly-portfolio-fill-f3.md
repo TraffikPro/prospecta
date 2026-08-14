@@ -5,15 +5,15 @@
 - **Classificação:** PLATFORM (job / IDs / assignment) · WORKSPACE (Completar minha carteira)
 - **Branch:** `feat/weekly-portfolio-fill-runner-f3`
 - **Pré-requisito:** F1 e F2 em `main`
-- **Não autoriza:** F4 (cron), dashboard, KPIs, badges, lazy enrollment, auto-recycle
+- **Não autoriza:** dashboard, KPIs, badges, lazy enrollment, auto-recycle
 
 ## Sequência canônica
 
 ```text
 F1 = DONE
 F2 = DONE
-F3 = BUILD
-F4 = PLANNED / NEXT
+F3 = DONE / E2E PASS
+F4 = BUILD agora
 DASHBOARD/KPIs/BADGES = depois
 ```
 
@@ -44,7 +44,7 @@ Cap F2 e recycle explícito continuam valendo.
 
 ## Fora desta PR
 
-- Cron / fechamento automático da semana (F4)
+- Cron / fechamento automático da semana (F4) → [product-decision-weekly-portfolio-close-f4.md](product-decision-weekly-portfolio-close-f4.md) (**BUILD agora**)
 - Dashboard, KPIs, badges
 - Lazy enrollment / `ENROLL_OWNED`
 - Auto-recycle

@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import { PrismaClient } from "@prisma/client";
 
+import { walletFillFingerprint } from "@/features/acquisition/acquisition.schema";
+import { getOperationalWeek } from "@/features/portfolio/week";
 import { hashPassword } from "@/server/auth/password";
 import { applyAcquisitionJobCallback } from "./acquisition-job.service";
 import {
@@ -608,5 +610,52 @@ describe("wallet fill F3", { skip: !hasDatabase }, () => {
     });
     assert.equal(row.assigneeId, memberId);
     assert.equal(row.source, "NEW_ACQUISITION");
+  });
+
+  it("late WALLET_FILL callback does not assign into the new week", async () => {
+    const oldWeek = getOperationalWeek(new Date("2026-08-05T18:00:00.000Z"));
+    const monday = new Date("2026-08-10T03:00:00.000Z");
+    await setOperatorWeeklyQuota({
+      actorId: adminId,
+      targetUserId: otherId,
+      weeklyTarget: 8,
+    });
+
+    const job = await prisma.acquisitionJob.create({
+      data: {
+        city: "Santos SP",
+        query: "clínica odontológica",
+        limit: 4,
+        campaign: "santos-odontologia",
+        fingerprint: walletFillFingerprint(otherId, oldWeek.weekStartAt),
+        requestedById: otherId,
+        timeoutAt: new Date(monday.getTime() + 15 * 60 * 1000),
+        status: "QUEUED",
+        purpose: "WALLET_FILL",
+        requestedSlots: 2,
+      },
+    });
+    const lead = await createHighLead(adminId, "late-cb");
+
+    await applyAcquisitionJobCallback(job.id, { status: "RUNNING" }, monday);
+    const done = await applyAcquisitionJobCallback(
+      job.id,
+      {
+        status: "SUCCEEDED",
+        requestedById: otherId,
+        leadIds: [lead.id],
+      },
+      monday,
+    );
+    assert.equal(done.status, "SUCCEEDED");
+
+    const stored = await prisma.acquisitionJob.findUniqueOrThrow({
+      where: { id: job.id },
+    });
+    assert.equal(stored.assignedCount, 0);
+    assert.equal(
+      await prisma.leadAssignment.count({ where: { leadId: lead.id } }),
+      0,
+    );
   });
 });

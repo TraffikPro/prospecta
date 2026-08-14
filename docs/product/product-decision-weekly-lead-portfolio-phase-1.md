@@ -25,8 +25,8 @@ Se cada operador tiver meta semanal de HIGH atribuídos, ownership histórico e 
 ## Fora (Fases 3–4 e depois do motor)
 
 - F2 pool / recycle / cap 2 → [product-decision-weekly-high-pool-recycle-f2.md](product-decision-weekly-high-pool-recycle-f2.md) (**DONE**)
-- Completar carteira com runner adaptativo (F3) → [product-decision-weekly-portfolio-fill-f3.md](product-decision-weekly-portfolio-fill-f3.md) (**BUILD agora**)
-- Cron de fechamento (F4) → **PLANNED / BUILD depois de F3**
+- Completar carteira com runner adaptativo (F3) → [product-decision-weekly-portfolio-fill-f3.md](product-decision-weekly-portfolio-fill-f3.md) (**DONE**)
+- Cron de fechamento (F4) → [product-decision-weekly-portfolio-close-f4.md](product-decision-weekly-portfolio-close-f4.md) (**BUILD agora**)
 - Dashboard / KPIs / badges → depois do motor operacional
 - Mudança de contrato do generator
 

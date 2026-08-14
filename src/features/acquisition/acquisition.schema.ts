@@ -81,6 +81,18 @@ export function walletFillFingerprint(
   return `fill|${userId}|${weekStartAt.toISOString()}`;
 }
 
+/** Week start encoded in a WALLET_FILL fingerprint, or null if not parseable. */
+export function parseWalletFillWeekStart(fingerprint: string): Date | null {
+  if (!fingerprint.startsWith("fill|")) return null;
+  const iso = fingerprint.slice(fingerprint.lastIndexOf("|") + 1);
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(iso)) {
+    return null;
+  }
+  const weekStartAt = new Date(iso);
+  if (Number.isNaN(weekStartAt.getTime())) return null;
+  return weekStartAt;
+}
+
 /**
  * Oversample remaining slots without a sophisticated loop.
  * remaining=3 → batch 6 (min 4, max 30).

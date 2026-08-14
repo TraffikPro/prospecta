@@ -28,22 +28,30 @@ export const MIN_WEEKLY_TARGET = 1;
 export const HIGH_ASSIGNMENT_CAP = 2;
 export const RELEASE_REASON_ADMIN_REASSIGN = "ADMIN_REASSIGN";
 export const RELEASE_REASON_RECYCLED = "RECYCLED";
+export const RELEASE_REASON_WEEK_CLOSED = "WEEK_CLOSED";
 
 export type AssignmentCycleInput = {
   status: "ACTIVE" | "TREATED" | "RELEASED";
   releaseReason: string | null;
 };
 
+function isNonCommercialRelease(reason: string | null): boolean {
+  return (
+    reason === RELEASE_REASON_ADMIN_REASSIGN ||
+    reason === RELEASE_REASON_WEEK_CLOSED
+  );
+}
+
 /**
  * One LeadAssignment row is one commercial cycle, except F1 ADMIN_REASSIGN
- * leftovers (transfer of the same attempt).
+ * leftovers (transfer of the same attempt) and F4 WEEK_CLOSED (temporal close).
  */
 export function countsAsCommercialCycle(
   assignment: AssignmentCycleInput,
 ): boolean {
   return !(
     assignment.status === "RELEASED" &&
-    assignment.releaseReason === RELEASE_REASON_ADMIN_REASSIGN
+    isNonCommercialRelease(assignment.releaseReason)
   );
 }
 

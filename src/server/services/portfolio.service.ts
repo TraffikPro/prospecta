@@ -326,12 +326,14 @@ export async function assignWalletFillLeads(input: {
   requestedById: string;
   leadIds: string[];
   requestedSlots: number;
+  now?: Date;
 }): Promise<{ assignedCount: number; remainingSlots: number }> {
+  const now = input.now ?? new Date();
   const uniqueIds = [...new Set(input.leadIds.filter((id) => id.trim()))];
   let assignedCount = 0;
 
   for (const leadId of uniqueIds) {
-    const summary = await getPortfolioSummaryForUser(input.requestedById);
+    const summary = await getPortfolioSummaryForUser(input.requestedById, now);
     if (!summary.quotaConfigured || summary.slotsRemaining <= 0) {
       break;
     }
@@ -342,6 +344,7 @@ export async function assignWalletFillLeads(input: {
       const result = await assignLeadFromWalletFill({
         actorId: input.requestedById,
         leadId,
+        now,
       });
       if (!result.idempotent) {
         assignedCount += 1;
@@ -354,7 +357,7 @@ export async function assignWalletFillLeads(input: {
     }
   }
 
-  const after = await getPortfolioSummaryForUser(input.requestedById);
+  const after = await getPortfolioSummaryForUser(input.requestedById, now);
   return {
     assignedCount,
     remainingSlots: after.slotsRemaining,

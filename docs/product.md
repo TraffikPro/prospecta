@@ -160,7 +160,7 @@ Checklist societário segue **em paralelo** e não bloqueia a operação do pilo
 | --- | --- |
 | `docs/product.md` | Este documento (resumo normativo V1) |
 | `docs/product/status-post-mvp.md` | Status canônico pós-MVP (estágio atual) |
-| `docs/product/product-decision-mvp-technical.md` | Grill + decisões detalhadas |
+| `docs/product/product-decision-weekly-portfolio-close-f4.md` | F4 fechamento semanal + cron (BUILD) |
 | `docs/product/pilot-validation-plan.md` | Validação técnica/operacional do piloto |
 | `docs/product/founder-pilot.md` | Piloto comercial (tese, métricas, DEFER Maps) |
 | `docs/product/founder-pilot-execution.md` | Manual operacional dos sócios (14 dias) |
