@@ -9,6 +9,8 @@ import {
   ContextualNav,
   leadBreadcrumbItems,
 } from "@/components/navigation";
+import { CommercialPlaybookSection } from "@/features/commercial/components/commercial-playbook-section";
+import { buildCommercialPlaybookView } from "@/features/commercial/playbook-view";
 import { IntelligenceCard } from "@/features/leads/components/intelligence";
 import { LeadContactActions } from "@/features/leads/components/lead-contact-actions";
 import { LeadDetailLayout } from "@/features/leads/components/lead-detail-layout";
@@ -96,6 +98,13 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
   const followUpLabel = lead.nextFollowUpAt
     ? formatDateTime(lead.nextFollowUpAt)
     : "Não definido";
+  const playbook = buildCommercialPlaybookView({
+    companyName: lead.companyName,
+    contactName: lead.contactName,
+    phone: lead.phone,
+    website: lead.website,
+    intelligence,
+  });
 
   return (
     <PageFrame width="detailWide" gap={{ base: "6", md: "8" }}>
@@ -121,28 +130,31 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
         }
         contact={<LeadContactActions phone={lead.phone} email={lead.email} />}
         intelligence={
-          intelligence ? (
-            <section aria-labelledby="intelligence-heading">
-              <Heading
-                as="h2"
-                id="intelligence-heading"
-                position="absolute"
-                width="1px"
-                height="1px"
-                padding="0"
-                margin="-1px"
-                overflow="hidden"
-                clipPath="inset(50%)"
-                whiteSpace="nowrap"
-                borderWidth="0"
-              >
-                Inteligência do lead
-              </Heading>
-              <IntelligenceCard intelligence={intelligence} />
-            </section>
-          ) : (
-            <LeadIntelligenceFallback source={lead.source} />
-          )
+          <Stack gap={{ base: "6", lg: "8" }}>
+            <CommercialPlaybookSection view={playbook} />
+            {intelligence ? (
+              <section aria-labelledby="intelligence-heading">
+                <Heading
+                  as="h2"
+                  id="intelligence-heading"
+                  position="absolute"
+                  width="1px"
+                  height="1px"
+                  padding="0"
+                  margin="-1px"
+                  overflow="hidden"
+                  clipPath="inset(50%)"
+                  whiteSpace="nowrap"
+                  borderWidth="0"
+                >
+                  Inteligência do lead
+                </Heading>
+                <IntelligenceCard intelligence={intelligence} />
+              </section>
+            ) : (
+              <LeadIntelligenceFallback source={lead.source} />
+            )}
+          </Stack>
         }
         activity={
           <section

@@ -5,22 +5,15 @@ import { HStack, Stack, Text } from "@chakra-ui/react";
 
 import { AppEmptyState } from "@/components/ui/app-empty-state";
 import { Button } from "@/components/ui/button";
+import { toWhatsAppUrl } from "@/features/leads/whatsapp-url";
 
 type LeadContactActionsProps = {
   phone: string | null;
   email: string | null;
 };
 
-function toWhatsAppUrl(phone: string): string | null {
-  const digits = phone.replace(/\D/g, "");
-  if (digits.length < 10) {
-    return null;
-  }
-  return `https://wa.me/${digits}`;
-}
-
 export function LeadContactActions({ phone, email }: LeadContactActionsProps) {
-  const whatsappUrl = phone ? toWhatsAppUrl(phone) : null;
+  const whatsappUrl = toWhatsAppUrl(phone);
   const hasChannel = Boolean(whatsappUrl || email);
 
   return (
