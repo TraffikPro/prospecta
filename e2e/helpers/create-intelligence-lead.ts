@@ -7,7 +7,7 @@ loadEnvConfig(process.cwd());
 
 type CreateIntelligenceLeadInput = {
   companyName: string;
-  phone: string;
+  phone?: string | null;
   ownerEmail: string;
   externalId: string;
   contactName?: string | null;
@@ -47,7 +47,7 @@ export async function createIntelligenceLead(
       data: {
         companyName: input.companyName,
         contactName: input.contactName ?? null,
-        phone: input.phone,
+        phone: input.phone ?? null,
         website: input.website ?? null,
         source: "GOOGLE_PLACES",
         externalId: input.externalId,

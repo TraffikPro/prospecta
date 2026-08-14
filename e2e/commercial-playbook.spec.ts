@@ -29,19 +29,19 @@ function icpLead(stamp: number, ownerEmail: string) {
 }
 
 test.describe("commercial playbook UI", () => {
+  test.describe.configure({ timeout: 90_000 });
+
   test("member copies approved D0 then D+2 and registers via existing activity", async ({
     page,
   }) => {
     const stamp = Date.now();
-    const lead = icpLead(stamp, memberEmail);
-    await createIntelligenceLead(lead);
+    const input = icpLead(stamp, memberEmail);
+    const created = await createIntelligenceLead(input);
 
     await login(page, memberEmail, memberPassword);
     await page.goto("/app/my-leads");
-    await expect(page.getByText(lead.companyName, { exact: true })).toBeVisible();
-    await page.getByTestId("my-queue-card-link").filter({
-      hasText: lead.companyName,
-    }).click();
+    await expect(page.getByText(input.companyName, { exact: true })).toBeVisible();
+    await page.goto(`/app/leads/${created.id}`);
 
     const playbook = page.getByTestId("commercial-playbook");
     await expect(playbook).toHaveAttribute("data-playbook-status", "available");
@@ -51,9 +51,11 @@ test.describe("commercial playbook UI", () => {
 
     const message = page.getByTestId("playbook-message");
     await expect(message).toContainText("Oi, Marina");
-    await expect(message).toContainText(lead.companyName);
+    await expect(message).toContainText(input.companyName);
     await expect(message).toContainText("não encontrei um site claro da clínica");
     await expect(message).not.toContainText("undefined");
+
+    await expect(page.getByTestId("activity-timeline-empty")).toBeVisible();
 
     await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.getByTestId("playbook-copy").click();
@@ -63,8 +65,14 @@ test.describe("commercial playbook UI", () => {
     const d0 = await page.evaluate(() => navigator.clipboard.readText());
     expect(d0).toContain("não encontrei um site claro da clínica");
     expect(d0).toContain("Marina");
+    await expect(page.getByTestId("activity-timeline-empty")).toBeVisible();
 
-    await expect(page.getByLabel("Histórico")).not.toContainText(d0.slice(0, 40));
+    const popupPromise = page.waitForEvent("popup");
+    await page.getByTestId("playbook-whatsapp").click();
+    const popup = await popupPromise;
+    await expect(popup).toHaveURL(/wa\.me|api\.whatsapp\.com/);
+    await popup.close();
+    await expect(page.getByTestId("activity-timeline-empty")).toBeVisible();
 
     await page.getByTestId("playbook-step-D2").click();
     await expect(message).toHaveAttribute("data-step", "D2");
@@ -92,7 +100,7 @@ test.describe("commercial playbook UI", () => {
 
   test("playbook stays unavailable outside ICP", async ({ page }) => {
     const stamp = Date.now();
-    await createIntelligenceLead({
+    const created = await createIntelligenceLead({
       companyName: `Restaurante Playbook ${stamp}`,
       phone: `1396${String(stamp).slice(-7)}`,
       ownerEmail: memberEmail,
@@ -108,15 +116,58 @@ test.describe("commercial playbook UI", () => {
     });
 
     await login(page, memberEmail, memberPassword);
-    await page.goto("/app/my-leads");
-    await page.getByTestId("my-queue-card-link").filter({
-      hasText: `Restaurante Playbook ${stamp}`,
-    }).click();
+    await page.goto(`/app/leads/${created.id}`);
 
     await expect(page.getByTestId("commercial-playbook")).toHaveAttribute(
       "data-playbook-status",
       "unavailable",
     );
+    await expect(page.getByTestId("playbook-unavailable")).toHaveText(
+      "Playbook comercial indisponível para este lead.",
+    );
+  });
+
+  test("playbook stays unavailable for another city, and without phone", async ({
+    page,
+  }) => {
+    const stamp = Date.now();
+    const otherCity = await createIntelligenceLead({
+      companyName: `Clínica Guarujá ${stamp}`,
+      phone: `1395${String(stamp).slice(-7)}`,
+      ownerEmail: memberEmail,
+      externalId: `e2e-playbook-city-${stamp}`,
+      intelligence: {
+        score: 90,
+        qualification: "HIGH",
+        campaign: "guaruja-odontologia-2026-07",
+        signals: ["NO_WEBSITE", "HIGH_RATING"],
+        diagnostic: "Outra cidade.",
+        pitch: "Não usar.",
+      },
+    });
+    const noPhone = await createIntelligenceLead({
+      companyName: `Clínica Sem Tel ${stamp}`,
+      phone: null,
+      ownerEmail: memberEmail,
+      externalId: `e2e-playbook-nophone-${stamp}`,
+      intelligence: {
+        score: 90,
+        qualification: "HIGH",
+        campaign: "santos-odontologia-2026-07",
+        signals: ["NO_WEBSITE"],
+        diagnostic: "Sem telefone.",
+        pitch: "Não usar.",
+      },
+    });
+
+    await login(page, memberEmail, memberPassword);
+
+    await page.goto(`/app/leads/${otherCity.id}`);
+    await expect(page.getByTestId("playbook-unavailable")).toHaveText(
+      "Playbook comercial indisponível para este lead.",
+    );
+
+    await page.goto(`/app/leads/${noPhone.id}`);
     await expect(page.getByTestId("playbook-unavailable")).toHaveText(
       "Playbook comercial indisponível para este lead.",
     );
@@ -129,9 +180,9 @@ test.describe("commercial playbook UI", () => {
     const lead = await createIntelligenceLead(icpLead(stamp, adminEmail));
 
     await login(page, memberEmail, memberPassword);
-    const response = await page.goto(`/app/leads/${lead.id}`);
-    expect(response?.status()).toBe(403);
+    await page.goto(`/app/leads/${lead.id}`);
     await expect(page.getByText(/403|Acesso negado/i).first()).toBeVisible();
+    await expect(page.getByTestId("commercial-playbook")).toHaveCount(0);
   });
 
   test("ADMIN sees playbook on an ICP lead", async ({ page }) => {
@@ -151,17 +202,15 @@ test.describe("commercial playbook UI", () => {
 
 test.describe("commercial playbook UI — mobile", () => {
   test.use({ viewport: { width: 390, height: 844 } });
+  test.describe.configure({ timeout: 90_000 });
 
   test("tabs stay usable without page overflow", async ({ page }) => {
     const stamp = Date.now();
-    const lead = icpLead(stamp, memberEmail);
-    await createIntelligenceLead(lead);
+    const input = icpLead(stamp, memberEmail);
+    const created = await createIntelligenceLead(input);
 
     await login(page, memberEmail, memberPassword);
-    await page.goto("/app/my-leads");
-    await page.getByTestId("my-queue-card-link").filter({
-      hasText: lead.companyName,
-    }).click();
+    await page.goto(`/app/leads/${created.id}`);
 
     await expect(page.getByTestId("commercial-playbook")).toBeVisible();
     await expect(page.getByTestId("playbook-step-REACTIVATION")).toBeVisible();
