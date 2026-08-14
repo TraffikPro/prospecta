@@ -768,6 +768,48 @@ export async function listHighPoolReview(actorId: string): Promise<HighPoolRevie
 }
 
 /**
+ * ADMIN-only count of TREATED leads waiting for an explicit recycle decision.
+ * Uses the same F2 classifier as the review board — not a second eligibility rule.
+ */
+export async function countRecyclableHighPool(actorId: string): Promise<number> {
+  const actor = await prisma.user.findUnique({
+    where: { id: actorId },
+    select: { id: true, role: true, isActive: true },
+  });
+  if (!actor?.isActive || actor.role !== "ADMIN") {
+    throw new PortfolioError(
+      "Apenas administradores podem revisar o pool HIGH.",
+    );
+  }
+
+  const leads = await prisma.lead.findMany({
+    where: {
+      stage: { notIn: ["WON", "LOST"] },
+      assignments: {
+        some: { status: "TREATED" },
+        none: { status: "ACTIVE" },
+      },
+    },
+    select: {
+      intelligence: true,
+      stage: true,
+      assignments: {
+        select: { status: true, releaseReason: true },
+      },
+    },
+  });
+
+  return leads.filter(
+    (lead) =>
+      classifyHighPoolLead({
+        intelligence: lead.intelligence,
+        stage: lead.stage,
+        assignments: lead.assignments,
+      }) === "recyclable",
+  ).length;
+}
+
+/**
  * Marks ACTIVE assignment as TREATED inside the caller's transaction.
  * When the activity is a valid treatment, update must succeed or the whole
  * transaction should abort (caller throws).

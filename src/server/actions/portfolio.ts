@@ -108,6 +108,7 @@ export async function reassignLeadAction(
   revalidatePath("/app/my-leads");
   revalidatePath("/admin/users");
   revalidatePath("/admin/high-pool");
+  revalidatePath("/", "layout");
   return { ok: true };
 }
 
@@ -145,6 +146,7 @@ export async function recycleLeadAction(
   revalidatePath(`/app/leads/${leadId}`);
   revalidatePath("/app/my-leads");
   revalidatePath("/admin/high-pool");
+  revalidatePath("/", "layout");
   return { ok: true };
 }
 
@@ -169,6 +171,7 @@ export async function fillWalletAction(
   try {
     const result = await requestWalletFill({ actorId: sessionUser!.id });
     revalidatePath("/app/my-leads");
+    revalidatePath("/", "layout");
     if (result.reused) {
       return {
         ok: true,

@@ -16,17 +16,24 @@ import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 
 import { AppSidebar } from "@/components/layout/app-sidebar";
+import { NavBadge } from "@/components/navigation/nav-badge";
 import {
   isNavPathActive,
   MOBILE_PRIMARY_NAV,
   profileRoleLabel,
   type NavAccess,
 } from "@/components/navigation/nav-config";
+import {
+  badgeCountForNavItem,
+  navItemAccessibleName,
+} from "@/features/navigation/nav-badge.format";
+import type { NavigationBadges } from "@/server/services/navigation-badges.service";
 
 type AppShellProps = {
   userName: string;
   userRole: string;
   canRunAcquisition?: boolean;
+  badges?: NavigationBadges;
   children: ReactNode;
 };
 
@@ -34,6 +41,7 @@ export function AppShell({
   userName,
   userRole,
   canRunAcquisition = false,
+  badges = { myQueue: 0 },
   children,
 }: AppShellProps) {
   const pathname = usePathname();
@@ -49,6 +57,7 @@ export function AppShell({
           userName={userName}
           userRole={userRole}
           access={access}
+          badges={badges}
         />
 
         <Box flex="1" minW="0" pb={{ base: "20", md: "0" }}>
@@ -123,6 +132,14 @@ export function AppShell({
         <HStack justify="space-around" align="stretch" px="1" gap="0">
           {MOBILE_PRIMARY_NAV.map((item) => {
             const active = isNavPathActive(pathname, item.href);
+            const itemId =
+              item.href === "/app/my-leads" ? "my-leads" : undefined;
+            const count = itemId
+              ? badgeCountForNavItem(itemId, badges)
+              : 0;
+            const accessibleName = itemId
+              ? navItemAccessibleName(item.label, itemId, count)
+              : item.label;
             return (
               <ChakraLink
                 asChild
@@ -133,6 +150,7 @@ export function AppShell({
                 <NextLink
                   href={item.href}
                   aria-current={active ? "page" : undefined}
+                  aria-label={count > 0 ? accessibleName : undefined}
                   data-testid={item.testId}
                   style={{
                     display: "flex",
@@ -145,9 +163,13 @@ export function AppShell({
                     opacity: active ? 1 : 0.7,
                     textAlign: "center",
                     padding: "0.35rem 0.25rem",
+                    gap: "0.15rem",
                   }}
                 >
-                  {item.label}
+                  <Text as="span">{item.label}</Text>
+                  {itemId ? (
+                    <NavBadge count={count} itemId={itemId} compact />
+                  ) : null}
                 </NextLink>
               </ChakraLink>
             );

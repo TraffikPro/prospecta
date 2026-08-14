@@ -19,6 +19,7 @@ import { usePathname } from "next/navigation";
 
 import { logoutAction } from "@/server/actions/auth";
 import { Tooltip } from "@/components/ui/tooltip";
+import type { NavigationBadges } from "@/server/services/navigation-badges.service";
 
 import {
   isNavPathActive,
@@ -26,15 +27,26 @@ import {
   visibleNavGroups,
   type NavAccess,
 } from "@/components/navigation/nav-config";
+import { NavBadge } from "@/components/navigation/nav-badge";
 import { CollapseIcon, NavIcon } from "@/components/navigation/nav-icons";
+import {
+  badgeCountForNavItem,
+  navItemAccessibleName,
+} from "@/features/navigation/nav-badge.format";
 
 type AppSidebarProps = {
   userName: string;
   userRole: string;
   access: NavAccess;
+  badges?: NavigationBadges;
 };
 
-export function AppSidebar({ userName, userRole, access }: AppSidebarProps) {
+export function AppSidebar({
+  userName,
+  userRole,
+  access,
+  badges = { myQueue: 0 },
+}: AppSidebarProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const groups = visibleNavGroups(access);
@@ -124,6 +136,12 @@ export function AppSidebar({ userName, userRole, access }: AppSidebarProps) {
             ) : null}
             {group.items.map((item) => {
               const active = isNavPathActive(pathname, item.href, item.match);
+              const count = badgeCountForNavItem(item.id, badges);
+              const accessibleName = navItemAccessibleName(
+                item.label,
+                item.id,
+                count,
+              );
               const link = (
                 <ChakraLink
                   asChild
@@ -132,6 +150,8 @@ export function AppSidebar({ userName, userRole, access }: AppSidebarProps) {
                   justifyContent={collapsed ? "center" : "flex-start"}
                   gap={collapsed ? "0" : "2.5"}
                   minH="touch"
+                  w="full"
+                  minW="0"
                   px={collapsed ? "0" : "2"}
                   borderRadius="md"
                   fontSize="sm"
@@ -142,11 +162,46 @@ export function AppSidebar({ userName, userRole, access }: AppSidebarProps) {
                   <NextLink
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    aria-label={collapsed ? item.label : undefined}
+                    aria-label={
+                      collapsed || count > 0 ? accessibleName : undefined
+                    }
                     data-testid={item.testId}
+                    style={{ width: "100%" }}
                   >
-                    <NavIcon id={item.icon} />
-                    {collapsed ? null : item.label}
+                    <HStack
+                      w="full"
+                      minW="0"
+                      justify={collapsed ? "center" : "space-between"}
+                      gap="2"
+                    >
+                      <HStack gap="2.5" minW="0">
+                        <Box position="relative" flexShrink="0">
+                          <NavIcon id={item.icon} />
+                          {collapsed ? (
+                            <Box
+                              position="absolute"
+                              top="-1"
+                              right="-2"
+                              pointerEvents="none"
+                            >
+                              <NavBadge
+                                count={count}
+                                itemId={item.id}
+                                compact
+                              />
+                            </Box>
+                          ) : null}
+                        </Box>
+                        {collapsed ? null : (
+                          <Text as="span" truncate>
+                            {item.label}
+                          </Text>
+                        )}
+                      </HStack>
+                      {collapsed ? null : (
+                        <NavBadge count={count} itemId={item.id} />
+                      )}
+                    </HStack>
                   </NextLink>
                 </ChakraLink>
               );
@@ -158,7 +213,7 @@ export function AppSidebar({ userName, userRole, access }: AppSidebarProps) {
               return (
                 <Tooltip
                   key={item.href}
-                  content={item.label}
+                  content={accessibleName}
                   positioning={{ placement: "right" }}
                 >
                   <Box display="block">{link}</Box>

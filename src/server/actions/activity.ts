@@ -62,5 +62,7 @@ export async function createActivityAction(
   }
 
   revalidatePath(`/app/leads/${leadId}`);
+  revalidatePath("/app/my-leads");
+  revalidatePath("/", "layout");
   return { ok: true };
 }

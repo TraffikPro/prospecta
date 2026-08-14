@@ -8,6 +8,7 @@ export {
 } from "./breadcrumb-context";
 export type { BreadcrumbItemModel, LeadNavOrigin } from "./breadcrumb.types";
 export { ContextualNav } from "./contextual-nav";
+export { NavBadge } from "./nav-badge";
 export { MobileContextBack } from "./mobile-context-back";
 export {
   morePageSections,
