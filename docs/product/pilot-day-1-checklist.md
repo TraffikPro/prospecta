@@ -44,6 +44,7 @@ Execução diária: [founder-pilot-execution.md](founder-pilot-execution.md)
 - [ ] **Um** nicho escolhido (não “B2B genérico”)
 - [ ] Região / cidade definida
 - [ ] Hipótese escrita em [founder-pilot-execution.md](founder-pilot-execution.md) §2
+- [ ] Abordagem alinhada ao [playbook comercial](../commercial/playbook-v1.md) (não script genérico)
 
 Exemplos: clínicas odontológicas · imobiliárias · advocacias.
 
@@ -54,9 +55,9 @@ Exemplos: clínicas odontológicas · imobiliárias · advocacias.
 
 ### 6. Script de abordagem aprovado
 
-- [ ] Mensagem inicial alinhada
-- [ ] Follow-up alinhado
-- [ ] Cadência definida (ex.: D1 → D3 → D7)
+- [ ] Mensagem inicial alinhada ao [playbook](../commercial/playbook-v1.md) (sinal → pergunta)
+- [ ] Follow-up alinhado (D0 → D+2 → D+5 → D+9)
+- [ ] Cadência definida no `nextFollowUpAt`
 - [ ] Combinado: cada tentativa = Activity
 
 ### 7. Ritual marcado

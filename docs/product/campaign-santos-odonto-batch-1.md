@@ -82,6 +82,8 @@ Próximo avanço = operação + aprendizado.
 4. Centro Santista de Odontologia  
 5. Drª Ariany de França Ferreira  
 
+Texto e cadência: [Commercial Playbook V1](../commercial/playbook-v1.md) (sinal → pergunta; D0 / D+2 / D+5 / D+9). Não usar pitch genérico de “soluções digitais”.  
+
 ### Após cada contato (obrigatório)
 
 ```text
@@ -90,7 +92,7 @@ Lead → Activity → Outcome → Next Follow Up
 
 | Situação | Type | Outcome | Follow-up |
 | --- | --- | --- | --- |
-| Sem resposta | WHATSAPP | SENT_NO_REPLY | +3 dias |
+| Sem resposta | WHATSAPP | SENT_NO_REPLY | cadência do [playbook](../commercial/playbook-v1.md) (D+2 / D+5 / D+9) |
 | Respondeu | WHATSAPP | REPLIED | next step no body |
 | Reunião | WHATSAPP / NOTE | MEETING_SCHEDULED | data da reunião |
 
