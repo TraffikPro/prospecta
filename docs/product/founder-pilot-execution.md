@@ -7,10 +7,12 @@ Validação técnica do app: [pilot-validation-plan.md](pilot-validation-plan.md
 
 **Regra de ouro:** Prospecta é a única fonte da verdade. Planilha só rascunha captura; depois disso, tudo vai para o app.
 
-**Loop Lead Intelligence (pós-Inbox):**  
-`/app/intelligence` → escolher prioridade → lead detail (pitch) → contato → Activity.  
+**Loop operacional (oficial):**  
+`login` → `/app/my-leads` → detalhe do lead → playbook WhatsApp → contato manual → Activity.  
+Inteligência, Visão geral, Pipeline e Portfólio são suporte.  
+Mapa congelado: [product-decision-pilot-screen-map.md](product-decision-pilot-screen-map.md).  
 Campanha lote 1: [campaign-santos-odonto-batch-1.md](campaign-santos-odonto-batch-1.md).  
-**Freeze:** sem features novas até evidência do primeiro lote de 5 contatos.
+**Freeze:** sem tela/feature nova até fricção observada nesse caminho (não “scripts existem”).
 
 ---
 

@@ -8,7 +8,7 @@
 - **Este corte (V1):** `01 ICP` · `02 Oferta (mínimo)` · `03 Gatilhos` · `04 WhatsApp`
 - **UI operacional:** disponível no Prospecta (Minha fila → lead → **Abordagem comercial**). Scripts estáticos em `src/features/commercial/playbook-v1.ts`. Este Markdown continua sendo a explicação da estratégia.
 - **Critério de saída do V1:** usar a cadência em leads HIGH reais e registrar o que aconteceu (resposta, silêncio, objeção, encaminhamento, interesse, reunião) — não “ter os scripts escritos”
-- **Próximo corte:** só depois desse uso real, escolhido pelo gargalo observado (e-mail / objeções / discovery). Sem roadmap antecipado de canal.
+- **Próximo corte:** só depois desse uso real, escolhido pelo gargalo observado (e-mail / objeções / discovery). Sem tela nova fora do mapa congelado: [product-decision-pilot-screen-map.md](../product/product-decision-pilot-screen-map.md).
 
 Motor técnico (F1–F4, KPIs, dashboard, badges) está **fechado**. Este documento não altera regra de assignment, score nem sinais.
 

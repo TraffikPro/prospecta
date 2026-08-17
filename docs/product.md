@@ -144,10 +144,14 @@ Cumpridos na [decisão do MVP](product/product-decision-mvp-technical.md) (fluxo
 
 ```text
 MVP técnico em produção (Auth → Lead → Activity → Pipeline → Intelligence → Lead Detail) = DONE
-→ VALIDATE — piloto fundador / lote Santos (Activity → resposta → reunião)
-→ Dashboard / Campaign entity / CSV UI / polish = só com product-grill após evidência
+WEEKLY COMMERCIAL SYSTEM (F1–F4, KPIs, /app, badges) = DONE
+PLAYBOOK WhatsApp (docs + UI no lead) = VALIDATE
+SCREEN MAP = FREEZE — CORE = Minha fila + detalhe do lead
+→ VALIDATE — executar cadência e registrar Activity
+→ tela/feature nova só com fricção observada nesse caminho
 ```
 
+Mapa de telas: [product/product-decision-pilot-screen-map.md](product/product-decision-pilot-screen-map.md).  
 Status canônico pós-MVP: [product/status-post-mvp.md](product/status-post-mvp.md).  
 Piloto comercial: [product/founder-pilot.md](product/founder-pilot.md).  
 Lote oficial: [product/campaign-santos-odonto-batch-1.md](product/campaign-santos-odonto-batch-1.md).
@@ -164,7 +168,8 @@ Checklist societário segue **em paralelo** e não bloqueia a operação do pilo
 | `docs/product/product-decision-weekly-portfolio-close-f4.md` | F4 fechamento semanal + cron (DONE) |
 | `docs/product/product-decision-commercial-kpis.md` | KPIs semanais canônicos (DONE) |
 | `docs/product/product-decision-operational-dashboard.md` | Visão operacional `/app` (DONE) |
-| `docs/product/product-decision-navigation-badges.md` | Badges de ação na navegação (BUILD) |
+| `docs/product/product-decision-navigation-badges.md` | Badges de ação na navegação (DONE) |
+| `docs/product/product-decision-pilot-screen-map.md` | Mapa de telas do piloto (FREEZE) |
 | `docs/product/pilot-validation-plan.md` | Validação técnica/operacional do piloto |
 | `docs/product/founder-pilot.md` | Piloto comercial (tese, métricas, DEFER Maps) |
 | `docs/commercial/playbook-v1.md` | Playbook comercial (ICP, sinais, WhatsApp) |

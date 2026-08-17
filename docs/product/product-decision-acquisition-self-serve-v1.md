@@ -19,6 +19,12 @@ Places API permanece fora do Next.js
 MEMBER comum permanece sem acesso; ADMIN concede/revoga em /admin/users
 ```
 
+## Atualização 2026-08-17 — débito nav vs rota
+
+A nav mostra Aquisição para MEMBER com `canRunAcquisition`. A página `/admin/acquisition` ainda é `ADMIN`-only (403).
+
+Fora do fluxo do piloto WhatsApp. Correção só com grill explícito — ver [pilot-screen-map](product-decision-pilot-screen-map.md).
+
 ## Problema
 
 O comercial/operador depende de engenharia + CLI do `prospecta-lead-generator` para puxar leads. Isso bloqueia a operação quando há demanda real de aquisição.
