@@ -1,20 +1,27 @@
 # Status canônico — Prospecta (pós-MVP)
 
-- **Data:** 2026-07-28
+- **Data:** 2026-08-17
 - **Repo canônico:** [`TraffikPro/prospecta`](https://github.com/TraffikPro/prospecta)
-- **Branch:** `main` @ `c161e25` (merge [#51](https://github.com/TraffikPro/prospecta/pull/51))
+- **Branch:** `main` @ `18856f0` (merge [#65](https://github.com/TraffikPro/prospecta/pull/65))
 - **Produção:** `https://prospecta-ten-tau.vercel.app`
-- **PRs:** merged até #51 (#18 é issue)
-- **Testes:** 118 + typecheck + lint
-- **Decisão de estágio:** MVP técnico **DONE** · gate técnico Commercial Clarity **ACCEPTED — 5/5** · Acquisition Self-Serve Fase 1 **BUILD** · próximo passo produto = **demo comercial** + liberar aquisição ADMIN em piloto
+- **PRs:** merged até #65
+- **Decisão de estágio:** MVP técnico **DONE** · sistema semanal F1–F4 / KPIs / dashboard / badges **DONE** · playbook WhatsApp **VALIDATE** · **mapa de telas FREEZE** — próximo passo = **executar** Minha fila → lead → Activity
 
 Este documento substitui narrativas de “scaffold técnico”. Não autoriza feature code por si só.
 
 ---
 
-## Veredito
+## Veredito (17 ago 2026)
 
-Prospecta é um **MVP operacional em produção**. Auth, leads, atividades, pipeline, ingestão externa, Intelligence Inbox, filas, Lead Detail (A+B+C), Commercial Clarity Fatia 1 e smokes de produção existem. O gargalo atual **não** é reabrir auth/login nem polish de UI — é a **demo comercial** e, após ela, escolher clínica-modelo e validar a oferta (**Presença, Conversão e Operação**).
+Prospecta é um **MVP operacional em produção** com carteira semanal e playbook no detalhe do lead. O gargalo **não** é reabrir o motor nem ampliar a superfície de telas — é a **execução comercial** no caminho:
+
+```text
+login → Minha fila → detalhe do lead → playbook WhatsApp → contato manual → Activity
+```
+
+Mapa: [product-decision-pilot-screen-map.md](product-decision-pilot-screen-map.md).
+
+`/app` (Visão geral) é suporte de KPI, **não** o centro da operação.
 
 ---
 
@@ -80,10 +87,12 @@ CSV deixou de ser o hub (ADR 0009). Só reabre com sintoma real do piloto.
 
 ### 5. Métricas de uso e conversão
 
-- **Visão operacional semanal `/app` = DONE** — [product-decision-operational-dashboard.md](product-decision-operational-dashboard.md).
-- **Badges de ação na navegação = BUILD** — [product-decision-navigation-badges.md](product-decision-navigation-badges.md).
+- **Visão operacional semanal `/app` = DONE** — [product-decision-operational-dashboard.md](product-decision-operational-dashboard.md). **Suporte**, não hub da execução.
+- **Badges de ação na navegação = DONE** — [product-decision-navigation-badges.md](product-decision-navigation-badges.md).
+- **Playbook WhatsApp no lead = VALIDATE UI** — [product-decision-commercial-playbook-ui.md](product-decision-commercial-playbook-ui.md).
+- **Mapa de telas = FREEZE** — [product-decision-pilot-screen-map.md](product-decision-pilot-screen-map.md).
 - **Dashboard de conversão / campanha = DEFER** — [product-decision-dashboard-defer.md](product-decision-dashboard-defer.md).
-- Observação operacional: `/app`, Inbox, Minha fila, stages e follow-ups.
+- Observação operacional: Minha fila + detalhe do lead; `/app`, Inbox, pipeline e follow-ups apoiam.
 
 ### 6. Currículo / case GitHub
 
@@ -107,15 +116,16 @@ CSV deixou de ser o hub (ADR 0009). Só reabre com sintoma real do piloto.
 
 | Prioridade | Ação | Tipo |
 | --- | --- | --- |
-| P0 | Demo comercial com sócio (único gate de produto restante) | **VALIDATE** |
+| P0 | Executar cadência WhatsApp nos HIGH (Minha fila → lead → Activity) | **VALIDATE** |
 | P1 | Comparar os 5 leads Santos → escolher clínica-modelo | Ops / Product |
 | P1 | Validar oferta: portfólio **Presença, Conversão e Operação** | Product |
 | P2 | Fechar/assinar Pilot Day 1 com evidência de Activity | Ops |
+| P2 | Débito: MEMBER `canRunAcquisition` vê Aquisição na nav, página 403 | Tech / Product |
 | P2 | Issue #18 + CI Actions | Tech debt |
 
 **Hipótese ativa (piloto):** se o comercial operar os HIGH no Prospecta, gera conversa (Activity → resposta → reunião) sem planilha paralela.
 
-Até a demo e a evidência comercial, a decisão correta é **VALIDATE / operar**, não **BUILD** de polish.
+Até evidência de Activity no caminho CORE, a decisão correta é **VALIDATE / operar**, não **BUILD** de tela nova.
 
 ---
 
@@ -129,7 +139,8 @@ Até a demo e a evidência comercial, a decisão correta é **VALIDATE / operar*
 | [founder-pilot-execution.md](founder-pilot-execution.md) | Manual dos sócios |
 | [campaign-santos-odonto-batch-1.md](campaign-santos-odonto-batch-1.md) | Lote oficial VALIDATE |
 | [product-decision-operational-dashboard.md](product-decision-operational-dashboard.md) | Visão operacional `/app` DONE |
-| [product-decision-navigation-badges.md](product-decision-navigation-badges.md) | Badges de ação na nav BUILD |
+| [product-decision-navigation-badges.md](product-decision-navigation-badges.md) | Badges de ação na nav DONE |
+| [product-decision-pilot-screen-map.md](product-decision-pilot-screen-map.md) | Mapa de telas do piloto FREEZE |
 | [product-decision-dashboard-defer.md](product-decision-dashboard-defer.md) | Dashboard de conversão DEFER |
 | [prospecta-lead-detail-commercial-clarity.md](prospecta-lead-detail-commercial-clarity.md) | Gate técnico ACCEPTED 5/5 · demo PENDING |
 | [product-decision-lead-detail-states-v1.md](product-decision-lead-detail-states-v1.md) | Lead Detail States v1 DONE |
