@@ -176,6 +176,7 @@ Checklist societário segue **em paralelo** e não bloqueia a operação do pilo
 | `docs/product/product-decision-commercial-playbook-ui.md` | UI do playbook no detalhe do lead (VALIDATE UI) |
 | `docs/product/founder-pilot-execution.md` | Manual operacional dos sócios (14 dias) |
 | `docs/product/campaign-santos-odonto-batch-1.md` | Lote Santos (VALIDATE) |
+| `docs/product/commercial-kit/` | Kit comercial mínimo (oferta, diagnósticos, roteiro) |
 | `docs/product/pilot-day-1-checklist.md` | Checklist pré–dia 1 / Pilot Day 1 Ready |
 | `docs/adr/0009-google-places-lead-ingestion.md` | Ingestão externa → CRM (accepted; BUILD fatia 1) |
 | `docs/adr/0010-lead-intelligence-pipeline.md` | Lead Intelligence pipeline (accepted; BUILD fatia 1) |
