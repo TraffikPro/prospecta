@@ -1,11 +1,10 @@
 # Status canônico — Prospecta (pós-MVP)
 
-- **Data:** 2026-08-17
+- **Data:** 2026-08-18
 - **Repo canônico:** [`TraffikPro/prospecta`](https://github.com/TraffikPro/prospecta)
-- **Branch:** `main` @ `18856f0` (merge [#65](https://github.com/TraffikPro/prospecta/pull/65))
 - **Produção:** `https://prospecta-ten-tau.vercel.app`
-- **PRs:** merged até #65
-- **Decisão de estágio:** MVP técnico **DONE** · sistema semanal F1–F4 / KPIs / dashboard / badges **DONE** · playbook WhatsApp **VALIDATE** · **mapa de telas FREEZE** — próximo passo = **executar** Minha fila → lead → Activity
+- **PRs:** merged até [#66](https://github.com/TraffikPro/prospecta/pull/66) (mapa de telas FREEZE)
+- **Decisão de estágio:** MVP técnico **DONE** · sistema semanal **DONE** · playbook **VALIDATE** · mapa de telas **FREEZE** · **Sprint 0 = evidência comercial** (`wa.me`) · **WhatsApp API envio = NOT YET** · **Readiness v1 = BUILD docs / flags off**
 
 Este documento substitui narrativas de “scaffold técnico”. Não autoriza feature code por si só.
 
@@ -51,8 +50,8 @@ Mapa: [product-decision-pilot-screen-map.md](product-decision-pilot-screen-map.m
 ### 1. Operabilidade do piloto
 
 - Produção e papéis `ADMIN`/`MEMBER` operáveis.
-- Lote **Santos Odontologia** em **VALIDATE** — ver [campaign-santos-odonto-batch-1.md](campaign-santos-odonto-batch-1.md).
-- Freeze de produto até evidência do primeiro ciclo de contato (Activity real).
+- Lote **Santos Odontologia** em **VALIDATE** — [campaign-santos-odonto-batch-1.md](campaign-santos-odonto-batch-1.md) · ciclo [Sprint 0](product-decision-sprint-0-commercial-evidence.md).
+- Freeze de produto (score, pesos, pitch, telas) **durante** o Sprint 0.
 - [pilot-day-1-checklist.md](pilot-day-1-checklist.md) permanece checklist operacional (assinatura do marco ainda a fechar com evidência).
 
 ### 2. Fluxo aquisição → resultado
@@ -108,7 +107,8 @@ CSV deixou de ser o hub (ADR 0009). Só reabre com sintoma real do piloto.
 - Nova polish de Lead Detail sem sintoma
 - Dashboard de conversão / entidade Campaign / Workspace completo
 - CSV UI sem fricção observada
-- Features sob freeze do lote Santos
+- Features sob freeze do lote Santos (score, pesos, pitch)
+- WhatsApp API **envio** em produção, cadência automática, disparo em massa
 
 ---
 
@@ -116,8 +116,11 @@ CSV deixou de ser o hub (ADR 0009). Só reabre com sintoma real do piloto.
 
 | Prioridade | Ação | Tipo |
 | --- | --- | --- |
-| P0 | Executar cadência WhatsApp nos HIGH (Minha fila → lead → Activity) | **VALIDATE** |
-| P1 | Comparar os 5 leads Santos → escolher clínica-modelo | Ops / Product |
+| P0 | **Sprint 0** — evidência comercial: fechar 5 Santos + onda 2; ≥20 Activities (`wa.me`) | **VALIDATE** |
+| P0 | **WhatsApp Readiness v1** — contrato (este corte) → elegibilidade → APIs assinadas; flags `false` | **BUILD** reduzido |
+| P1 | Product Grill — Qualification Score Review v1 (**só ao encerrar o Sprint 0**) | Product |
+| P1 | Product Grill — WhatsApp API Go-Live v1 (**só após staging verde**) | Product |
+| P1 | Comparar leads Santos → clínica-modelo (com dados do sprint) | Ops / Product |
 | P1 | Validar oferta: portfólio **Presença, Conversão e Operação** | Product |
 | P2 | Fechar/assinar Pilot Day 1 com evidência de Activity | Ops |
 | P2 | Débito: MEMBER `canRunAcquisition` vê Aquisição na nav, página 403 | Tech / Product |
@@ -125,7 +128,7 @@ CSV deixou de ser o hub (ADR 0009). Só reabre com sintoma real do piloto.
 
 **Hipótese ativa (piloto):** se o comercial operar os HIGH no Prospecta, gera conversa (Activity → resposta → reunião) sem planilha paralela.
 
-Até evidência de Activity no caminho CORE, a decisão correta é **VALIDATE / operar**, não **BUILD** de tela nova.
+Até o checkpoint do Sprint 0, a operação comercial continua **VALIDATE / `wa.me`**. Readiness WhatsApp é trilha de engenharia **com cancela fechada**, não go-live nem grill de score.
 
 ---
 
@@ -141,6 +144,11 @@ Até evidência de Activity no caminho CORE, a decisão correta é **VALIDATE / 
 | [product-decision-operational-dashboard.md](product-decision-operational-dashboard.md) | Visão operacional `/app` DONE |
 | [product-decision-navigation-badges.md](product-decision-navigation-badges.md) | Badges de ação na nav DONE |
 | [product-decision-pilot-screen-map.md](product-decision-pilot-screen-map.md) | Mapa de telas do piloto FREEZE |
+| [product-decision-sprint-0-commercial-evidence.md](product-decision-sprint-0-commercial-evidence.md) | Sprint 0 evidência comercial VALIDATE |
+| [product-decision-whatsapp-ecosystem-readiness-v1.md](product-decision-whatsapp-ecosystem-readiness-v1.md) | WhatsApp readiness BUILD (flags off) |
+| [whatsapp-ecosystem-contract-v1.md](whatsapp-ecosystem-contract-v1.md) | Contrato Prospecta ↔ DevFlow v1 |
+| [whatsapp-operations-runbook.md](whatsapp-operations-runbook.md) | Runbook staging / rollback (draft) |
+| [../adr/0015-whatsapp-ecosystem-readiness.md](../adr/0015-whatsapp-ecosystem-readiness.md) | ADR integração WhatsApp |
 | [product-decision-dashboard-defer.md](product-decision-dashboard-defer.md) | Dashboard de conversão DEFER |
 | [prospecta-lead-detail-commercial-clarity.md](prospecta-lead-detail-commercial-clarity.md) | Gate técnico ACCEPTED 5/5 · demo PENDING |
 | [product-decision-lead-detail-states-v1.md](product-decision-lead-detail-states-v1.md) | Lead Detail States v1 DONE |

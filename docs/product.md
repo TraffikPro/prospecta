@@ -147,8 +147,11 @@ MVP técnico em produção (Auth → Lead → Activity → Pipeline → Intellig
 WEEKLY COMMERCIAL SYSTEM (F1–F4, KPIs, /app, badges) = DONE
 PLAYBOOK WhatsApp (docs + UI no lead) = VALIDATE
 SCREEN MAP = FREEZE — CORE = Minha fila + detalhe do lead
-→ VALIDATE — executar cadência e registrar Activity
-→ tela/feature nova só com fricção observada nesse caminho
+SPRINT 0 = VALIDATE — evidência comercial (25–30 leads trabalhados, Activities)
+WHATSAPP API = NOT YET (envio) · READINESS v1 = BUILD docs/flags-off (cancela fechada)
+→ Qualification Score Review só depois do Sprint 0
+→ go-live WhatsApp API só depois de homologação + grill próprio
+→ tela/feature comercial nova só com fricção observada no CORE PILOT
 ```
 
 Mapa de telas: [product/product-decision-pilot-screen-map.md](product/product-decision-pilot-screen-map.md).  
@@ -170,12 +173,17 @@ Checklist societário segue **em paralelo** e não bloqueia a operação do pilo
 | `docs/product/product-decision-operational-dashboard.md` | Visão operacional `/app` (DONE) |
 | `docs/product/product-decision-navigation-badges.md` | Badges de ação na navegação (DONE) |
 | `docs/product/product-decision-pilot-screen-map.md` | Mapa de telas do piloto (FREEZE) |
+| `docs/product/product-decision-sprint-0-commercial-evidence.md` | Sprint 0 — evidência comercial (VALIDATE) |
+| `docs/product/product-decision-whatsapp-ecosystem-readiness-v1.md` | WhatsApp readiness (BUILD reduzido, flags off) |
+| `docs/product/whatsapp-ecosystem-contract-v1.md` | Contrato Prospecta ↔ DevFlow v1 |
+| `docs/product/whatsapp-operations-runbook.md` | Runbook WhatsApp (draft, flags off) |
+| `docs/adr/0015-whatsapp-ecosystem-readiness.md` | ADR WhatsApp readiness |
 | `docs/product/pilot-validation-plan.md` | Validação técnica/operacional do piloto |
 | `docs/product/founder-pilot.md` | Piloto comercial (tese, métricas, DEFER Maps) |
 | `docs/commercial/playbook-v1.md` | Playbook comercial (ICP, sinais, WhatsApp) |
 | `docs/product/product-decision-commercial-playbook-ui.md` | UI do playbook no detalhe do lead (VALIDATE UI) |
 | `docs/product/founder-pilot-execution.md` | Manual operacional dos sócios (14 dias) |
-| `docs/product/campaign-santos-odonto-batch-1.md` | Lote Santos (VALIDATE) |
+| `docs/product/campaign-santos-odonto-batch-1.md` | Lote Santos (VALIDATE) — Sprint 0, fechar estes 5 |
 | `docs/product/pilot-day-1-checklist.md` | Checklist pré–dia 1 / Pilot Day 1 Ready |
 | `docs/adr/0009-google-places-lead-ingestion.md` | Ingestão externa → CRM (accepted; BUILD fatia 1) |
 | `docs/adr/0010-lead-intelligence-pipeline.md` | Lead Intelligence pipeline (accepted; BUILD fatia 1) |

@@ -12,7 +12,9 @@ Validação técnica do app: [pilot-validation-plan.md](pilot-validation-plan.md
 Inteligência, Visão geral, Pipeline e Portfólio são suporte.  
 Mapa congelado: [product-decision-pilot-screen-map.md](product-decision-pilot-screen-map.md).  
 Campanha lote 1: [campaign-santos-odonto-batch-1.md](campaign-santos-odonto-batch-1.md).  
-**Freeze:** sem tela/feature nova até fricção observada nesse caminho (não “scripts existem”).
+**Freeze de produto:** sem tela/feature comercial nova até fricção no CORE. WhatsApp API envio = NOT YET.  
+**Ciclo atual:** [Sprint 0 — evidência comercial](product-decision-sprint-0-commercial-evidence.md) (`wa.me`).  
+Readiness (cancela fechada): [WhatsApp Ecosystem Readiness v1](product-decision-whatsapp-ecosystem-readiness-v1.md).
 
 ---
 

@@ -8,7 +8,7 @@
 - **Este corte (V1):** `01 ICP` · `02 Oferta (mínimo)` · `03 Gatilhos` · `04 WhatsApp`
 - **UI operacional:** disponível no Prospecta (Minha fila → lead → **Abordagem comercial**). Scripts estáticos em `src/features/commercial/playbook-v1.ts`. Este Markdown continua sendo a explicação da estratégia.
 - **Critério de saída do V1:** usar a cadência em leads HIGH reais e registrar o que aconteceu (resposta, silêncio, objeção, encaminhamento, interesse, reunião) — não “ter os scripts escritos”
-- **Próximo corte:** só depois desse uso real, escolhido pelo gargalo observado (e-mail / objeções / discovery). Sem tela nova fora do mapa congelado: [product-decision-pilot-screen-map.md](../product/product-decision-pilot-screen-map.md).
+- **Próximo corte:** Sprint 0 de evidência ([product-decision-sprint-0-commercial-evidence.md](../product/product-decision-sprint-0-commercial-evidence.md)). Grill de score / e-mail / objeções / discovery **só depois** de Activities reais. Sem tela nova fora do [mapa congelado](../product/product-decision-pilot-screen-map.md).
 
 Motor técnico (F1–F4, KPIs, dashboard, badges) está **fechado**. Este documento não altera regra de assignment, score nem sinais.
 
@@ -320,7 +320,7 @@ Runtime: `src/features/commercial/playbook-v1.ts` (não gerar copy em runtime).
 
 ## 05–10. NEXT (não decidir agora)
 
-O próximo capítulo **não** é um roadmap de canais. Só abre depois do uso real do WhatsApp nos HIGH:
+O próximo capítulo **não** é um roadmap de canais. [Sprint 0](../product/product-decision-sprint-0-commercial-evidence.md) primeiro. Só abre corte novo depois do uso real do WhatsApp nos HIGH:
 
 | Gargalo observado | Próximo corte |
 | --- | --- |
