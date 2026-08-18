@@ -61,7 +61,8 @@ test.describe("must change password (Fatia 3)", () => {
       page.getByRole("heading", { name: "Minha operação", exact: true }),
     ).toBeVisible();
 
-    await page.getByRole("button", { name: "Sair" }).click();
+    await page.getByTestId("nav-profile-trigger").click();
+    await page.getByRole("menuitem", { name: "Sair" }).click();
     await login(page, memberEmail, nextPassword);
     await expect(page).toHaveURL(/\/app\/my-leads/);
   });

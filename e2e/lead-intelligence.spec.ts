@@ -41,10 +41,10 @@ test.describe("lead intelligence view", () => {
     await expect(page.getByTestId("lead-intelligence-card")).toBeVisible();
     await expect(page.getByTestId("intelligence-score")).toContainText("90");
     await expect(page.getByTestId("intelligence-qualification")).toHaveText(
-      "Alta",
+      "Prioridade alta",
     );
     await expect(page.getByTestId("intelligence-signals")).toContainText(
-      "Sem website identificado",
+      "Website não identificado",
     );
     await expect(page.getByTestId("intelligence-diagnostic")).toContainText(
       diagnostic,
