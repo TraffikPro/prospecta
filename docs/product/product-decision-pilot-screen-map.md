@@ -4,7 +4,7 @@
 - **Decisão:** **VALIDATE** (congelar o mapa de telas) — não autoriza tela nova
 - **Classificação:** WORKSPACE (IA comercial) · PILOT_SPECIFIC (execução do lote)
 - **Pré-requisito:** F1–F4, KPIs, dashboard, badges, playbook docs (#64) e playbook UI (#65) em `main`
-- **Não autoriza:** transformar `/app` no centro da execução; inventar telas; corrigir Aquisição MEMBER neste corte; funil, CSV, gestão de usuários, IA, sequências, WhatsApp API
+- **Não autoriza:** transformar `/app` no centro da execução; inventar telas; corrigir Aquisição MEMBER neste corte; funil, CSV, gestão de usuários, IA, sequências; **envio** WhatsApp API / go-live
 
 ## Fluxo oficial do piloto
 
@@ -47,8 +47,10 @@ CSV
 Gestão de usuários
 IA de mensagens
 Sequências automáticas
-WhatsApp API
+WhatsApp API (envio / go-live)
 ```
+
+Readiness (contrato, elegibilidade, flags `false`) é BUILD paralelo — [whatsapp-ecosystem-readiness-v1](product-decision-whatsapp-ecosystem-readiness-v1.md). **Não** é rota nova e **não** liga envio. `wa.me` permanece o CORE PILOT.
 
 ## Grill
 
@@ -93,4 +95,8 @@ BADGES = DONE
 PLAYBOOK DOCS = VALIDATE
 PLAYBOOK UI = VALIDATE UI
 SCREEN MAP = FREEZE agora
+SPRINT 0 = VALIDATE — evidência comercial
+WHATSAPP READINESS = BUILD docs / flags off (envio = NOT YET)
 ```
+
+Ciclo operacional corrente: [product-decision-sprint-0-commercial-evidence.md](product-decision-sprint-0-commercial-evidence.md). Sem rota nova até o checkpoint. Readiness WhatsApp não descongela envio.

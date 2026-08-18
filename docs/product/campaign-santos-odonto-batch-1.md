@@ -1,7 +1,9 @@
 # Campanha — Santos Odontologia (Lote 1)
 
-**Status:** experimento comercial oficial — aguardando primeiro ciclo de Activity  
+**Status:** Sprint 0 — evidência comercial (**VALIDATE**)  
 **Pergunta:** a inteligência gera conversa comercial real?
+
+Ciclo atual: [product-decision-sprint-0-commercial-evidence.md](product-decision-sprint-0-commercial-evidence.md) — fechar estes 5 + segunda onda, **sem** mudar score/pesos/pitch.
 
 ## Estado operacional
 
@@ -52,7 +54,7 @@ Não abrir:
 - novas fontes de aquisição
 - Workspace
 
-Próximo avanço = operação + aprendizado.
+Próximo avanço = [Sprint 0 — evidência comercial](product-decision-sprint-0-commercial-evidence.md) (fechar estes 5 + wave-2). Sem schema Campaign.
 
 ## Campanha
 
@@ -62,14 +64,14 @@ Próximo avanço = operação + aprendizado.
 | Região | Santos |
 | Pool HIGH | ~18 (meta) |
 | Lote inicial | **5** leads (maiores scores na Inbox) |
-| Ferramenta | `/app/intelligence` → lead detail → Activity |
+| Ferramenta | `/app/my-leads` → lead detail → playbook → Activity |
 | Chave JSON | `santos-odontologia-2026-07` |
 
 ## Protocolo por lead
 
 ### Antes do contato
 
-1. Abrir Intelligence Inbox → Lead Detail  
+1. Abrir **Minha fila** → Lead Detail  
 2. Ler diagnóstico + pitch  
 3. Pergunta mental (30s): *“por que esta empresa é uma oportunidade?”*  
    Se não conseguir explicar, registrar na coluna Observação.
@@ -100,17 +102,19 @@ Sem Activity não há aprendizado.
 
 ### O que não fazer no lote
 
-Não alterar score, pesos, sinais, pitch por lead, IA de mensagem, dashboard, website audit nem coletar novas cidades. Variável sob teste = Intelligence + oferta + abordagem atuais.
+Não alterar score, pesos, sinais, pitch-base, nicho, cidade, owner, processo de contato, IA de mensagem, dashboard nem website audit. Variável sob teste = Intelligence + oferta + abordagem atuais. Segunda onda: [Sprint 0](product-decision-sprint-0-commercial-evidence.md) (`santos-odontologia-2026-07-wave-2`).
 
 ## Acompanhamento do lote (atualizar à mão)
 
-| # | Lead | Contato | Resposta | Reunião | Observação qualitativa |
-| --- | --- | --- | --- | --- | --- |
-| 1 | Comsorriso | | | | |
-| 2 | Clínica Brasil Sorriso - Gonzaga | | | | |
-| 3 | Lux Estética Odontológica Santos | | | | |
-| 4 | Centro Santista de Odontologia | | | | |
-| 5 | Drª Ariany de França Ferreira | | | | |
+Fonte da verdade = Prospecta. Esta tabela só resume. Qualidade percebida vai no body da Activity (sem campo novo).
+
+| # | Lead | Score | Activity | Outcome | Follow-up | Stage | Perda | Qualidade percebida |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | Comsorriso | | | | | | | |
+| 2 | Clínica Brasil Sorriso - Gonzaga | | | | | | | |
+| 3 | Lux Estética Odontológica Santos | | | | | | | |
+| 4 | Centro Santista de Odontologia | | | | | | | |
+| 5 | Drª Ariany de França Ferreira | | | | | | | |
 
 ### Totais
 
@@ -122,15 +126,11 @@ Não alterar score, pesos, sinais, pitch por lead, IA de mensagem, dashboard, we
 | Reuniões | 0 |
 | WON | 0 |
 
-## Decisão após o lote (grill com números)
+Ao fechar estes 5: **não** abrir grill de score. Seguir onda 2 com as mesmas variáveis.
 
-| Cenário | Leitura | Próximo passo |
-| --- | --- | --- |
-| Respostas altas + reunião | Máquina funciona | Escalar aquisição |
-| 5 contatos / 0 respostas | Lead, mensagem, canal ou oferta | Investigar; hipótese C se argumento fraco |
-| Respostas sem reunião | Posicionamento comercial | Ajustar oferta/pitch (não score às cegas) |
-| Comercial não usa Inbox | Fricção de execução | Workspace — hipótese B |
-| Mistura de campanhas | Atribuição | Campaign Foundation — hipótese A |
+## Depois do Sprint 0 (≥20 tentativas)
+
+O grill autorizado é **Qualification Score Review v1**. Hipóteses A/B/C (Campaign / Workspace / argumento) só reabrem **se** os dados do sprint as sustentarem — não por palpite no meio da onda.
 
 ## Referências
 
@@ -139,4 +139,5 @@ Próxima ação (BUILD): [product-decision-lead-next-action.md](product-decision
 Dashboard (DEFER): [product-decision-dashboard-defer.md](product-decision-dashboard-defer.md)  
 Workspace (histórico DEFER→BUILD): [product-decision-workspace-defer.md](product-decision-workspace-defer.md)  
 Minha fila (BUILD): [product-decision-my-queue.md](product-decision-my-queue.md)  
+Sprint 0: [product-decision-sprint-0-commercial-evidence.md](product-decision-sprint-0-commercial-evidence.md)  
 Execução geral: [founder-pilot-execution.md](founder-pilot-execution.md)
