@@ -4,6 +4,11 @@ import { PrismaClient } from "@prisma/client";
 import { AuthorizationError } from "@/server/auth/errors";
 import { hashPassword } from "@/server/auth/password";
 import { WhatsAppConsentValidationError } from "@/features/whatsapp-consent/consent.errors";
+import { assertSafeForMutableTestsOrThrow } from "@/lib/safety/production-mutation-guard";
+import {
+  applyWhatsAppConsentState,
+  createWhatsAppConsentEvent,
+} from "@/server/repositories/whatsapp-consent.repository";
 import { recordWhatsAppConsent } from "./whatsapp-consent.service";
 
 const prisma = new PrismaClient();
@@ -13,9 +18,13 @@ describe("recordWhatsAppConsent", { skip: !hasDatabase }, () => {
   const suffix = Date.now().toString(36);
   let ownerId = "";
   let otherId = "";
+  let adminId = "";
   let leadId = "";
 
   before(async () => {
+    assertSafeForMutableTestsOrThrow({
+      databaseUrl: process.env.DATABASE_URL,
+    });
     const owner = await prisma.user.upsert({
       where: { email: `wa-consent-owner-${suffix}@prospecta.test` },
       update: { isActive: true },
@@ -42,6 +51,19 @@ describe("recordWhatsAppConsent", { skip: !hasDatabase }, () => {
     });
     otherId = other.id;
 
+    const admin = await prisma.user.upsert({
+      where: { email: `wa-consent-admin-${suffix}@prospecta.test` },
+      update: { isActive: true, role: "ADMIN" },
+      create: {
+        email: `wa-consent-admin-${suffix}@prospecta.test`,
+        name: "Consent Admin",
+        role: "ADMIN",
+        passwordHash: await hashPassword("ConsentTest123!"),
+        isActive: true,
+      },
+    });
+    adminId = admin.id;
+
     const lead = await prisma.lead.create({
       data: {
         companyName: `Clínica Consent ${suffix}`,
@@ -62,6 +84,7 @@ describe("recordWhatsAppConsent", { skip: !hasDatabase }, () => {
           in: [
             `wa-consent-owner-${suffix}@prospecta.test`,
             `wa-consent-other-${suffix}@prospecta.test`,
+            `wa-consent-admin-${suffix}@prospecta.test`,
           ],
         },
       },
@@ -216,5 +239,163 @@ describe("recordWhatsAppConsent", { skip: !hasDatabase }, () => {
         }),
       AuthorizationError,
     );
+  });
+
+  it("allows ADMIN to record consent on a lead they do not own", async () => {
+    const adminLead = await prisma.lead.create({
+      data: {
+        companyName: `Clínica Admin ${suffix}`,
+        phone: "13966665555",
+        ownerId,
+      },
+    });
+    await recordWhatsAppConsent({
+      leadId: adminLead.id,
+      actorId: adminId,
+      status: "OPTED_OUT",
+      source: "PHONE_CALL",
+      evidenceAt: new Date().toISOString(),
+    });
+    const lead = await prisma.lead.findUniqueOrThrow({
+      where: { id: adminLead.id },
+    });
+    assert.equal(lead.whatsappConsentStatus, "OPTED_OUT");
+    const event = await prisma.whatsAppConsentEvent.findFirstOrThrow({
+      where: { leadId: adminLead.id },
+    });
+    assert.equal(event.actorId, adminId);
+    assert.ok(event.evidenceAt);
+    assert.ok(event.createdAt);
+  });
+
+  it("rolls back lead state when the consent event insert fails", async () => {
+    const isolated = await prisma.lead.create({
+      data: {
+        companyName: `Clínica Rollback ${suffix}`,
+        phone: "13955554444",
+        ownerId,
+      },
+    });
+
+    await assert.rejects(() =>
+      prisma.$transaction(async (tx) => {
+        await createWhatsAppConsentEvent(
+          {
+            leadId: isolated.id,
+            status: "OPTED_IN",
+            source: "PHONE_CALL",
+            purpose: "PRESENTATION",
+            purposeNote: null,
+            evidenceAt: new Date(),
+            actorId: "missing-actor",
+          },
+          tx,
+        );
+        await applyWhatsAppConsentState(
+          {
+            leadId: isolated.id,
+            status: "OPTED_IN",
+            phoneE164: "+5513955554444",
+          },
+          tx,
+        );
+      }),
+    );
+
+    const lead = await prisma.lead.findUniqueOrThrow({
+      where: { id: isolated.id },
+    });
+    assert.equal(lead.whatsappConsentStatus, "UNKNOWN");
+    assert.equal(lead.phoneE164, null);
+    assert.equal(
+      await prisma.whatsAppConsentEvent.count({ where: { leadId: isolated.id } }),
+      0,
+    );
+  });
+
+  it("rolls back the event if updating current lead state fails", async () => {
+    const isolated = await prisma.lead.create({
+      data: {
+        companyName: `Clínica Rollback State ${suffix}`,
+        phone: "13944443333",
+        ownerId,
+      },
+    });
+
+    await assert.rejects(() =>
+      prisma.$transaction(async (tx) => {
+        await createWhatsAppConsentEvent(
+          {
+            leadId: isolated.id,
+            status: "OPTED_IN",
+            source: "EMAIL",
+            purpose: "MEETING",
+            purposeNote: null,
+            evidenceAt: new Date(),
+            actorId: ownerId,
+          },
+          tx,
+        );
+        await applyWhatsAppConsentState(
+          {
+            leadId: "missing-lead",
+            status: "OPTED_IN",
+            phoneE164: "+5513944443333",
+          },
+          tx,
+        );
+      }),
+    );
+
+    assert.equal(
+      await prisma.whatsAppConsentEvent.count({ where: { leadId: isolated.id } }),
+      0,
+    );
+    const lead = await prisma.lead.findUniqueOrThrow({
+      where: { id: isolated.id },
+    });
+    assert.equal(lead.whatsappConsentStatus, "UNKNOWN");
+  });
+
+  it("serializes concurrent writes so Lead status matches the latest event", async () => {
+    const isolated = await prisma.lead.create({
+      data: {
+        companyName: `Clínica Race ${suffix}`,
+        phone: "13933332222",
+        ownerId,
+      },
+    });
+    const t1 = new Date();
+    const t2 = new Date(t1.getTime() + 60_000);
+
+    await Promise.all([
+      recordWhatsAppConsent({
+        leadId: isolated.id,
+        actorId: ownerId,
+        status: "OPTED_IN",
+        source: "PHONE_CALL",
+        purpose: "PRESENTATION",
+        evidenceAt: t1.toISOString(),
+        phoneE164: "+5513933332222",
+      }),
+      recordWhatsAppConsent({
+        leadId: isolated.id,
+        actorId: ownerId,
+        status: "OPTED_OUT",
+        source: "OTHER",
+        evidenceAt: t2.toISOString(),
+      }),
+    ]);
+
+    const lead = await prisma.lead.findUniqueOrThrow({
+      where: { id: isolated.id },
+    });
+    const events = await prisma.whatsAppConsentEvent.findMany({
+      where: { leadId: isolated.id },
+      orderBy: { createdAt: "asc" },
+    });
+    assert.equal(events.length, 2);
+    const latest = events[1]!;
+    assert.equal(lead.whatsappConsentStatus, latest.status);
   });
 });
