@@ -65,6 +65,13 @@ export async function recordWhatsAppConsent(
   const evidenceAt = parseEvidenceAt(parsed.data.evidenceAt);
 
   return prisma.$transaction(async (tx) => {
+    const locked = await tx.$queryRaw<Array<{ id: string }>>`
+      SELECT id FROM "Lead" WHERE id = ${parsed.data.leadId} FOR UPDATE
+    `;
+    if (locked.length === 0) {
+      throw new LeadNotFoundError(parsed.data.leadId);
+    }
+
     const lead = await tx.lead.findUnique({
       where: { id: parsed.data.leadId },
       select: {
