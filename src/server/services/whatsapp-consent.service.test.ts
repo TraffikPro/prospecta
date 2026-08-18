@@ -365,8 +365,8 @@ describe("recordWhatsAppConsent", { skip: !hasDatabase }, () => {
         ownerId,
       },
     });
-    const t1 = new Date();
-    const t2 = new Date(t1.getTime() + 60_000);
+    const optedOutAt = new Date();
+    const optedInAt = new Date(optedOutAt.getTime() + 60_000);
 
     await Promise.all([
       recordWhatsAppConsent({
@@ -375,7 +375,7 @@ describe("recordWhatsAppConsent", { skip: !hasDatabase }, () => {
         status: "OPTED_IN",
         source: "PHONE_CALL",
         purpose: "PRESENTATION",
-        evidenceAt: t1.toISOString(),
+        evidenceAt: optedInAt.toISOString(),
         phoneE164: "+5513933332222",
       }),
       recordWhatsAppConsent({
@@ -383,7 +383,7 @@ describe("recordWhatsAppConsent", { skip: !hasDatabase }, () => {
         actorId: ownerId,
         status: "OPTED_OUT",
         source: "OTHER",
-        evidenceAt: t2.toISOString(),
+        evidenceAt: optedOutAt.toISOString(),
       }),
     ]);
 
