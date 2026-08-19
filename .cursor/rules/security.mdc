@@ -7,9 +7,14 @@ alwaysApply: true
 
 - App do time fundador é área restrita: auth server-side; não “securizar” só escondendo UI.
 - Papéis V1 no sistema: `ADMIN` | `MEMBER`. Sociedade (`PARTNER`) não é permissão de software.
-- `ADMIN`: configuração, usuários, importação, visão completa, ações sensíveis.
+- `ADMIN`: configuração, usuários, importação, ações sensíveis e acesso a todos os leads do workspace.
 - `MEMBER`: leads, contatos, atividades, pipeline — sem ações destrutivas/config técnica.
-- Autorização **server-side** por papel; não confiar no client nem em “somos todos sócios”.
+- `MEMBER` só pode ler ou alterar lead cujo `ownerId` corresponda ao próprio usuário.
+- Autenticação não substitui autorização. Autorização e filtros de ownership ocorrem **no servidor**; esconder elementos no frontend não é controle de acesso.
+- Acesso global deve ser uma decisão explícita de `ADMIN`. Ausência de `viewer`, `actor` ou `ownerId` nunca significa acesso global.
+- Listagem, detalhe, atividades, pipeline, inteligência, exportação e mutações preservam o mesmo escopo de ownership.
+- Recurso de outro owner retorna acesso negado ou não encontrado, sem revelar dados.
+- Duplicidade cross-owner não expõe `existingLeadId`, owner ou metadados do lead.
 - Sessão: cookies **HttpOnly**, Secure em produção, SameSite adequado; sem token de sessão em `localStorage`.
 - Segredos só em env (`.env` / Vercel); nunca hardcode. Nunca logar senhas ou tokens.
 - Senhas: hash adequado; nunca texto puro.
