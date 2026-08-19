@@ -7,6 +7,10 @@ import { prisma } from "@/lib/prisma";
 import { postAuthPath } from "@/server/auth/login-redirect";
 import { hashPassword, verifyPassword } from "@/server/auth/password";
 import { getSessionUser } from "@/server/auth/session";
+import {
+  RATE_LIMIT_POLICIES,
+  runUserOperationWithRateLimit,
+} from "@/server/rate-limit";
 
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(1),
@@ -27,53 +31,63 @@ export async function changePasswordAction(
     redirect("/login");
   }
 
-  const parsed = changePasswordSchema.safeParse({
-    currentPassword: formData.get("currentPassword"),
-    password: formData.get("password"),
-    confirmPassword: formData.get("confirmPassword"),
-  });
+  const change = await runUserOperationWithRateLimit({
+    userId: sessionUser.id,
+    policy: RATE_LIMIT_POLICIES.changePasswordUser,
+    operation: async () => {
+      const parsed = changePasswordSchema.safeParse({
+        currentPassword: formData.get("currentPassword"),
+        password: formData.get("password"),
+        confirmPassword: formData.get("confirmPassword"),
+      });
 
-  if (!parsed.success) {
-    return { error: "Preencha os campos corretamente (mín. 8 caracteres)." };
-  }
+      if (!parsed.success) {
+        return {
+          error: "Preencha os campos corretamente (mín. 8 caracteres).",
+        };
+      }
 
-  if (parsed.data.password !== parsed.data.confirmPassword) {
-    return { error: "As senhas não coincidem." };
-  }
+      if (parsed.data.password !== parsed.data.confirmPassword) {
+        return { error: "As senhas não coincidem." };
+      }
 
-  const user = await prisma.user.findUnique({
-    where: { id: sessionUser.id },
-    select: { id: true, passwordHash: true, isActive: true },
-  });
+      const user = await prisma.user.findUnique({
+        where: { id: sessionUser.id },
+        select: { id: true, passwordHash: true, isActive: true },
+      });
 
-  if (!user || !user.isActive) {
-    redirect("/login");
-  }
+      if (!user || !user.isActive) {
+        redirect("/login");
+      }
 
-  const currentOk = await verifyPassword(
-    parsed.data.currentPassword,
-    user.passwordHash,
-  );
-  if (!currentOk) {
-    return { error: "Senha atual incorreta." };
-  }
+      const currentOk = await verifyPassword(
+        parsed.data.currentPassword,
+        user.passwordHash,
+      );
+      if (!currentOk) {
+        return { error: "Senha atual incorreta." };
+      }
 
-  if (parsed.data.currentPassword === parsed.data.password) {
-    return { error: "A nova senha deve ser diferente da atual." };
-  }
+      if (parsed.data.currentPassword === parsed.data.password) {
+        return { error: "A nova senha deve ser diferente da atual." };
+      }
 
-  await prisma.user.update({
-    where: { id: user.id },
-    data: {
-      passwordHash: await hashPassword(parsed.data.password),
-      mustChangePassword: false,
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          passwordHash: await hashPassword(parsed.data.password),
+          mustChangePassword: false,
+        },
+      });
+
+      redirect(
+        postAuthPath({
+          mustChangePassword: false,
+          role: sessionUser.role,
+        }),
+      );
     },
   });
-
-  redirect(
-    postAuthPath({
-      mustChangePassword: false,
-      role: sessionUser.role,
-    }),
-  );
+  if (change.rateLimitError) return { error: change.rateLimitError };
+  return change.result ?? {};
 }
