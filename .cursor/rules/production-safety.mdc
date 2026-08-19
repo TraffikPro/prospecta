@@ -1,0 +1,17 @@
+---
+description: Proteção de produção, banco, secrets e serviços externos
+alwaysApply: true
+---
+
+# Production safety
+
+- Tratar ambiente remoto como produção até confirmação explícita.
+- Antes de operação mutável, identificar ambiente, host e banco de forma redigida e confirmar que pertencem ao escopo.
+- Nunca usar produção para testes, seeds ou validação.
+- Migrations, seeds, resets, deploys, rollbacks e rotação de secrets exigem solicitação explícita.
+- Testes mutáveis usam banco local ou efêmero com guard que recuse host remoto/produção.
+- Nunca mostrar `.env`, connection strings, tokens, cookies ou headers `Authorization`.
+- Não alterar secrets de GitHub, Vercel, banco, e-mail ou outros provedores implicitamente.
+- Revisar migrations, impacto nos dados e estratégia de recuperação antes de aplicá-las.
+- No relatório final, informar ambiente, operações mutáveis e serviços externos alterados.
+- Parar quando a única continuação possível exigir mutação de produção sem autorização.

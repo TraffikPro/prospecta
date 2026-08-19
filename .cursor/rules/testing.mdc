@@ -8,6 +8,9 @@ alwaysApply: false
 
 - Priorizar fluxos críticos: schema Zod de lead/atividade, transição de stage, dedupe e-mail/telefone, formatter de template WhatsApp/e-mail, import CSV, ACL `MEMBER` bloqueado em import/delete.
 - Testar repositories/services quando existirem (unit/integration enxutos).
+- Mudanças em leads devem cobrir: `ADMIN` acessa registros de owners diferentes; MEMBER A acessa somente os próprios; MEMBER A não recebe ID, empresa, etapa, origem ou atividade de MEMBER B; leitura e mutação cross-owner são negadas; duplicidade cross-owner não retorna `existingLeadId`; APIs internas sem Bearer válido falham fechadas.
+- Testes mutáveis usam somente banco local ou dedicado a testes, com guard que recuse host remoto/produção. Usar dados fictícios identificáveis e limpar somente registros criados pelo teste.
+- Evitar paralelismo quando houver estado global compartilhado no banco.
 - Evitar testes frágeis de layout/CSS/snapshots visuais sem valor.
 - Preferir asserts em comportamento e dados, não em markup detalhado.
 - Ao corrigir bug, adicionar regressão quando for barato e estável.
