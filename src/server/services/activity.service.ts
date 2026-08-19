@@ -164,17 +164,15 @@ export async function createActivityForLead(
 
 export async function getActivitiesForLead(
   leadId: string,
-  actor?: { id: string; role: UserRole },
+  actor: { id: string; role: UserRole },
 ): Promise<ActivityWithAuthor[]> {
-  if (actor) {
-    const lead = await prisma.lead.findUnique({
-      where: { id: leadId },
-      select: { ownerId: true },
-    });
-    if (!lead) {
-      throw new LeadNotFoundError(leadId);
-    }
-    assertCanAccessLead(lead, actor);
+  const lead = await prisma.lead.findUnique({
+    where: { id: leadId },
+    select: { ownerId: true },
+  });
+  if (!lead) {
+    throw new LeadNotFoundError(leadId);
   }
+  assertCanAccessLead(lead, actor);
   return listActivitiesByLeadId(leadId);
 }

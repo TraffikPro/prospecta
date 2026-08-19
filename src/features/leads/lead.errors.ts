@@ -1,8 +1,8 @@
 export class LeadDuplicateError extends Error {
   readonly code = "DUPLICATE_LEAD" as const;
-  readonly existingLeadId: string;
+  readonly existingLeadId?: string;
 
-  constructor(existingLeadId: string) {
+  constructor(existingLeadId?: string) {
     super("DUPLICATE_LEAD");
     this.name = "LeadDuplicateError";
     this.existingLeadId = existingLeadId;

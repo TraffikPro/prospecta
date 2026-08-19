@@ -101,6 +101,7 @@ export async function findLeadById(
   });
 }
 
+/** Explicit global listing. Call only after an ADMIN decision at the service layer. */
 export async function listLeads(): Promise<LeadWithOwner[]> {
   return prisma.lead.findMany({
     include: {
@@ -144,14 +145,19 @@ export async function listLeadsForOwnerQueue(
   });
 }
 
+export type LeadIntelligenceListScope =
+  | { ownerId: string }
+  | { scope: "all" };
+
 /** Leads that may carry Lead Intelligence JSON (inbox candidates). */
-export async function listLeadsWithIntelligence(options?: {
-  ownerId?: string;
-}): Promise<LeadWithOwner[]> {
+export async function listLeadsWithIntelligence(
+  options: LeadIntelligenceListScope,
+): Promise<LeadWithOwner[]> {
+  const ownerId = "ownerId" in options ? options.ownerId : undefined;
   return prisma.lead.findMany({
     where: {
       intelligence: { not: Prisma.DbNull },
-      ...(options?.ownerId ? { ownerId: options.ownerId } : {}),
+      ...(ownerId ? { ownerId } : {}),
     },
     include: {
       owner: {
@@ -162,11 +168,12 @@ export async function listLeadsWithIntelligence(options?: {
   });
 }
 
-export async function listLeadsScoped(options?: {
-  ownerId?: string;
+/** MEMBER-scoped listing. Global listing is `listLeads()` — call that only after an explicit ADMIN decision. */
+export async function listLeadsScoped(options: {
+  ownerId: string;
 }): Promise<LeadWithOwner[]> {
   return prisma.lead.findMany({
-    where: options?.ownerId ? { ownerId: options.ownerId } : undefined,
+    where: { ownerId: options.ownerId },
     include: {
       owner: {
         select: { id: true, name: true, email: true },
