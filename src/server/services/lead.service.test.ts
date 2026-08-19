@@ -40,6 +40,7 @@ describe("createLeadForOwner", { skip: !hasDatabase }, () => {
       companyName: `Empresa Valida ${suffix}`,
       email: `valida-${suffix}@acme.example`,
       ownerId,
+      actor: { id: ownerId, role: "MEMBER" },
     });
     const lead = await prisma.lead.findUniqueOrThrow({
       where: { id: created.id },
@@ -55,6 +56,7 @@ describe("createLeadForOwner", { skip: !hasDatabase }, () => {
       companyName: `Empresa Dup Email ${suffix}`,
       email,
       ownerId,
+      actor: { id: ownerId, role: "MEMBER" },
     });
 
     await assert.rejects(
@@ -63,6 +65,7 @@ describe("createLeadForOwner", { skip: !hasDatabase }, () => {
           companyName: `Outra Empresa ${suffix}`,
           email: email.toUpperCase(),
           ownerId,
+          actor: { id: ownerId, role: "MEMBER" },
         }),
       LeadDuplicateError,
     );
@@ -74,6 +77,7 @@ describe("createLeadForOwner", { skip: !hasDatabase }, () => {
       companyName: `Empresa Dup Phone ${suffix}`,
       phone,
       ownerId,
+      actor: { id: ownerId, role: "MEMBER" },
     });
 
     await assert.rejects(
@@ -82,6 +86,7 @@ describe("createLeadForOwner", { skip: !hasDatabase }, () => {
           companyName: `Outra Phone ${suffix}`,
           phone: "(13) 98888-7777",
           ownerId,
+          actor: { id: ownerId, role: "MEMBER" },
         }),
       LeadDuplicateError,
     );

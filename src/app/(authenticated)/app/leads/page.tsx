@@ -10,12 +10,14 @@ import { LeadTable } from "@/features/leads/components/lead-table";
 import { AuthenticationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
+import type { SessionUser } from "@/server/auth/types";
 import { getLeads } from "@/server/services/lead.service";
 
 export default async function LeadsPage() {
   const sessionUser = await getSessionUser();
+  let user: SessionUser;
   try {
-    requireAnyRole(sessionUser, ["ADMIN", "MEMBER"]);
+    user = requireAnyRole(sessionUser, ["ADMIN", "MEMBER"]);
   } catch (error) {
     if (error instanceof AuthenticationError) {
       redirect("/login");
@@ -23,7 +25,7 @@ export default async function LeadsPage() {
     throw error;
   }
 
-  const leads = await getLeads();
+  const leads = await getLeads(user);
 
   return (
     <PageFrame width="list" gap="6">

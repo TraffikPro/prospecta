@@ -39,12 +39,13 @@ import {
   listLeadsWithIntelligence,
   type LeadWithOwner,
 } from "@/server/repositories/lead.repository";
-import { assertCanAccessLead } from "@/server/auth/lead-access";
+import {
+  assertCanAccessLead,
+  duplicateLeadIdForActor,
+  leadListScopeForViewer,
+  type ActorRef,
+} from "@/server/auth/lead-access";
 import type { SessionUser } from "@/server/auth/types";
-
-function memberScopeOwnerId(user: SessionUser): string | undefined {
-  return user.role === "MEMBER" ? user.id : undefined;
-}
 
 export type CreateLeadCommand = {
   companyName: string;
@@ -53,6 +54,7 @@ export type CreateLeadCommand = {
   phone?: string;
   website?: string;
   ownerId: string;
+  actor: ActorRef;
 };
 
 export async function createLeadForOwner(
@@ -94,7 +96,9 @@ export async function createLeadForOwner(
     phoneNormalized: phone,
   });
   if (duplicate) {
-    throw new LeadDuplicateError(duplicate.id);
+    throw new LeadDuplicateError(
+      duplicateLeadIdForActor(duplicate, input.actor),
+    );
   }
 
   const lead = await createLeadRecord({
@@ -114,7 +118,11 @@ export async function getLeadById(id: string): Promise<LeadWithOwner | null> {
   return findLeadById(id);
 }
 
-export async function getLeads(): Promise<LeadWithOwner[]> {
+export async function getLeads(viewer: SessionUser): Promise<LeadWithOwner[]> {
+  const scope = leadListScopeForViewer(viewer);
+  if (scope.access === "owner") {
+    return listLeadsScoped({ ownerId: scope.ownerId });
+  }
   return listLeads();
 }
 
@@ -138,11 +146,13 @@ export type IntelligenceInboxResult = {
 
 export async function getIntelligenceInbox(
   filters: IntelligenceInboxFilters,
-  viewer?: SessionUser | null,
+  viewer: SessionUser,
 ): Promise<IntelligenceInboxResult> {
-  const ownerId = viewer ? memberScopeOwnerId(viewer) : undefined;
+  const scope = leadListScopeForViewer(viewer);
   const leads = await listLeadsWithIntelligence(
-    ownerId ? { ownerId } : undefined,
+    scope.access === "owner"
+      ? { ownerId: scope.ownerId }
+      : { scope: "all" },
   );
   const allItems = buildIntelligenceInbox(leads, {
     qualification: "ALL",
@@ -158,12 +168,13 @@ export async function getIntelligenceInbox(
 export type LeadsByStage = Record<LeadStage, LeadWithOwner[]>;
 
 export async function getLeadsGroupedByStage(
-  viewer?: SessionUser | null,
+  viewer: SessionUser,
 ): Promise<LeadsByStage> {
-  const ownerId = viewer ? memberScopeOwnerId(viewer) : undefined;
-  const leads = ownerId
-    ? await listLeadsScoped({ ownerId })
-    : await listLeads();
+  const scope = leadListScopeForViewer(viewer);
+  const leads =
+    scope.access === "owner"
+      ? await listLeadsScoped({ ownerId: scope.ownerId })
+      : await listLeads();
   const grouped = Object.fromEntries(
     LEAD_STAGE_ORDER.map((stage) => [stage, [] as LeadWithOwner[]]),
   ) as LeadsByStage;

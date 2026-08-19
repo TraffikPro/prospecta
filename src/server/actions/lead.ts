@@ -52,6 +52,7 @@ export async function createLeadAction(
       phone: formString(formData, "phone") || undefined,
       website: formString(formData, "website") || undefined,
       ownerId: user.id,
+      actor: user,
     });
     createdId = created.id;
   } catch (error) {
