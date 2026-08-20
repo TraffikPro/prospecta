@@ -1,5 +1,4 @@
 ---
-description: Leads, atividades, templates e mutações server-side
 globs: src/server/**/*.{ts,tsx},src/lib/**/*.{ts,tsx},src/app/**/actions.ts,src/app/api/**/*
 alwaysApply: false
 ---
@@ -7,6 +6,7 @@ alwaysApply: false
 # Backend
 
 - Lógica de lead/atividade no server; Zod nas fronteiras.
+- Mutações via Server Actions ou Route Handlers. Tratar cada uma como endpoint público: validar e autorizar o caller no próprio handler.
 - Persistência antes do handoff: atividade/resultado **grava no banco**; `wa.me`/`mailto` não alteram stage sozinhos.
 - Stages: `NEW` | `QUALIFIED` | `CONTACTED` | `MEETING` | `WON` | `LOST` — critérios em `docs/product.md`.
 - Lead obrigatório: `companyName` + (`phone`|`email`) + `ownerId` + `stage`.

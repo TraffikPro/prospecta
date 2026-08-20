@@ -1,6 +1,6 @@
 ---
-description: Branches, commits, PRs pequenas e relatório
-alwaysApply: true
+description: Git, commits, branches, pull requests, merge, push, and release workflow
+alwaysApply: false
 ---
 
 # Git workflow

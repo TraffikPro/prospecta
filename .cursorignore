@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+.cursor/mcp.json
+backup/
+playwright/.auth/
+hygiene-e2e-leads-report-*.json
+*.pem
+*.key
+id_rsa
+credentials*.json
