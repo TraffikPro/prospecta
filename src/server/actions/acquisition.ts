@@ -7,6 +7,7 @@ import { AuthenticationError, AuthorizationError } from "@/server/auth/errors";
 import { requireRole } from "@/server/auth/guards";
 import { loginPath } from "@/server/auth/login-redirect";
 import { getSessionUser } from "@/server/auth/session";
+import { runAcquisitionRequestWithRateLimit } from "@/server/rate-limit";
 import {
   AcquisitionConflictError,
   AcquisitionDispatchError,
@@ -20,6 +21,7 @@ export type RequestAcquisitionState = {
     | "VALIDATION"
     | "CONFLICT"
     | "DISPATCH"
+    | "RATE_LIMIT"
     | "FORBIDDEN"
     | "UNAUTHENTICATED";
   existingJobId?: string;
@@ -54,16 +56,21 @@ export async function requestAcquisitionAction(
   }
 
   try {
-    await requestAcquisitionJob({
-      requestedById: sessionUser!.id,
-      raw: {
-        city: formString(formData, "city"),
-        query: formString(formData, "query"),
-        limit: formString(formData, "limit"),
-        campaign: formString(formData, "campaign"),
-        confirmed: formString(formData, "confirmed") || undefined,
-      },
+    const requestedById = sessionUser!.id;
+    const raw = {
+      city: formString(formData, "city"),
+      query: formString(formData, "query"),
+      limit: formString(formData, "limit"),
+      campaign: formString(formData, "campaign"),
+      confirmed: formString(formData, "confirmed") || undefined,
+    };
+    const result = await runAcquisitionRequestWithRateLimit({
+      userId: requestedById,
+      request: () => requestAcquisitionJob({ requestedById, raw }),
     });
+    if (result.rateLimitError) {
+      return { error: result.rateLimitError, code: "RATE_LIMIT" };
+    }
   } catch (error) {
     if (error instanceof AcquisitionValidationError) {
       return { error: error.message, code: "VALIDATION" };

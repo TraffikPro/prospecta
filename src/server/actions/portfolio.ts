@@ -8,6 +8,10 @@ import { requireAnyRole, requireRole } from "@/server/auth/guards";
 import { loginPath } from "@/server/auth/login-redirect";
 import { getSessionUser } from "@/server/auth/session";
 import {
+  RATE_LIMIT_POLICIES,
+  runUserOperationWithRateLimit,
+} from "@/server/rate-limit";
+import {
   AcquisitionDispatchError,
 } from "@/server/services/acquisition-job.service";
 import {
@@ -169,7 +173,15 @@ export async function fillWalletAction(
   }
 
   try {
-    const result = await requestWalletFill({ actorId: sessionUser!.id });
+    const limitedOperation = await runUserOperationWithRateLimit({
+      userId: sessionUser!.id,
+      policy: RATE_LIMIT_POLICIES.acquisitionActionUser,
+      operation: () => requestWalletFill({ actorId: sessionUser!.id }),
+    });
+    if (limitedOperation.rateLimitError) {
+      return { error: limitedOperation.rateLimitError };
+    }
+    const result = limitedOperation.result!;
     revalidatePath("/app/my-leads");
     revalidatePath("/", "layout");
     if (result.reused) {
