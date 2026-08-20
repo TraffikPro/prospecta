@@ -83,6 +83,11 @@ function firstValidIp(value: string | null): string | null {
   return candidate ? normalizeClientIp(candidate) : null;
 }
 
+function firstForwardedCandidate(value: string | null): string | null {
+  if (!value) return null;
+  return value.split(",")[0]?.trim() || null;
+}
+
 /**
  * Vercel documents that it overwrites x-forwarded-for to prevent client
  * spoofing. We only trust forwarding headers when the runtime confirms Vercel.
@@ -104,8 +109,12 @@ export function resolveClientIp(
   }
 
   if (context.nodeEnv !== "production") {
-    const localIp = firstValidIp(requestHeaders.get("x-forwarded-for"));
-    return localIp === "127.0.0.1" || localIp === "::1" ? localIp : null;
+    const candidate = firstForwardedCandidate(
+      requestHeaders.get("x-forwarded-for"),
+    );
+    return candidate === "127.0.0.1" || candidate === "::1"
+      ? candidate
+      : null;
   }
 
   return null;

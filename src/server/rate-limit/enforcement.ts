@@ -90,6 +90,9 @@ export function getDefaultAdapter(
   }
 
   if (environment === "production" || environment === "preview") return null;
+  if (environment === "test") {
+    return new MemoryRateLimitAdapter(Date.now, environment);
+  }
   const existing = memoryAdapters.get(environment);
   if (existing) return existing;
   const adapter = new MemoryRateLimitAdapter(Date.now, environment);

@@ -3,7 +3,10 @@ import { readFileSync } from "node:fs";
 import { afterEach, describe, it } from "node:test";
 
 import { normalizeClientIp, resolveClientIp } from "./client-ip";
-import { isValidRateLimitKeySecret } from "./config";
+import {
+  isValidRateLimitKeySecret,
+  parseUpstashRateLimitConfig,
+} from "./config";
 import {
   enforceRateLimits,
   getDefaultAdapter,
@@ -257,11 +260,48 @@ describe("rate limit identifiers and IP", () => {
       "127.0.0.1",
     );
     assert.equal(
+      resolveClientIp(new Headers({ "x-forwarded-for": "::1" }), {
+        isVercel: false,
+        nodeEnv: "development",
+      }),
+      "::1",
+    );
+    for (const rejected of [
+      "::",
+      "0:0:0:0:0:0:0:1",
+      "::ffff:127.0.0.1",
+      "203.0.113.10",
+    ]) {
+      assert.equal(
+        resolveClientIp(new Headers({ "x-forwarded-for": rejected }), {
+          isVercel: false,
+          nodeEnv: "development",
+        }),
+        null,
+      );
+    }
+    assert.equal(
       resolveClientIp(new Headers({ "x-forwarded-for": "203.0.113.10" }), {
         isVercel: false,
         nodeEnv: "development",
       }),
       null,
+    );
+    assert.equal(
+      resolveClientIp(new Headers({ "x-forwarded-for": "::1" }), {
+        isVercel: false,
+        nodeEnv: "production",
+      }),
+      null,
+    );
+    assert.equal(
+      resolveClientIp(
+        new Headers({
+          "x-vercel-forwarded-for": "2001:db8:abcd:12:ffff::1",
+        }),
+        { isVercel: true, nodeEnv: "production" },
+      ),
+      "2001:db8:abcd:12::/64",
     );
   });
 
@@ -313,6 +353,26 @@ describe("rate limit identifiers and IP", () => {
     assert.ok(match);
     assert.equal(isValidRateLimitKeySecret(match[1]), false);
   });
+
+  it("accepts only HTTPS Upstash hosts without embedded credentials", () => {
+    const token = "test-token-never-used-for-network";
+    assert.deepEqual(
+      parseUpstashRateLimitConfig({
+        url: "https://example.upstash.io",
+        token,
+      }),
+      { url: "https://example.upstash.io", token },
+    );
+
+    for (const url of [
+      "http://example.upstash.io",
+      "https://upstash.io.evil.example",
+      "https://example-upstash.io",
+      "https://user:password@example.upstash.io",
+    ]) {
+      assert.equal(parseUpstashRateLimitConfig({ url, token }), null);
+    }
+  });
 });
 
 describe("default adapter selection", () => {
@@ -326,6 +386,31 @@ describe("default adapter selection", () => {
     clearUpstashConfig();
     assert.ok(getDefaultAdapter("development") instanceof MemoryRateLimitAdapter);
     assert.ok(getDefaultAdapter("test") instanceof MemoryRateLimitAdapter);
+    assert.equal(getDefaultAdapter("preview"), null);
+    assert.equal(getDefaultAdapter("production"), null);
+  });
+
+  it("isolates default test adapters while retaining the development singleton", async () => {
+    clearUpstashConfig();
+    const firstTestAdapter = getDefaultAdapter("test");
+    const secondTestAdapter = getDefaultAdapter("test");
+    assert.ok(firstTestAdapter);
+    assert.ok(secondTestAdapter);
+    assert.notEqual(firstTestAdapter, secondTestAdapter);
+
+    const input = {
+      policy: testPolicy({ limit: 1 }),
+      identifier: "isolated-test-bucket",
+      environment: "test",
+    };
+    assert.equal((await firstTestAdapter.consume(input)).status, "allowed");
+    assert.equal((await firstTestAdapter.consume(input)).status, "limited");
+    assert.equal((await secondTestAdapter.consume(input)).status, "allowed");
+
+    assert.equal(
+      getDefaultAdapter("development"),
+      getDefaultAdapter("development"),
+    );
     assert.equal(getDefaultAdapter("preview"), null);
     assert.equal(getDefaultAdapter("production"), null);
   });

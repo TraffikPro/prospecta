@@ -61,12 +61,8 @@ export function parseAppEnv(input: unknown): AppEnv {
   return parsed.data;
 }
 
-export function getEnv(): AppEnv {
-  if (cached) {
-    return cached;
-  }
-
-  cached = parseAppEnv({
+export function validateRuntimeEnv(): AppEnv {
+  return parseAppEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     AUTH_SECRET: process.env.AUTH_SECRET,
     NODE_ENV: process.env.NODE_ENV,
@@ -75,5 +71,13 @@ export function getEnv(): AppEnv {
     UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
     RATE_LIMIT_KEY_SECRET: process.env.RATE_LIMIT_KEY_SECRET,
   });
+}
+
+export function getEnv(): AppEnv {
+  if (cached) {
+    return cached;
+  }
+
+  cached = validateRuntimeEnv();
   return cached;
 }
