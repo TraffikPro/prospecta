@@ -47,6 +47,8 @@ describe("createLeadForOwner", { skip: !hasDatabase }, () => {
     });
     assert.equal(lead.stage, "NEW");
     assert.equal(lead.ownerId, ownerId);
+    assert.equal(lead.whatsappConsentStatus, "UNKNOWN");
+    assert.equal(lead.phoneE164, null);
     assert.equal(lead.email, `valida-${suffix}@acme.example`);
   });
 

@@ -23,8 +23,9 @@ export function LeadContactActions({ phone, email }: LeadContactActionsProps) {
         fontWeight="semibold"
         color="fg.muted"
         lineHeight="1.2"
+        data-testid="lead-manual-contact-label"
       >
-        Contato
+        Contato manual (Sprint 0)
       </Text>
 
       {!hasChannel ? (
