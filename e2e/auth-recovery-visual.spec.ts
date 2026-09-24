@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./test";
 
 test.describe("auth recovery visual consistency (Fatia A)", () => {
   test("desktop forgot shows reduced public brand panel", async ({ page }) => {

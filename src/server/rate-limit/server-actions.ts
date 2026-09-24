@@ -1,5 +1,6 @@
 import {
   enforceRateLimits,
+  runtimeEnvironment,
   type EnforcementDependencies,
   type RateLimitDecision,
 } from "./enforcement";
@@ -13,6 +14,24 @@ export type RateLimitedOperationResult<T> = {
   result?: T;
   rateLimitError?: string;
 };
+
+const E2E_RATE_LIMIT_SCOPE_HEADER = "x-prospecta-e2e-rate-limit-scope";
+const SAFE_E2E_SCOPE = /^[a-zA-Z0-9_-]{1,64}$/;
+
+export function scopeRateLimitIdentityForE2E(
+  identity: string,
+  requestHeaders: Pick<Headers, "get">,
+  environment = runtimeEnvironment(),
+  enabled = process.env.PROSPECTA_E2E_RATE_LIMIT_SCOPING === "1",
+): string {
+  if (!enabled || environment === "production" || environment === "preview") {
+    return identity;
+  }
+  const scope = requestHeaders.get(E2E_RATE_LIMIT_SCOPE_HEADER)?.trim();
+  return scope && SAFE_E2E_SCOPE.test(scope)
+    ? `e2e:${scope}:${identity}`
+    : identity;
+}
 
 async function runRateLimitedOperation<T>(input: {
   decide: () => Promise<RateLimitDecision>;
@@ -35,13 +54,25 @@ export async function checkLoginRateLimit(
 ): Promise<RateLimitDecision> {
   const ip = resolveClientIp(requestHeaders);
   if (!ip) return { status: "unavailable" };
+  const environment = dependencies?.environment ?? runtimeEnvironment();
 
   return enforceRateLimits(
     [
-      { policy: RATE_LIMIT_POLICIES.loginIp, identity: ip },
+      {
+        policy: RATE_LIMIT_POLICIES.loginIp,
+        identity: scopeRateLimitIdentityForE2E(
+          ip,
+          requestHeaders,
+          environment,
+        ),
+      },
       {
         policy: RATE_LIMIT_POLICIES.loginEmail,
-        identity: normalizeRateLimitEmail(emailRaw) || "invalid-email",
+        identity: scopeRateLimitIdentityForE2E(
+          normalizeRateLimitEmail(emailRaw) || "invalid-email",
+          requestHeaders,
+          environment,
+        ),
       },
     ],
     dependencies,
@@ -55,13 +86,25 @@ export async function checkForgotPasswordRateLimit(
 ): Promise<RateLimitDecision> {
   const ip = resolveClientIp(requestHeaders);
   if (!ip) return { status: "unavailable" };
+  const environment = dependencies?.environment ?? runtimeEnvironment();
 
   return enforceRateLimits(
     [
-      { policy: RATE_LIMIT_POLICIES.forgotPasswordIp, identity: ip },
+      {
+        policy: RATE_LIMIT_POLICIES.forgotPasswordIp,
+        identity: scopeRateLimitIdentityForE2E(
+          ip,
+          requestHeaders,
+          environment,
+        ),
+      },
       {
         policy: RATE_LIMIT_POLICIES.forgotPasswordIdentity,
-        identity: normalizeRateLimitEmail(emailRaw) || "invalid-email",
+        identity: scopeRateLimitIdentityForE2E(
+          normalizeRateLimitEmail(emailRaw) || "invalid-email",
+          requestHeaders,
+          environment,
+        ),
       },
     ],
     dependencies,
@@ -74,8 +117,18 @@ export async function checkResetPasswordRateLimit(
 ): Promise<RateLimitDecision> {
   const ip = resolveClientIp(requestHeaders);
   if (!ip) return { status: "unavailable" };
+  const environment = dependencies?.environment ?? runtimeEnvironment();
   return enforceRateLimits(
-    [{ policy: RATE_LIMIT_POLICIES.resetPasswordIp, identity: ip }],
+    [
+      {
+        policy: RATE_LIMIT_POLICIES.resetPasswordIp,
+        identity: scopeRateLimitIdentityForE2E(
+          ip,
+          requestHeaders,
+          environment,
+        ),
+      },
+    ],
     dependencies,
   );
 }

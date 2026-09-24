@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./test";
 import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
 

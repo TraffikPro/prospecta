@@ -1,5 +1,4 @@
 ---
-description: README, docs de produto e honestidade de roadmap
 globs: README.md,docs/**/*,.cursor/**/*.md,.env.example
 alwaysApply: false
 ---

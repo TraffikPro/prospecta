@@ -18,14 +18,14 @@ Use o agente certo no prompt (“atue como Frontend Engineer…”) ou combine: 
 
 ## Quando usar cada um
 
-- **Nova feature de negócio** → Product Owner + `skills/product-grill` → (somente se BUILD) Architect → Engineer(s)
+- **Nova feature de negócio** → Product Owner + `skills/product-grill` → (somente se BUILD) `skills/plan-task` → Architect → Engineer(s)
 - **REDUCE SCOPE** → cortar, reformular, re-grill; sem BUILD não há arquitetura
 - **Mudança de UI/UX/operação** → `skills/revenue-centric-design` somente após BUILD
 - **Import CSV / qualidade de lista** → `skills/prospect-quality` + Backend/Database
 - **Mudança só de UI já aprovada** → Frontend Engineer (+ QA)
 - **Lead / atividade / mutações** → Backend (+ Database + Security)
 - **Schema / seed** → Database Engineer
-- **Antes de merge sensível** → Security Reviewer + QA
+- **Antes de merge sensível** → `skills/review-change` + Security Reviewer + QA
 - **Antes de subir produção** → Release Manager + `workflows/production-check.md`
 - **Validação do piloto** → [`docs/product/pilot-validation-plan.md`](../docs/product/pilot-validation-plan.md)
 - **MVP técnico (BUILD)** → [`docs/product/product-decision-mvp-technical.md`](../docs/product/product-decision-mvp-technical.md)
@@ -37,6 +37,8 @@ Use o agente certo no prompt (“atue como Frontend Engineer…”) ou combine: 
 | Skill | Path |
 | --- | --- |
 | Product grill | [`skills/product-grill/SKILL.md`](skills/product-grill/SKILL.md) |
+| Plan task | [`skills/plan-task/SKILL.md`](skills/plan-task/SKILL.md) — `product-grill` → BUILD → `plan-task` |
+| Review change | [`skills/review-change/SKILL.md`](skills/review-change/SKILL.md) — revisão antes de merge sensível |
 | Revenue-centric design | [`skills/revenue-centric-design/SKILL.md`](skills/revenue-centric-design/SKILL.md) |
 | Prospect quality | [`skills/prospect-quality/SKILL.md`](skills/prospect-quality/SKILL.md) |
 

@@ -13,9 +13,13 @@ import {
   findAcquisitionJobById,
   listAcquisitionJobs,
   updateAcquisitionJobStatus,
+  updateAcquisitionJobStatusWithMonotonicAssignedCount,
   type AcquisitionJobWithRequester,
 } from "@/server/repositories/acquisition-job.repository";
-import { assignWalletFillLeads } from "@/server/services/portfolio.service";
+import {
+  assignWalletFillLeads,
+  countWalletFillAssignedLeads,
+} from "@/server/services/portfolio.service";
 
 export class AcquisitionValidationError extends Error {
   constructor(message: string) {
@@ -219,15 +223,6 @@ export async function applyAcquisitionJobCallback(
     throw new AcquisitionValidationError("Job não encontrado.");
   }
 
-  const allowed = allowedTransitions[job.status] ?? [];
-  if (!allowed.includes(payload.status)) {
-    throw new AcquisitionConflictError(
-      `Transição inválida: ${job.status} → ${payload.status}`,
-      job.id,
-    );
-  }
-  const terminal = payload.status === "SUCCEEDED" || payload.status === "FAILED";
-
   if (
     payload.requestedById &&
     payload.requestedById !== job.requestedById
@@ -237,7 +232,21 @@ export async function applyAcquisitionJobCallback(
     );
   }
 
+  const terminal = payload.status === "SUCCEEDED" || payload.status === "FAILED";
+  if (terminal && job.status === payload.status) {
+    return { id: job.id, status: job.status };
+  }
+
+  const allowed = allowedTransitions[job.status] ?? [];
+  if (!allowed.includes(payload.status)) {
+    throw new AcquisitionConflictError(
+      `Transição inválida: ${job.status} → ${payload.status}`,
+      job.id,
+    );
+  }
+
   let assignedCount = job.assignedCount;
+  let useMonotonicAssignedCount = false;
   if (
     payload.status === "SUCCEEDED" &&
     job.purpose === "WALLET_FILL" &&
@@ -251,13 +260,18 @@ export async function applyAcquisitionJobCallback(
     ) {
       assignedCount = 0;
     } else {
-      const fill = await assignWalletFillLeads({
+      await assignWalletFillLeads({
         requestedById: job.requestedById,
         leadIds: payload.leadIds ?? [],
         requestedSlots: job.requestedSlots ?? 0,
         now,
       });
-      assignedCount = fill.assignedCount;
+      assignedCount = await countWalletFillAssignedLeads({
+        requestedById: job.requestedById,
+        leadIds: payload.leadIds ?? [],
+        weekStartAt: currentWeek.weekStartAt,
+      });
+      useMonotonicAssignedCount = true;
     }
   }
 
@@ -265,7 +279,7 @@ export async function applyAcquisitionJobCallback(
     assignedCount = job.assignedCount ?? 0;
   }
 
-  const updated = await updateAcquisitionJobStatus(jobId, {
+  const update = {
     status: payload.status,
     startedAt:
       payload.status === "RUNNING" && !job.startedAt ? now : job.startedAt,
@@ -283,7 +297,14 @@ export async function applyAcquisitionJobCallback(
         : payload.status === "SUCCEEDED"
           ? null
           : job.errorMessage,
-  });
+  };
+  const updated =
+    useMonotonicAssignedCount && assignedCount !== null
+      ? await updateAcquisitionJobStatusWithMonotonicAssignedCount(jobId, {
+          ...update,
+          assignedCount,
+        })
+      : await updateAcquisitionJobStatus(jobId, update);
 
   return { id: updated.id, status: updated.status };
 }

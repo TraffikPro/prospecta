@@ -517,6 +517,109 @@ describe("wallet fill F3", { skip: !hasDatabase }, () => {
     );
   });
 
+  it("keeps assignedCount consistent under concurrent wallet-fill callbacks", async () => {
+    for (const callbackCount of [1, 5, 10, 20]) {
+      const user = await prisma.user.create({
+        data: {
+          email: `f3-race-${callbackCount}-${stamp}@prospecta.test`,
+          name: `F3 Race ${callbackCount}`,
+          role: "MEMBER",
+          canRunAcquisition: true,
+          passwordHash: await hashPassword("WalletFillRace123!"),
+          isActive: true,
+        },
+      });
+
+      try {
+        await setOperatorWeeklyQuota({
+          actorId: adminId,
+          targetUserId: user.id,
+          weeklyTarget: 10,
+        });
+        const week = getOperationalWeek();
+        const leadIds: string[] = [];
+        for (let index = 0; index < 20; index += 1) {
+          leadIds.push(
+            (await createHighLead(adminId, `race-${callbackCount}-${index}`)).id,
+          );
+        }
+        const job = await prisma.acquisitionJob.create({
+          data: {
+            city: "Santos SP",
+            query: "clínica odontológica",
+            limit: 20,
+            campaign: "santos-odontologia",
+            fingerprint: walletFillFingerprint(user.id, week.weekStartAt),
+            requestedById: user.id,
+            timeoutAt: new Date(Date.now() + 15 * 60 * 1000),
+            status: "RUNNING",
+            purpose: "WALLET_FILL",
+            requestedSlots: 10,
+          },
+        });
+
+        const callbacks = await Promise.all(
+          Array.from({ length: callbackCount }, () =>
+            applyAcquisitionJobCallback(job.id, {
+              status: "SUCCEEDED",
+              requestedById: user.id,
+              leadIds,
+            }),
+          ),
+        );
+        assert.equal(
+          callbacks.every((callback) => callback.status === "SUCCEEDED"),
+          true,
+        );
+
+        const [stored, activeAssignments, summary] = await Promise.all([
+          prisma.acquisitionJob.findUniqueOrThrow({ where: { id: job.id } }),
+          prisma.leadAssignment.findMany({
+            where: { leadId: { in: leadIds }, status: "ACTIVE" },
+            select: { leadId: true },
+          }),
+          getPortfolioSummaryForUser(user.id),
+        ]);
+        assert.equal(stored.assignedCount, 10);
+        assert.equal(activeAssignments.length, 10);
+        assert.equal(
+          new Set(activeAssignments.map((assignment) => assignment.leadId)).size,
+          activeAssignments.length,
+        );
+        assert.equal(summary.assigned, 10);
+        assert.equal(summary.assigned <= summary.target, true);
+
+        const repeated = await applyAcquisitionJobCallback(job.id, {
+          status: "SUCCEEDED",
+          requestedById: user.id,
+          leadIds,
+        });
+        assert.equal(repeated.status, "SUCCEEDED");
+      } finally {
+        await prisma.leadAssignment.deleteMany({
+          where: { assigneeId: user.id },
+        });
+        await prisma.lead.updateMany({
+          where: { ownerId: user.id },
+          data: { ownerId: adminId },
+        });
+        await prisma.acquisitionJob.deleteMany({
+          where: { requestedById: user.id },
+        });
+        await prisma.weeklyPortfolio.deleteMany({
+          where: { userId: user.id },
+        });
+        await prisma.operatorWeeklyQuota.deleteMany({
+          where: { userId: user.id },
+        });
+        await prisma.adminAuditEvent.deleteMany({
+          where: { targetUserId: user.id },
+        });
+        await prisma.user.delete({ where: { id: user.id } });
+      }
+    }
+  });
+
   it("partial fill assigns 3 of 5 and zero HIGH is operational success", async () => {
     const partialUser = await prisma.user.create({
       data: {

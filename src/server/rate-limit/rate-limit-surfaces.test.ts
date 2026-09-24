@@ -10,7 +10,9 @@ import {
   runLoginAttemptWithRateLimit,
   runResetPasswordWithRateLimit,
   runUserOperationWithRateLimit,
+  scopeRateLimitIdentityForE2E,
 } from "@/server/rate-limit/server-actions";
+import { MemoryRateLimitAdapter } from "@/server/rate-limit/memory-adapter";
 import { RATE_LIMIT_POLICIES } from "@/server/rate-limit/policies";
 import type {
   RateLimitAdapter,
@@ -21,6 +23,93 @@ const TEST_SECRET = "surface-rate-limit-test-secret-32-chars";
 const LOOPBACK_HEADERS = new Headers({ "x-forwarded-for": "127.0.0.1" });
 
 describe("auth rate limit surfaces", () => {
+  it("isolates E2E identities only when explicitly enabled outside production", () => {
+    const scopeA = new Headers({
+      "x-prospecta-e2e-rate-limit-scope": "test-a",
+    });
+    const scopeB = new Headers({
+      "x-prospecta-e2e-rate-limit-scope": "test-b",
+    });
+
+    assert.equal(
+      scopeRateLimitIdentityForE2E("127.0.0.1", scopeA, "test", true),
+      "e2e:test-a:127.0.0.1",
+    );
+    assert.notEqual(
+      scopeRateLimitIdentityForE2E("127.0.0.1", scopeA, "test", true),
+      scopeRateLimitIdentityForE2E("127.0.0.1", scopeB, "test", true),
+    );
+    assert.equal(
+      scopeRateLimitIdentityForE2E("127.0.0.1", scopeA, "test", false),
+      "127.0.0.1",
+    );
+    assert.equal(
+      scopeRateLimitIdentityForE2E("127.0.0.1", scopeA, "production", true),
+      "127.0.0.1",
+    );
+  });
+
+  it("preserves the login limit inside each E2E test scope", async () => {
+    const original = process.env.PROSPECTA_E2E_RATE_LIMIT_SCOPING;
+    process.env.PROSPECTA_E2E_RATE_LIMIT_SCOPING = "1";
+    const adapter = new MemoryRateLimitAdapter(() => 0, "test");
+    const dependencies = {
+      adapter,
+      keySecret: TEST_SECRET,
+      environment: "test",
+      now: () => 0,
+    };
+    const scopeA = new Headers({
+      "x-forwarded-for": "127.0.0.1",
+      "x-prospecta-e2e-rate-limit-scope": "test-a",
+    });
+    const scopeB = new Headers({
+      "x-forwarded-for": "127.0.0.1",
+      "x-prospecta-e2e-rate-limit-scope": "test-b",
+    });
+
+    try {
+      for (let attempt = 0; attempt < 10; attempt += 1) {
+        assert.equal(
+          (
+            await checkLoginRateLimit(
+              "person@prospecta.test",
+              scopeA,
+              dependencies,
+            )
+          ).status,
+          "allowed",
+        );
+      }
+      assert.equal(
+        (
+          await checkLoginRateLimit(
+            "person@prospecta.test",
+            scopeA,
+            dependencies,
+          )
+        ).status,
+        "limited",
+      );
+      assert.equal(
+        (
+          await checkLoginRateLimit(
+            "person@prospecta.test",
+            scopeB,
+            dependencies,
+          )
+        ).status,
+        "allowed",
+      );
+    } finally {
+      if (original === undefined) {
+        delete process.env.PROSPECTA_E2E_RATE_LIMIT_SCOPING;
+      } else {
+        process.env.PROSPECTA_E2E_RATE_LIMIT_SCOPING = original;
+      }
+    }
+  });
+
   it("runs the same login policies before user existence can matter", async () => {
     const calls: RateLimitConsumeInput[] = [];
     const adapter: RateLimitAdapter = {

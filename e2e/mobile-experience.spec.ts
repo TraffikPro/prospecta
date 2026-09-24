@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./test";
 import { createIntelligenceLead } from "./helpers/create-intelligence-lead";
 import { LEAD_DETAIL_URL, login } from "./helpers";
 

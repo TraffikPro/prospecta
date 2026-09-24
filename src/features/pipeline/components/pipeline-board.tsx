@@ -2,13 +2,10 @@
 
 import type { LeadStage } from "@prisma/client";
 import { Accordion, Box, Stack } from "@chakra-ui/react";
-import { useMemo } from "react";
 
-import { AppEmptyState } from "@/components/ui/app-empty-state";
 import { LEAD_STAGE_ORDER } from "@/features/leads/lead.labels";
 
 import type { LeadStageCardData } from "./lead-stage-card";
-import { LeadStageCard } from "./lead-stage-card";
 import { StageBadge } from "./stage-badge";
 import { StageColumn } from "./stage-column";
 
@@ -16,6 +13,10 @@ export type PipelineBoardData = Record<LeadStage, LeadStageCardData[]>;
 
 type PipelineBoardProps = {
   grouped: PipelineBoardData;
+  counts: Record<LeadStage, number>;
+  selectedStage: LeadStage;
+  page: number;
+  totalPages: number;
 };
 
 function formatFollowUp(value: Date | string): string {
@@ -26,25 +27,21 @@ function formatFollowUp(value: Date | string): string {
   }).format(date);
 }
 
-function pickInitialStage(grouped: PipelineBoardData): LeadStage {
-  for (const stage of LEAD_STAGE_ORDER) {
-    if (grouped[stage].length > 0) {
-      return stage;
-    }
-  }
-  return LEAD_STAGE_ORDER[0]!;
-}
-
-export function PipelineBoard({ grouped }: PipelineBoardProps) {
-  const initialStage = useMemo(() => pickInitialStage(grouped), [grouped]);
-
+export function PipelineBoard({
+  grouped,
+  counts,
+  selectedStage,
+  page,
+  totalPages,
+}: PipelineBoardProps) {
   return (
     <>
       <Box display={{ base: "none", md: "block" }} data-testid="pipeline-desktop">
         <Accordion.Root
+          key={selectedStage}
           collapsible
           multiple={false}
-          defaultValue={[initialStage]}
+          defaultValue={[selectedStage]}
         >
           <Stack gap="2">
             {LEAD_STAGE_ORDER.map((stage) => {
@@ -62,7 +59,7 @@ export function PipelineBoard({ grouped }: PipelineBoardProps) {
                 >
                   <Accordion.ItemTrigger minH="touch" py="3">
                     <Box flex="1" textAlign="left">
-                      <StageBadge stage={stage} count={leads.length} />
+                      <StageBadge stage={stage} count={counts[stage]} />
                     </Box>
                     <Accordion.ItemIndicator />
                   </Accordion.ItemTrigger>
@@ -71,6 +68,10 @@ export function PipelineBoard({ grouped }: PipelineBoardProps) {
                       <StageColumn
                         stage={stage}
                         leads={leads}
+                        totalCount={counts[stage]}
+                        selected={stage === selectedStage}
+                        page={stage === selectedStage ? page : 1}
+                        totalPages={stage === selectedStage ? totalPages : 1}
                         formatFollowUp={formatFollowUp}
                       />
                     </Accordion.ItemBody>
@@ -84,8 +85,9 @@ export function PipelineBoard({ grouped }: PipelineBoardProps) {
 
       <Box display={{ base: "block", md: "none" }} data-testid="pipeline-mobile">
         <Accordion.Root
+          key={selectedStage}
           collapsible
-          defaultValue={[initialStage]}
+          defaultValue={[selectedStage]}
           multiple={false}
         >
           {LEAD_STAGE_ORDER.map((stage) => {
@@ -98,33 +100,21 @@ export function PipelineBoard({ grouped }: PipelineBoardProps) {
               >
                 <Accordion.ItemTrigger minH="touch" py="3">
                   <Box flex="1" textAlign="left">
-                    <StageBadge stage={stage} count={leads.length} />
+                    <StageBadge stage={stage} count={counts[stage]} />
                   </Box>
                   <Accordion.ItemIndicator />
                 </Accordion.ItemTrigger>
                 <Accordion.ItemContent>
                   <Accordion.ItemBody pb="4">
-                    {leads.length === 0 ? (
-                      <AppEmptyState
-                        variant="compact"
-                        title="Nenhum lead nesta etapa."
-                        data-testid={`pipeline-mobile-stage-empty-${stage}`}
-                      />
-                    ) : (
-                      <Stack gap="3">
-                        {leads.map((lead) => (
-                          <LeadStageCard
-                            key={lead.id}
-                            lead={lead}
-                            followUpLabel={
-                              lead.nextFollowUpAt
-                                ? formatFollowUp(lead.nextFollowUpAt)
-                                : null
-                            }
-                          />
-                        ))}
-                      </Stack>
-                    )}
+                    <StageColumn
+                      stage={stage}
+                      leads={leads}
+                      totalCount={counts[stage]}
+                      selected={stage === selectedStage}
+                      page={stage === selectedStage ? page : 1}
+                      totalPages={stage === selectedStage ? totalPages : 1}
+                      formatFollowUp={formatFollowUp}
+                    />
                   </Accordion.ItemBody>
                 </Accordion.ItemContent>
               </Accordion.Item>

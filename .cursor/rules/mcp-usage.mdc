@@ -1,6 +1,6 @@
 ---
-description: Política de uso dos MCPs do Prospecta (Context7, GitHub, Playwright, Figma)
-alwaysApply: true
+description: MCP usage for Context7, GitHub, Playwright, Figma, and other external APIs
+alwaysApply: false
 ---
 
 # MCP usage

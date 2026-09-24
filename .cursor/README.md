@@ -42,6 +42,8 @@ Papéis lógicos para planejar, implementar ou revisar. Não são automações m
 | Skill | Uso |
 | --- | --- |
 | `product-grill` | Gate BUILD / VALIDATE / REDUCE SCOPE / DEFER / REJECT antes de planejar |
+| `plan-task` | Plano técnico após BUILD: `product-grill` → BUILD → `plan-task` |
+| `review-change` | Revisão defect-first antes de merge de alterações sensíveis |
 | `revenue-centric-design` | Hipótese + métrica para mudanças de UI/UX/operação (somente após BUILD) |
 | `prospect-quality` | Qualidade de lista/lead, dedupe leve, campos mínimos, anti-lixo no CSV |
 | `chakra-ui-builder` | Design system Chakra v3 (padrão UI) |

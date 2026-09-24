@@ -1,6 +1,6 @@
 ---
-description: Segurança, auth do time e PII de leads
-alwaysApply: true
+description: Security for authentication, authorization, ACL, ownership, permissions, roles, sessions, cookies, PII, secrets, leads, data access, and admin operations
+alwaysApply: false
 ---
 
 # Security
