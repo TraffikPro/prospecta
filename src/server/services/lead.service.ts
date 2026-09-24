@@ -30,13 +30,16 @@ import {
 } from "@/features/leads/my-queue";
 import {
   createLead as createLeadRecord,
+  countPipelineLeadsByStage,
   findDuplicate,
   findLeadById,
   findLeadBySourceExternalId,
   listLeads,
   listLeadsForOwnerQueue,
+  listPipelineLeadsPage,
   listLeadsScoped,
   listLeadsWithIntelligence,
+  type PipelineLead,
   type LeadWithOwner,
 } from "@/server/repositories/lead.repository";
 import {
@@ -183,6 +186,73 @@ export async function getLeadsGroupedByStage(
     grouped[lead.stage].push(lead);
   }
   return grouped;
+}
+
+export const PIPELINE_PAGE_SIZE = 25;
+export const PIPELINE_STAGE_PREVIEW_SIZE = 3;
+
+export type PipelineView = {
+  grouped: Record<LeadStage, PipelineLead[]>;
+  counts: Record<LeadStage, number>;
+  selectedStage: LeadStage;
+  page: number;
+  totalPages: number;
+};
+
+export async function getPipelineView(
+  viewer: SessionUser,
+  input: { stage?: string; page?: string | number } = {},
+): Promise<PipelineView> {
+  const listScope = leadListScopeForViewer(viewer);
+  const scope =
+    listScope.access === "owner"
+      ? { ownerId: listScope.ownerId }
+      : { scope: "all" as const };
+  const countRows = await countPipelineLeadsByStage(scope);
+  const counts = Object.fromEntries(
+    LEAD_STAGE_ORDER.map((stage) => [stage, 0]),
+  ) as Record<LeadStage, number>;
+  for (const row of countRows) {
+    counts[row.stage] = row.count;
+  }
+
+  const requestedStage = LEAD_STAGE_ORDER.includes(input.stage as LeadStage)
+    ? (input.stage as LeadStage)
+    : undefined;
+  const selectedStage =
+    requestedStage ??
+    LEAD_STAGE_ORDER.find((stage) => counts[stage] > 0) ??
+    LEAD_STAGE_ORDER[0]!;
+  const requestedPage =
+    typeof input.page === "number" ? input.page : Number(input.page);
+  const normalizedPage =
+    Number.isInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+  const totalPages = Math.max(
+    1,
+    Math.ceil(counts[selectedStage] / PIPELINE_PAGE_SIZE),
+  );
+  const page = Math.min(normalizedPage, totalPages);
+
+  const entries = await Promise.all(
+    LEAD_STAGE_ORDER.map(async (stage) => {
+      const isSelected = stage === selectedStage;
+      const leads = await listPipelineLeadsPage({
+        scope,
+        stage,
+        skip: isSelected ? (page - 1) * PIPELINE_PAGE_SIZE : 0,
+        take: isSelected ? PIPELINE_PAGE_SIZE : PIPELINE_STAGE_PREVIEW_SIZE,
+      });
+      return [stage, leads] as const;
+    }),
+  );
+
+  return {
+    grouped: Object.fromEntries(entries) as Record<LeadStage, PipelineLead[]>,
+    counts,
+    selectedStage,
+    page,
+    totalPages,
+  };
 }
 
 export type MoveLeadStageCommand = {
