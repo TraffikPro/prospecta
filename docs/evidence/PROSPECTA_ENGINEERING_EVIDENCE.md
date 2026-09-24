@@ -136,7 +136,8 @@ second scope starts with an independent budget.
 
 ### Source suite
 
-Post-hardening and post-commit validation on ephemeral PostgreSQL:
+Post-hardening and post-commit validation on ephemeral PostgreSQL
+(historical Phase 1 consolidation tip):
 
 | Metric | Value |
 | --- | ---: |
@@ -145,6 +146,15 @@ Post-hardening and post-commit validation on ephemeral PostgreSQL:
 | Failed | 0 |
 | Skipped | 0 |
 | Suites | 95 |
+
+Phase 4 publication re-validation (local `127.0.0.1:5433` /
+`prospecta_test`, after concurrent-ingest hardening):
+
+| Metric | Value |
+| --- | ---: |
+| Tests | 346 |
+| Passed | 346 |
+| Failed | 0 |
 
 Also validated:
 
@@ -309,7 +319,9 @@ With the qualifications stated in this document:
 3. Pipeline listing projection + pagination reduced the measured local synthetic
    response from ~1.45 MB to 215,495 bytes and reduced concurrency-1 p99 from
    505 ms to 48.6 ms.
-4. Source suite currently passes `337/337` against ephemeral PostgreSQL.
+4. Source suite currently passes `346/346` against local ephemeral PostgreSQL
+   after concurrent-ingest hardening (historical consolidation tip was
+   `337/337`).
 5. The unpaginated HIGH Pool relational query panics under a local 50k/5k
    synthetic fixture on Prisma `6.19.3`.
 
@@ -441,6 +453,99 @@ Raw verified material only. Not a final CV draft.
 - **Trade-off:** One flaky navigation case remains; production/preview continue
   to ignore the scoping header.
 
+## Ecosystem Phase 2 / 3 — CRM ingestion reliability
+
+**LOCAL SYNTHETIC EVIDENCE** (sibling Generator + local CRM + ephemeral /
+loopback PostgreSQL). Not production metrics. Lab JSON under
+`prospecta-phase2-lab/results/` is intentionally **local-only** (not committed).
+
+### Phase 2 baseline (sequential + concurrent gap)
+
+Sequential same `source+externalId` replay (in-process ingest):
+
+| Scenario | Requests | Created | Existing | Errors | Final rows | Dup groups |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 100 unique × 10 replays | 1000 | 100 | 900 | 0 | 100 | 0 |
+
+Concurrent same `externalId` **before** Phase 3 fix (DB unique held; API unsafe):
+
+| Concurrency | Created | Existing | Errors | Rows |
+| ---: | ---: | ---: | ---: | ---: |
+| 5 | 1 | 0 | **4** | 1 |
+| 10 | 1 | 0 | **9** | 1 |
+| 20 | 1 | 0 | **19** | 1 |
+
+Errors included raw Prisma `P2002` and `LeadDuplicateError` from phone races.
+
+Score V2 (Generator fixtures, local): 100 fixtures × 100 repetitions =
+10,000 evaluations; 0 score / signal / band mismatches.
+
+### Root cause (concurrent ingest)
+
+`ingestExternalLead` check-then-act:
+
+1. lookup by `source+externalId` → miss  
+2. phone/email duplicate check → miss  
+3. `createLead`  
+
+Concurrent peers pass 1–2 together; one create wins; losers hit
+`@@unique([source, externalId])` (`P2002`) or phone-path `LeadDuplicateError`.
+
+### Phase 3 correction
+
+- Same-identity phone/email hit → `{ created: false }` (idempotent).  
+- On relevant `P2002` with `externalId` → re-read canonical row →
+  `{ created: false }`.  
+- Different `externalId` with same phone/email → still `LeadDuplicateError`.  
+- Unique DB constraint retained; no global serialization.
+
+### Phase 3 concurrent results (after)
+
+| Concurrency | Created | Existing | Errors | Rows |
+| ---: | ---: | ---: | ---: | ---: |
+| 1 | 1 | 0 | 0 | 1 |
+| 5 | 1 | 4 | 0 | 1 |
+| 10 | 1 | 9 | 0 | 1 |
+| 20 | 1 | 19 | 0 | 1 |
+| 10 unique × 10 concurrent | 10 | 90 | 0 | 10 |
+
+`duplicateGroups = 0`; duplicate responses for a given `externalId` resolve the
+same canonical lead id. Re-run twice locally: no flake observed.
+
+### Callback / crash-replay (cross-repo, local)
+
+Repeated terminal `SUCCEEDED` on CRM preserves counts. Full local crash after
+sync / before SUCCEEDED ack + replay: convergent (N=8 → 8 rows, 0 dup groups).
+Generator-side HTTP retry details live in the Generator evidence doc.
+
+### Phase 4 local validation snapshot
+
+| Check | Result |
+| --- | --- |
+| Source suite | 346 / 346 PASS |
+| Typecheck | PASS |
+| Build | PASS |
+| Lint | 0 errors; 1 preexisting unrelated warning (`scripts/smoke-breadcrumbs-prod.mjs`) |
+
+### Claim registry (ecosystem)
+
+**Safe (tested scenarios):**
+
+- Sequential idempotent CRM ingestion  
+- Concurrent-safe ingestion (same `externalId`)  
+- Deterministic Score V2 on tested dataset  
+- Retry-safe Generator callback under tested transient failures  
+- Crash/replay convergence in tested local scenario  
+- Authenticated M2M runner  
+- Single-replica asynchronous acquisition  
+
+**Unsupported:**
+
+- Exactly-once  
+- Production scale / production throughput  
+- Multi-instance runner safety  
+- Zero-failure production operation  
+
 ## Related Commits
 
 | Commit | Message | Category |
@@ -448,3 +553,7 @@ Raw verified material only. Not a final CV draft.
 | `9a441430bb79e84ce1d64ae7322b56ef2b6367fa` | fix: make wallet-fill callback counts monotonic and idempotent | Reliability |
 | `6bc49f3ede3ab9bdbe0f8994e2e5c96d2d566332` | test: isolate E2E rate-limit identities per browser context | Quality |
 | `06c1479533d5647b963ea7cef03883e0cdcb8609` | perf: paginate and project pipeline leads | Performance |
+| `597d666` | fix(security): remediate high and critical dependency advisories | Security |
+| *(Phase 3/4)* | fix: make concurrent lead ingestion idempotent | Reliability |
+| *(Phase 3/4)* | test: cover concurrent lead ingestion races | Reliability |
+| *(Phase 3/4)* | docs: record Prospecta ingestion reliability evidence | Docs |
