@@ -554,6 +554,6 @@ Generator-side HTTP retry details live in the Generator evidence doc.
 | `6bc49f3ede3ab9bdbe0f8994e2e5c96d2d566332` | test: isolate E2E rate-limit identities per browser context | Quality |
 | `06c1479533d5647b963ea7cef03883e0cdcb8609` | perf: paginate and project pipeline leads | Performance |
 | `597d666` | fix(security): remediate high and critical dependency advisories | Security |
-| *(Phase 3/4)* | fix: make concurrent lead ingestion idempotent | Reliability |
-| *(Phase 3/4)* | test: cover concurrent lead ingestion races | Reliability |
-| *(Phase 3/4)* | docs: record Prospecta ingestion reliability evidence | Docs |
+| `f7b9f21dee907fff8d4a9459a1495197abf05d98` | fix: make concurrent lead ingestion idempotent | Reliability |
+| `bb74657e621fca532153b462690b6826db65fd1e` | test: cover concurrent lead ingestion races | Reliability |
+| `d06b621e20519e76a964d068562095b3780052d3` | docs: record Prospecta ingestion reliability evidence | Docs |
