@@ -1,4 +1,4 @@
-import type { LeadStage, Prisma } from "@prisma/client";
+import { Prisma, type LeadStage } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
   LeadDuplicateError,
@@ -441,28 +441,63 @@ export async function ingestExternalLead(
     phoneNormalized: phone,
   });
   if (duplicate) {
+    // Concurrent race: peer may have just committed the same source+externalId.
+    // Phone/email hit on that same Places identity is idempotent, not a conflict.
+    if (
+      externalId &&
+      duplicate.source === data.source &&
+      duplicate.externalId === externalId
+    ) {
+      return {
+        id: duplicate.id,
+        created: false,
+        stage: duplicate.stage,
+      };
+    }
     throw new LeadDuplicateError(duplicate.id);
   }
 
   const ownerId = await resolveIngestOwnerId(data.ownerEmail);
 
-  const lead = await createLeadRecord({
-    companyName,
-    contactName,
-    email,
-    phone,
-    website,
-    notes,
-    source: data.source,
-    externalId,
-    intelligence,
-    stage: "NEW",
-    ownerId,
-  });
+  try {
+    const lead = await createLeadRecord({
+      companyName,
+      contactName,
+      email,
+      phone,
+      website,
+      notes,
+      source: data.source,
+      externalId,
+      intelligence,
+      stage: "NEW",
+      ownerId,
+    });
 
-  return {
-    id: lead.id,
-    created: true,
-    stage: lead.stage,
-  };
+    return {
+      id: lead.id,
+      created: true,
+      stage: lead.stage,
+    };
+  } catch (error) {
+    // Check-then-act race on @@unique([source, externalId]).
+    if (
+      externalId &&
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      const existingByExternal = await findLeadBySourceExternalId(
+        data.source,
+        externalId,
+      );
+      if (existingByExternal) {
+        return {
+          id: existingByExternal.id,
+          created: false,
+          stage: existingByExternal.stage,
+        };
+      }
+    }
+    throw error;
+  }
 }
