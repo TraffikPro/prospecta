@@ -1,5 +1,5 @@
-import { expect, test } from "@playwright/test";
-import { login } from "./helpers";
+import { expect, test } from "./test";
+import { ensureE2ERateLimitScope, login } from "./helpers";
 
 const adminEmail = process.env.E2E_ADMIN_EMAIL ?? "admin@prospecta.test";
 const adminPassword = process.env.E2E_ADMIN_PASSWORD ?? "AdminTest123!";
@@ -61,6 +61,7 @@ test.describe("auth + ACL", () => {
   test("invalid credentials do not reveal whether email exists", async ({
     page,
   }) => {
+    await ensureE2ERateLimitScope(page);
     await page.goto("/login");
     await page.getByLabel("E-mail").fill("nobody@prospecta.test");
     await page.getByLabel("Senha", { exact: true }).fill("wrong-password");

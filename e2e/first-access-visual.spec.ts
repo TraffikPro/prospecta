@@ -1,5 +1,6 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./test";
 
+import { ensureE2ERateLimitScope } from "./helpers";
 import { setMustChangePassword } from "./helpers/set-must-change-password";
 import { hashPassword } from "../src/server/auth/password";
 import { loadEnvConfig } from "@next/env";
@@ -35,6 +36,7 @@ test.describe("first access visual consistency (Fatia B)", () => {
     page,
   }) => {
     await setMustChangePassword(memberEmail, true);
+    await ensureE2ERateLimitScope(page);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/login");
     await page.getByLabel("E-mail", { exact: true }).fill(memberEmail);
@@ -61,6 +63,7 @@ test.describe("first access visual consistency (Fatia B)", () => {
     page,
   }) => {
     await setMustChangePassword(memberEmail, true);
+    await ensureE2ERateLimitScope(page);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/login");
     await page.getByLabel("E-mail", { exact: true }).fill(memberEmail);
