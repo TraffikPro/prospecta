@@ -364,6 +364,33 @@ export async function assignWalletFillLeads(input: {
   };
 }
 
+/**
+ * Counts distinct callback candidates persisted in the requester's wallet for
+ * an operational week. Includes historical states so treatment or release
+ * after assignment cannot make an acquisition job's result regress.
+ */
+export async function countWalletFillAssignedLeads(input: {
+  requestedById: string;
+  leadIds: string[];
+  weekStartAt: Date;
+}): Promise<number> {
+  const uniqueIds = [...new Set(input.leadIds.filter((id) => id.trim()))];
+  if (uniqueIds.length === 0) return 0;
+
+  const assignedLeads = await prisma.leadAssignment.findMany({
+    where: {
+      assigneeId: input.requestedById,
+      leadId: { in: uniqueIds },
+      weekStartAt: input.weekStartAt,
+      source: "NEW_ACQUISITION",
+    },
+    distinct: ["leadId"],
+    select: { leadId: true },
+  });
+
+  return assignedLeads.length;
+}
+
 async function assignLeadToOperatorInternal(input: {
   actorId: string;
   leadId: string;
