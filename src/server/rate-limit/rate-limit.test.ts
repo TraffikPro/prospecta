@@ -74,15 +74,15 @@ describe("central rate limit policies", () => {
       {
         loginIp: ["sliding-window", 10, "15 m", "closed"],
         loginEmail: ["sliding-window", 10, "15 m", "closed"],
-        forgotPasswordIp: ["sliding-window", 5, "30 m", "acknowledge"],
-        forgotPasswordIdentity: [
+        forgotRecoveryIp: ["sliding-window", 5, "30 m", "acknowledge"],
+        forgotRecoveryIdentity: [
           "sliding-window",
           5,
           "30 m",
           "acknowledge",
         ],
-        resetPasswordIp: ["sliding-window", 5, "30 m", "closed"],
-        changePasswordUser: ["sliding-window", 5, "30 m", "closed"],
+        resetRecoveryIp: ["sliding-window", 5, "30 m", "closed"],
+        changeCredentialUser: ["sliding-window", 5, "30 m", "closed"],
         importClient: ["fixed-window", 120, "5 m", "closed"],
         acquisitionGetClient: ["fixed-window", 60, "15 m", "open"],
         acquisitionPatchClient: ["fixed-window", 60, "15 m", "closed"],

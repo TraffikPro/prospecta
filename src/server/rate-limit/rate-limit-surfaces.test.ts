@@ -222,7 +222,7 @@ describe("auth rate limit surfaces", () => {
   });
 
   for (const [name, policy] of [
-    ["change password", RATE_LIMIT_POLICIES.changePasswordUser],
+    ["change password", RATE_LIMIT_POLICIES.changeCredentialUser],
     ["fill wallet", RATE_LIMIT_POLICIES.acquisitionActionUser],
   ] as const) {
     it(`blocks ${name} before expensive work or side effects`, async () => {

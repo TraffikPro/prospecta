@@ -9,6 +9,11 @@ export function normalizeRateLimitEmail(value: string): string {
   return value.trim().toLowerCase();
 }
 
+/**
+ * Builds an opaque rate-limit bucket key from a non-secret identity
+ * (typically a client IP or normalized email), not a user password.
+ * User passwords are hashed with bcrypt in `@/server/auth/password`.
+ */
 export function buildHashedIdentifier(input: {
   policy: RateLimitPolicy;
   identity: string;

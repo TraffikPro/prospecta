@@ -91,7 +91,7 @@ export async function checkForgotPasswordRateLimit(
   return enforceRateLimits(
     [
       {
-        policy: RATE_LIMIT_POLICIES.forgotPasswordIp,
+        policy: RATE_LIMIT_POLICIES.forgotRecoveryIp,
         identity: scopeRateLimitIdentityForE2E(
           ip,
           requestHeaders,
@@ -99,7 +99,7 @@ export async function checkForgotPasswordRateLimit(
         ),
       },
       {
-        policy: RATE_LIMIT_POLICIES.forgotPasswordIdentity,
+        policy: RATE_LIMIT_POLICIES.forgotRecoveryIdentity,
         identity: scopeRateLimitIdentityForE2E(
           normalizeRateLimitEmail(emailRaw) || "invalid-email",
           requestHeaders,
@@ -121,7 +121,7 @@ export async function checkResetPasswordRateLimit(
   return enforceRateLimits(
     [
       {
-        policy: RATE_LIMIT_POLICIES.resetPasswordIp,
+        policy: RATE_LIMIT_POLICIES.resetRecoveryIp,
         identity: scopeRateLimitIdentityForE2E(
           ip,
           requestHeaders,

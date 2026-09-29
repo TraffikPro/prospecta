@@ -3,8 +3,8 @@ import { after, before, describe, it } from "node:test";
 import { PrismaClient } from "@prisma/client";
 import { hashPassword, verifyPassword } from "@/server/auth/password";
 import {
-  generatePasswordResetToken,
-  hashPasswordResetToken,
+  generateResetToken,
+  hashResetToken,
   passwordResetExpiresAt,
 } from "@/server/auth/password-reset-token";
 import { MemoryEmailAdapter } from "@/server/email/memory-adapter";
@@ -63,7 +63,7 @@ describe("password reset service", { skip: !hasDatabase }, () => {
     const plainToken = match[1];
 
     const stored = await prisma.passwordResetToken.findUnique({
-      where: { tokenHash: hashPasswordResetToken(plainToken) },
+      where: { tokenHash: hashResetToken(plainToken) },
     });
     assert.ok(stored);
     assert.equal(stored.usedAt, null);
@@ -107,11 +107,11 @@ describe("password reset service", { skip: !hasDatabase }, () => {
   });
 
   it("rejects expired tokens", async () => {
-    const plainToken = generatePasswordResetToken();
+    const plainToken = generateResetToken();
     await prisma.passwordResetToken.create({
       data: {
         userId,
-        tokenHash: hashPasswordResetToken(plainToken),
+        tokenHash: hashResetToken(plainToken),
         expiresAt: new Date(Date.now() - 1_000),
       },
     });
@@ -129,11 +129,11 @@ describe("password reset service", { skip: !hasDatabase }, () => {
   });
 
   it("rejects password mismatch", async () => {
-    const plainToken = generatePasswordResetToken();
+    const plainToken = generateResetToken();
     await prisma.passwordResetToken.create({
       data: {
         userId,
-        tokenHash: hashPasswordResetToken(plainToken),
+        tokenHash: hashResetToken(plainToken),
         expiresAt: passwordResetExpiresAt(),
       },
     });

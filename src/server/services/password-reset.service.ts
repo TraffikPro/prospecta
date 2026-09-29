@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/server/auth/password";
 import {
-  generatePasswordResetToken,
-  hashPasswordResetToken,
+  generateResetToken,
+  hashResetToken,
   passwordResetExpiresAt,
 } from "@/server/auth/password-reset-token";
 import type { EmailProvider } from "@/server/email/types";
@@ -72,8 +72,8 @@ export async function requestPasswordReset(
     return;
   }
 
-  const plainToken = generatePasswordResetToken();
-  const tokenHash = hashPasswordResetToken(plainToken);
+  const plainToken = generateResetToken();
+  const tokenHash = hashResetToken(plainToken);
   const now = deps.now ?? new Date();
   const expiresAt = passwordResetExpiresAt(now);
 
@@ -153,7 +153,7 @@ export async function resetPasswordWithToken(
     );
   }
 
-  const tokenHash = hashPasswordResetToken(token);
+  const tokenHash = hashResetToken(token);
   const now = new Date();
 
   const record = await prisma.passwordResetToken.findUnique({
