@@ -1,58 +1,65 @@
-# LinkedIn post drafts — Prospecta
+# LinkedIn post drafts — Prospecta Ecosystem
 
 **DO NOT PUBLISH** without explicit approval.
 
 - **PRIMARY_DRAFT:** English
 - **SECONDARY_DRAFT:** Portuguese (Brazil)
 
-Engineering Case link (update if the public path differs after merge):
-
-`docs/prospecta/PROSPECTA_ENGINEERING_CASE.md`
+Engineering Case (main):
+https://github.com/TraffikPro/prospecta/blob/main/docs/prospecta/PROSPECTA_ENGINEERING_CASE.md
 
 ---
 
 ## PRIMARY_DRAFT (EN)
 
-As lead generation and CRM sync grew, some problems mattered more than the UI.
+As lead generation and CRM sync grew, reliability mattered more than another form.
 
-Prospecta is a founder-led B2B prospecting CRM: qualify opportunities, own a weekly portfolio, contact via WhatsApp/email, and persist the activity as the source of truth. Acquisition runs in an external generator; the CRM stays the system of record.
+Prospecta is a two-repository B2B prospecting system:
 
-Three engineering challenges showed up in the real flow:
+- **Lead Generator** — discovery, Score V2 qualification, authenticated sync
+- **CRM** — ingest, weekly wallet, pipeline, activities
 
-1. **Concurrent ingestion** — retries with the same external id must converge to one lead and idempotent responses, not error storms.
-2. **Idempotent callbacks** — lost responses and repeated SUCCEEDED updates must not corrupt wallet counters or invent duplicate ACTIVE assignments.
-3. **Failure-aware validation** — races and replays are covered with PostgreSQL-backed tests and CI gates, with explicit limits on what those tests do *not* prove.
+Three engineering challenges:
 
-I wrote up the architecture, failure modes, and evidence boundaries here:
+1. **Concurrent ingestion** — same external identity must converge to one lead with idempotent responses.
+2. **M2M callbacks** — bounded retries across 429/502/503/504/timeout/network without corrupting terminal job state.
+3. **Dual-repo validation** — automated suites and CI on both sides, with explicit limits on what local labs do *not* prove.
 
-→ Prospecta Engineering Case
+Write-up (architecture, failure modes, claim boundaries):
 
-(If you work on productized backends — ingest pipelines, retries, and data integrity — happy to compare notes.)
+→ Prospecta Engineering Case (ecosystem)
+
+Repos:
+
+https://github.com/TraffikPro/prospecta  
+https://github.com/TraffikPro/prospecta-lead-generator
 
 ---
 
 ## SECONDARY_DRAFT (PT-BR)
 
-À medida que o fluxo de geração e ingestão de leads cresceu, alguns desafios passaram a importar mais do que a interface.
+À medida que geração e sync de leads cresceram, confiabilidade passou a importar mais do que mais um formulário.
 
-O Prospecta é um CRM founder-led de prospecção B2B: qualificar oportunidades, assumir carteira semanal, contatar por WhatsApp/e-mail e persistir a atividade como verdade operacional. A aquisição roda num generator externo; o CRM permanece a fonte da verdade.
+O Prospecta é um sistema B2B de prospecção em dois repositórios:
 
-Três desafios técnicos apareceram no fluxo real:
+- **Lead Generator** — descoberta, Score V2, sync autenticado
+- **CRM** — ingestão, carteira semanal, pipeline, atividades
 
-1. **Ingestão concorrente** — retries com o mesmo id externo precisam convergir para um lead e respostas idempotentes, não para uma chuva de erros.
-2. **Callbacks idempotentes** — resposta perdida e SUCCEEDED repetido não podem corromper contadores de carteira nem inventar ACTIVE duplicado.
-3. **Validação orientada a falha** — corridas e replays cobertos com testes em PostgreSQL e gates de CI, com limites explícitos do que isso *não* prova.
+Três desafios:
 
-Documentei arquitetura, modos de falha e fronteiras de evidência aqui:
+1. **Ingestão concorrente** — mesma identidade externa → um lead e respostas idempotentes.
+2. **Callbacks M2M** — retries limitados a 429/502/503/504/timeout/rede sem corromper estado terminal.
+3. **Validação nos dois repos** — suites + CI de cada lado, com limites explícitos do que labs locais *não* provam.
 
-→ Prospecta Engineering Case
+Case:
+
+→ Prospecta Engineering Case (ecossistema)
 
 ---
 
-## Publish checklist (manual)
+## Publish checklist
 
-- [ ] Engineering Case revisado e mergeado na branch pública desejada
-- [ ] Link final conferido
-- [ ] Tom alinhado ao perfil (ApplyFlow permanece o outro sinal; Prospecta complementar)
-- [ ] Aprovação explícita para publicar
-- [ ] Preferir PRIMARY_DRAFT (EN) no perfil principal
+- [ ] Ecosystem case on `main`
+- [ ] ApplyFlow remains Featured #1; Prospecta Featured #2
+- [ ] Prefer PRIMARY_DRAFT (EN)
+- [ ] Explicit approval before posting

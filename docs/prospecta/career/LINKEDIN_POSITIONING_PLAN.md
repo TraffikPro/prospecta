@@ -1,88 +1,45 @@
-# LinkedIn positioning plan — Prospecta
+# LinkedIn positioning — Prospecta Ecosystem
 
-**Não edita o LinkedIn.** Recomendação apenas.
+**Do not edit LinkedIn from this task.** Recommendation only.
 
-Objetivo: Prospecta **complementa** ApplyFlow. Não competir pelo mesmo slot narrativo nem sobrecarregar o perfil.
-
----
+Prospecta **complements** ApplyFlow. Assume ApplyFlow is Featured #1.
 
 ## Signal map
 
-| Case | Signal principal para recrutador |
+| Case | Signal |
 | --- | --- |
-| **ApplyFlow** | Local-first / Chrome extension, evolução de persistência, concorrência no cliente, migration, AI trust boundaries |
-| **Prospecta** | Produto B2B multi-usuário, pipeline de ingestão, idempotência/retries no servidor, PostgreSQL, CI/security, ownership de CRM comercial |
+| **ApplyFlow** | Local-first Chrome MV3, persistence evolution, concurrency, resumable migration, AI trust boundary |
+| **Prospecta** | Two-repo B2B system, acquisition pipeline, Score V2, M2M, concurrent ingest, idempotency, bounded retries |
 
-Dois sinais de senioridade diferentes → manter ambos visíveis, com papéis claros.
+## About (EN / PT / ES)
 
----
+Keep ApplyFlow as the primary “local-first reliability” line if already established.  
+Add **at most one short Prospecta sentence** in About (optional): two-repo B2B prospecting; concurrent ingest + M2M retries.
 
-## About
-
-### English About
-
-- Keep ApplyFlow as the flagship “hard local-first / extension reliability” line if that is already the primary story.
-- Add **one short Prospecta sentence**: B2B prospecting CRM; concurrent ingest + idempotent acquisition callbacks; Next.js/Postgres.
-- Avoid stacking both cases as long paragraphs in About — detail lives in Featured / Experience.
-
-### Portuguese About
-
-- Mirror the EN structure (same hierarchy).
-- Prospecta in one sentence: CRM de prospecção B2B, ingestão concorrente e callbacks idempotentes validados em testes.
-
-### Spanish About
-
-- Same hierarchy as EN/PT.
-- One sentence: CRM B2B de prospección; ingestión concurrente e idempotencia en callbacks; stack Next.js/PostgreSQL.
-- Do not invent Spanish-only claims.
-
----
+Prefer putting Prospecta depth in **Experience + Featured**, not a long About rewrite.
 
 ## DevFlow Experience
 
-Assume DevFlow is the employer/brand umbrella where both products may sit. Adjust company name only if your profile already uses a different label.
+### EN / PT / ES (same hierarchy)
 
-### Experience EN
-
-- Role line: Product / Full Stack Engineer (or existing title — do not inflate).
-- Bullets: **2 ApplyFlow + 1–2 Prospecta** (or 2+1 if space is tight).
-- Prospecta bullets should stress product + reliability (ingest, idempotency, Postgres tests/CI), not a feature laundry list.
-- Do not duplicate the full Engineering Case in Experience.
-
-### Experience PT
-
-- Same bullet count and hierarchy as EN.
-- Natural PT wording; keep technical nouns (idempotência, ingestão concorrente, PostgreSQL).
-
-### Experience ES
-
-- Same structure; shorter if needed.
-- Keep ApplyFlow/Prospecta differentiation explicit so ES readers also see two signals.
-
----
+- Keep ApplyFlow bullets (2–3).
+- Add **1–2 Prospecta TIER 1 bullets** (two-repo system; concurrent ingest / M2M retries / dual CI).
+- Do not paste the full Engineering Case.
+- ES: same structure, shorter if needed.
 
 ## Featured
 
-Recommended order after ApplyFlow is already featured:
-
-1. ApplyFlow Engineering Case (keep primary if already performing)
-2. **Prospecta Engineering Case** (second featured item)
-3. Optional: public repo / demo link only if it does not leak private ops detail
-
-Do not feature LinkedIn drafts, ATS text files, or internal evidence dumps.
-
----
+1. ApplyFlow Engineering Case  
+2. **Prospecta Engineering Case (ecosystem)** ← target #2  
+3. Optional: repo links only if they don’t leak private ops
 
 ## Post
 
-- Use [`LINKEDIN_POST.md`](./LINKEDIN_POST.md) **PRIMARY_DRAFT (EN)** on the main profile.
-- Publish only after Engineering Case review + explicit approval.
-- Cadence: one post; do not flood with Prospecta follow-ups that restate ApplyFlow themes.
+Use [`LINKEDIN_POST.md`](./LINKEDIN_POST.md) PRIMARY_DRAFT after Featured #2 is live.  
+One post; don’t flood.
 
----
+## Anti-overload
 
-## Anti-overload rules
-
-- Prospecta must not replace ApplyFlow in About headline energy.
-- Avoid four long case studies in Experience.
-- CV and LinkedIn should share the same claim boundaries (no exactly-once / SLA language).
+- Prospecta must not displace ApplyFlow headline energy.
+- Cap DevFlow at two deep product signals.
+- Same claim boundaries everywhere (no exactly-once / SLA).

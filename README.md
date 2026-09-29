@@ -3,11 +3,13 @@
 Founder-led **B2B prospecting CRM**: qualified leads, weekly ownership, persisted
 activities, and WhatsApp (`wa.me`) / e-mail handoff.
 
-> **[Prospecta — Engineering Case](docs/prospecta/PROSPECTA_ENGINEERING_CASE.md)**  
-> Architecture, concurrent ingestion, idempotency, failure handling, tests, CI,
-> and explicit claim boundaries.
+> **[Prospecta — Engineering Case (Ecosystem)](docs/prospecta/PROSPECTA_ENGINEERING_CASE.md)**  
+> Two-repository product: Lead Generator + CRM — architecture, concurrent
+> ingestion, M2M retries, tests/CI, and claim boundaries.
 
-**Repo:** [`TraffikPro/prospecta`](https://github.com/TraffikPro/prospecta)
+**Repos:**  
+- CRM: [`TraffikPro/prospecta`](https://github.com/TraffikPro/prospecta)  
+- Lead Generator: [`TraffikPro/prospecta-lead-generator`](https://github.com/TraffikPro/prospecta-lead-generator)
 
 ## What is Prospecta?
 
@@ -22,9 +24,9 @@ Channel clicks alone are not contact — **persisted activity** is the source of
 ## What problem does it solve?
 
 Outbound B2B fails when leads lack ownership, acquisition retries create chaos,
-and operators cannot see the next action. Prospecta is the **system of record**
-for leads and weekly portfolio; an external acquisition runner collects and
-scores Google Places candidates, then syncs into the CRM.
+and operators cannot see the next action. Prospecta CRM is the **system of
+record**; [`prospecta-lead-generator`](https://github.com/TraffikPro/prospecta-lead-generator)
+collects and scores Google Places candidates, then syncs via authenticated M2M.
 
 ## How does it work?
 
@@ -66,7 +68,7 @@ Google Places → lead-generator (external) → Prospecta CRM (this repo) → pi
 | [`docs/prospecta/career/`](docs/prospecta/career/) | ATS / recruiter / interview / LinkedIn drafts |
 | [`docs/development/ci-security-gates.md`](docs/development/ci-security-gates.md) | CI + security gate ops |
 
-Source suite (local/CI-shaped PostgreSQL): **346** automated tests — see Engineering Case for scope and limits.
+CRM source suite (PostgreSQL CI): **346** tests · Generator suite (sibling repo CI): **84** tests — see Engineering Case; report counts separately.
 
 ## Product docs
 
