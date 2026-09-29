@@ -1,70 +1,95 @@
 # Prospecta
 
-Plataforma **founder-led** de **prospecção B2B**: pipeline de leads, atividades, follow-ups e handoff para WhatsApp (`wa.me`) + e-mail (`mailto`/template).
+Founder-led **B2B prospecting CRM**: qualified leads, weekly ownership, persisted
+activities, and WhatsApp (`wa.me`) / e-mail handoff.
 
-**Repo canônico:** [`TraffikPro/prospecta`](https://github.com/TraffikPro/prospecta)  
-**Produção:** https://prospecta-ten-tau.vercel.app
+> **[Prospecta — Engineering Case](docs/prospecta/PROSPECTA_ENGINEERING_CASE.md)**  
+> Architecture, concurrent ingestion, idempotency, failure handling, tests, CI,
+> and explicit claim boundaries.
 
-## Status
+**Repo:** [`TraffikPro/prospecta`](https://github.com/TraffikPro/prospecta)
 
-**MVP técnico operacional em produção** (`main` @ `c161e25`).
+## What is Prospecta?
 
-| Marco | Estado |
-| --- | --- |
-| Auth, Lead, Activity, Pipeline, ingestão, Intelligence Inbox, Minha fila, Portfolio, Lead Detail Redesign | **DONE** |
-| Lead Detail Commercial Clarity (Fatia 1) | **DONE** — PRs [#49](https://github.com/TraffikPro/prospecta/pull/49), [#50](https://github.com/TraffikPro/prospecta/pull/50), [#51](https://github.com/TraffikPro/prospecta/pull/51) |
-| Gate técnico visual (lote Santos, 5 leads) | **ACCEPTED — 5/5** |
-| Testes automatizados | **118** + `typecheck` + `lint` |
-| Demo comercial com sócio | **PENDING** (único gate de produto restante) |
-| Próximo após a demo | Comparar os 5 leads → escolher clínica-modelo → portfólio **Presença, Conversão e Operação** |
+A vertical commercial workflow for small outbound teams:
 
-Status canônico: [`docs/product/status-post-mvp.md`](docs/product/status-post-mvp.md)  
-Product Decision (clareza comercial): [`docs/product/prospecta-lead-detail-commercial-clarity.md`](docs/product/prospecta-lead-detail-commercial-clarity.md)  
-Piloto Santos: [`docs/product/campaign-santos-odonto-batch-1.md`](docs/product/campaign-santos-odonto-batch-1.md)
+```text
+login → lead → owner → pipeline → activity → WhatsApp/e-mail → result + next step
+```
 
-| Doc | Uso |
-| --- | --- |
-| [`docs/product/status-post-mvp.md`](docs/product/status-post-mvp.md) | Status pós-MVP (canônico) |
-| [`docs/product/prospecta-lead-detail-commercial-clarity.md`](docs/product/prospecta-lead-detail-commercial-clarity.md) | Gate técnico ACCEPTED 5/5 + demo PENDING |
-| [`docs/product.md`](docs/product.md) | Produto e normas V1 |
-| [`docs/product/founder-pilot.md`](docs/product/founder-pilot.md) | Piloto comercial |
-| [`docs/product/campaign-santos-odonto-batch-1.md`](docs/product/campaign-santos-odonto-batch-1.md) | Lote Santos (VALIDATE) |
-| [`docs/product/product-decision-mvp-technical.md`](docs/product/product-decision-mvp-technical.md) | Grill **BUILD** do MVP técnico |
-| [`docs/founding/roles-and-governance.md`](docs/founding/roles-and-governance.md) | Sociedade vs sistema + checklist |
-| [`docs/adr/0005-auth-sessions-acl-v1.md`](docs/adr/0005-auth-sessions-acl-v1.md) | Sessões HttpOnly + ACL |
-| [`docs/development/mcp-setup.md`](docs/development/mcp-setup.md) | MCPs |
+Channel clicks alone are not contact — **persisted activity** is the source of truth.
 
-## O que o produto faz hoje
+## What problem does it solve?
 
-- Autenticação segura com cookies **HttpOnly** e ACL server-side (`ADMIN` \| `MEMBER`)
-- Pipeline de leads, atividades, follow-ups e filas operacionais
-- Ingestão externa + **Intelligence Inbox** priorizada por score
-- Evidências Google Places: nota, avaliações e link Maps
-- Sinais comerciais normalizados + prioridade em português
-- Product Decisions para controlar escopo e evitar desenvolvimento especulativo
+Outbound B2B fails when leads lack ownership, acquisition retries create chaos,
+and operators cannot see the next action. Prospecta is the **system of record**
+for leads and weekly portfolio; an external acquisition runner collects and
+scores Google Places candidates, then syncs into the CRM.
+
+## How does it work?
+
+1. Operator authenticates (HttpOnly session + `ADMIN` / `MEMBER` ACL).
+2. Acquisition runner (external) collects → qualifies → `POST /api/internal/leads`.
+3. Leads land in Intelligence / HIGH pool and weekly portfolio flows.
+4. Operator contacts via `wa.me` / `mailto` and records an Activity.
+5. Pipeline stage + next follow-up drive the loop.
+
+Details: [ADR 0009](docs/adr/0009-google-places-lead-ingestion.md) ·
+[ADR 0014](docs/adr/0014-acquisition-runner-contract.md)
+
+## Architecture
+
+```text
+Google Places → lead-generator (external) → Prospecta CRM (this repo) → pipeline/activities
+```
+
+- **Frontend / backend:** Next.js App Router (fullstack; no separate Express BFF)
+- **Database:** PostgreSQL + Prisma
+- **Auth:** session table + HttpOnly cookie; machine tokens for ingest/jobs
+- **CI:** GitHub Actions — Postgres tests, lint, typecheck, build
+- **Security gates:** Gitleaks, dependency audit, CodeQL
 
 ## Stack
 
-- Next.js (App Router) + TypeScript + **Chakra UI v3** (design system oficial; Tailwind removido)
-- Prisma + PostgreSQL
+- Next.js + TypeScript + React + **Chakra UI v3**
+- Prisma + PostgreSQL 16
 - pnpm
-- Sessão em cookie HttpOnly + tabela `Session`
-- Roles `ADMIN` | `MEMBER`
-- UI: [ADR 0011 — Chakra-only](docs/adr/0011-ui-stack-keep-tailwind.md)
+- Playwright (E2E)
+- Zod, Resend (email provider abstraction)
+
+## Engineering evidence
+
+| Doc | Purpose |
+| --- | --- |
+| [`docs/prospecta/PROSPECTA_ENGINEERING_CASE.md`](docs/prospecta/PROSPECTA_ENGINEERING_CASE.md) | Public engineering case |
+| [`docs/evidence/PROSPECTA_ENGINEERING_EVIDENCE.md`](docs/evidence/PROSPECTA_ENGINEERING_EVIDENCE.md) | Measured local audit notes |
+| [`docs/prospecta/career/`](docs/prospecta/career/) | ATS / recruiter / interview / LinkedIn drafts |
+| [`docs/development/ci-security-gates.md`](docs/development/ci-security-gates.md) | CI + security gate ops |
+
+Source suite (local/CI-shaped PostgreSQL): **346** automated tests — see Engineering Case for scope and limits.
+
+## Product docs
+
+| Doc | Use |
+| --- | --- |
+| [`docs/product/status-post-mvp.md`](docs/product/status-post-mvp.md) | Canonical product status |
+| [`docs/product.md`](docs/product.md) | Product norms V1 |
+| [`docs/founding/roles-and-governance.md`](docs/founding/roles-and-governance.md) | Partnership vs app ACL |
+| [`docs/adr/`](docs/adr/) | Architecture Decision Records |
 
 ## Setup
 
 ```bash
 pnpm install
 cp .env.example .env
-# preencha AUTH_SECRET, SEED_*_PASSWORD e DATABASE_URL
+# fill AUTH_SECRET, SEED_*_PASSWORD, DATABASE_URL
 pnpm db:up
 pnpm prisma:migrate
 pnpm prisma:seed
 pnpm dev
 ```
 
-Seed fictício:
+Seed users (fictitious):
 
 - `admin@prospecta.test` (`ADMIN`)
 - `comercial@prospecta.test` (`MEMBER`)
@@ -72,28 +97,25 @@ Seed fictício:
 
 Scripts: `pnpm lint` · `pnpm typecheck` · `pnpm test` · `pnpm test:e2e` · `pnpm build`
 
-## Estrutura
+## Structure
 
 ```text
 src/
-  app/                 # rotas App Router
-  features/            # UI + schemas por domínio
-  lib/                 # prisma, env
+  app/                 # App Router routes + APIs
+  features/            # UI + schemas by domain
+  lib/                 # prisma, env, safety guards
   server/
     actions/
-    auth/              # session, guards, password, cookies
+    auth/
     services/
     repositories/
 prisma/
-  schema.prisma
-  migrations/
-  seed.ts
+docs/
+  prospecta/           # Engineering Case + career package
+  evidence/            # Measured audit evidence
+  adr/
 ```
 
-## Operação no Cursor
+## License
 
-Ver [`.cursor/README.md`](.cursor/README.md).
-
-## Licença
-
-Privado — uso do time fundador.
+Private — founding team use.
