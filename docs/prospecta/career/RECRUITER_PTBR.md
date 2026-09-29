@@ -1,27 +1,27 @@
-# Recruiter — Prospecta (PT-BR)
+# Recruiter — Prospecta Ecosystem (PT-BR)
 
-Versão humana, escaneável. Não é changelog.
+## Produto
 
-## O produto
+Prospecta é um produto founder-led de prospecção B2B em **dois repositórios**: o Lead Generator descobre e qualifica (Score V2); o CRM é a fonte da verdade para ownership semanal, pipeline e atividades.
 
-Prospecta é um CRM founder-led de prospecção B2B. O time precisa puxar oportunidades qualificadas, assumir ownership semanal e registrar contato real — não só clicar em WhatsApp.
+## Problema
 
-## O problema
-
-Quando a aquisição e os retries crescem, o CRM deixa de ser “cadastro de leads” e vira um problema de confiabilidade: corridas na ingestão, callbacks repetidos e contadores de carteira que podem regredir se forem last-write-wins.
+Retries e concorrência quebram CRMs “ingênuos”: leads duplicados, callbacks perdidos e contadores de carteira inconsistentes.
 
 ## Ownership
 
-Desenho e implementação end-to-end do CRM (produto + arquitetura fullstack): domínio comercial, API de ingestão, jobs de aquisição, portfolio/wallet, autenticação/ACL, testes em PostgreSQL e gates de CI/segurança. A coleta/score no Google Places fica em um runner externo; o Prospecta permanece a fonte da verdade.
+Desenho end-to-end do ecossistema: contrato M2M, ingestão idempotente, wallet/callbacks, testes em PostgreSQL no CRM e fault injection de HTTP no Generator.
 
-## Resultado técnico (limitado ao que foi medido)
+## Resultado técnico (escopo testado)
 
-- Ingestão concorrente com a mesma identidade externa converge para um lead e respostas idempotentes nos cenários testados (incluindo 20 requisições paralelas).
-- Callbacks de wallet-fill mantêm `ACTIVE` alinhado a `assignedCount` sob concorrência 1/5/10/20 no harness.
-- Suite de código-fonte: 346/346 passando contra PostgreSQL local/efêmero.
+- Ingestão concorrente converge para um lead por identidade externa nos cenários automatizados.
+- Callbacks toleram 429/502/503/504/timeout/rede no Generator; CRM preserva estado em replay terminal.
+- CI: CRM 346/346 · Generator 84/84 (suites independentes).
 
-## Arquitetura em uma frase
+## Arquitetura
 
-Next.js fullstack + PostgreSQL/Prisma, com runner externo de aquisição e contratos autenticados de sync/callback.
+```text
+Places → Generator (score/sync/retry) → CRM (ingest/wallet/pipeline/activities)
+```
 
-Detalhes e limites: [`../PROSPECTA_ENGINEERING_CASE.md`](../PROSPECTA_ENGINEERING_CASE.md)
+Detalhes: [`../PROSPECTA_ENGINEERING_CASE.md`](../PROSPECTA_ENGINEERING_CASE.md)

@@ -1,67 +1,34 @@
-# CV distribution plan — Prospecta
+# CV distribution plan — Prospecta Ecosystem
 
-**Não modifica PDFs nesta execução.** Matriz para a próxima atualização dos quatro CVs.
+**Do not modify PDFs in this task.** Matrix for the next CV update.
 
-Fonte de bullets:
-
-- ATS PT: [`ATS_PTBR.md`](./ATS_PTBR.md)
-- Recruiter PT: [`RECRUITER_PTBR.md`](./RECRUITER_PTBR.md)
-- ATS EN: [`ATS_EN.md`](./ATS_EN.md)
-- Recruiter EN: [`RECRUITER_EN.md`](./RECRUITER_EN.md)
-
----
+Claim source: [`CLAIM_TIERS.md`](./CLAIM_TIERS.md) · ATS/Recruiter files in this folder.
 
 ## Matrix
 
-| CV variant | What to put | Bullet count | Prospecta placement | ApplyFlow | Avoid |
-| --- | --- | --- | --- | --- | --- |
-| **ATS PT-BR** | Copy from `ATS_PTBR.md` almost verbatim | **≤3** | Under DevFlow / product eng experience | Keep 2–3 ApplyFlow ATS bullets if space | Feature lists, E2E %, lab-only Score V2 as ATS fact |
-| **Recruiter PT-BR** | Short narrative from `RECRUITER_PTBR.md` | 1 short para **or** 3 bullets | Same experience block; human tone | Keep ApplyFlow as complementary story | Changelog / commit laundry list |
-| **ATS EN** | Copy from `ATS_EN.md` | **≤3** | Same | Keep ApplyFlow ATS EN bullets | Literal PT translation; “exactly-once” |
-| **Recruiter EN** | `RECRUITER_EN.md` | 1 short para **or** 3 bullets | Same | Keep ApplyFlow recruiter blurb | “Production-ready / enterprise-grade” |
+| CV | Source | Bullets | Prospecta | ApplyFlow | Avoid |
+| --- | --- | ---: | --- | --- | --- |
+| ATS PT-BR | `ATS_PTBR.md` | ≤3 TIER 1 | DevFlow experience | Keep 2–3 | Tier 3 lab numbers; “430 tests” |
+| Recruiter PT-BR | `RECRUITER_PTBR.md` | short narrative or 3 bullets | Same | Complementary | Changelog |
+| ATS EN | `ATS_EN.md` | ≤3 TIER 1 | Same | Keep | Literal PT crawl; exactly-once |
+| Recruiter EN | `RECRUITER_EN.md` | short narrative or 3 bullets | Same | Complementary | enterprise-grade |
 
----
+## Substitute vs preserve
 
-## What to substitute vs preserve
+**Substitute:** CRM-only framing; old “118 tests”; any exactly-once/SLA language.  
+**Preserve:** ApplyFlow as first-class case; honest founder-led/pilot tone.
 
-### Substitute
+## Placement
 
-- Outdated “generic CRM CRUD” lines if any exist
-- Inflated test counts not matching the Engineering Case (e.g. old “118 tests” README figure)
-- Any claim of exactly-once, SLA, or production p99
+1. Experience (DevFlow) — home for TIER 1  
+2. Projects (recruiter only) — link Engineering Case  
+3. Not a tech-stack dump that erases differentiation  
 
-### Preserve
+## Sequencing after docs land on main
 
-- ApplyFlow as a first-class case (local-first / extension / persistence / AI trust)
-- Shared stack truth: TypeScript, Next.js/Node, PostgreSQL where accurate
-- Honest scope: founder-led / pilot product language if that matches the CV brand
+1. Update four CV PDFs (TIER 1)  
+2. LinkedIn EN/PT/ES Experience  
+3. Featured #2 = Prospecta ecosystem case  
+4. Post EN only with approval  
 
----
-
-## Where Prospecta enters
-
-1. **Experience (DevFlow or equivalent)** — primary home for the 1–3 bullets  
-2. **Projects / Selected work** (recruiter variants only) — link to Engineering Case if the CV format allows URLs  
-3. **Not** in a huge “Technologies” dump that erases differentiation  
-
----
-
-## Avoiding a DevFlow-heavy CV
-
-- Cap DevFlow at **two product signals**: ApplyFlow + Prospecta  
-- If a third DevFlow project exists, demote it to one line or drop from ATS  
-- Prefer depth (reliability + product) over listing every internal tool  
-- Recruiter versions tell a story; ATS versions stay keyword-dense but short  
-
----
-
-## Sequencing (after this package)
-
-1. Review Engineering Case  
-2. Merge/publish docs to the intended public branch  
-3. Update the four CV PDFs using this matrix  
-4. Sync LinkedIn EN/PT/ES per [`LINKEDIN_POSITIONING_PLAN.md`](./LINKEDIN_POSITIONING_PLAN.md)  
-5. Featured: add Prospecta case second to ApplyFlow  
-6. Publish LinkedIn post only with explicit approval  
-
-Claim boundaries: [`../PROSPECTA_ENGINEERING_CASE.md`](../PROSPECTA_ENGINEERING_CASE.md) §16
+Boundaries: Engineering Case §15 · CLAIM_TIERS Rejected list

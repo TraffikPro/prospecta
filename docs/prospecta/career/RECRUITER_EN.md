@@ -1,27 +1,27 @@
-# Recruiter — Prospecta (EN)
-
-Short, scannable narrative. Not a changelog.
+# Recruiter — Prospecta Ecosystem (EN)
 
 ## Product
 
-Prospecta is a founder-led B2B prospecting CRM. Operators pull qualified opportunities, own a weekly portfolio, and record real outreach — channel clicks alone are not “contact.”
+Prospecta is a founder-led B2B prospecting **product** split across two repositories: a Lead Generator discovers and qualifies (Score V2); the CRM is the system of record for weekly ownership, pipeline, and activities.
 
 ## Problem
 
-As generation and retries grow, the hard part is reliability: concurrent ingest races, repeated callbacks after lost responses, and wallet counters that can regress under last-write-wins updates.
+As acquisition retries and concurrency grow, naive CRMs fail: duplicate leads, lost callbacks, and drifting wallet counters.
 
 ## Ownership
 
-End-to-end product engineering of the CRM: commercial domain, authenticated ingest API, acquisition job callbacks, weekly portfolio/wallet semantics, auth/ACL, PostgreSQL-backed tests, and CI/security gates. Google Places collect/score runs in an external acquisition runner; Prospecta stays the system of record.
+End-to-end ecosystem engineering: M2M contracts, idempotent ingest, wallet/callback semantics, PostgreSQL-backed CRM tests, and Generator HTTP fault injection.
 
 ## Technical outcome (tested scope)
 
-- Concurrent same-identity ingest converges to one lead with idempotent responses in the exercised matrix (including 20-way concurrency).
-- Wallet-fill terminal callbacks keep ACTIVE assignments aligned with `assignedCount` at concurrency 1/5/10/20 in the harness.
-- Source suite: 346/346 passing against local/ephemeral PostgreSQL.
+- Concurrent same-identity ingest converges to one lead in automated matrices.
+- Callbacks retry 429/502/503/504/timeout/network on the Generator; CRM preserves terminal state on replay.
+- CI: CRM 346/346 · Generator 84/84 (independent suites).
 
-## Architecture in one line
+## Architecture
 
-Next.js fullstack + PostgreSQL/Prisma, with an external acquisition runner and authenticated sync/callback contracts.
+```text
+Places → Generator (score/sync/retry) → CRM (ingest/wallet/pipeline/activities)
+```
 
-Details and claim boundaries: [`../PROSPECTA_ENGINEERING_CASE.md`](../PROSPECTA_ENGINEERING_CASE.md)
+Details: [`../PROSPECTA_ENGINEERING_CASE.md`](../PROSPECTA_ENGINEERING_CASE.md)
