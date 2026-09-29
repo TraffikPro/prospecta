@@ -1,0 +1,10 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Known fictitious CRON_SECRET used only by the unit test"
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^src/server/auth/cron-secret\.test\.ts$''']
+regexTarget = "match"
+regexes = ['''test-cron-secret-123456''']

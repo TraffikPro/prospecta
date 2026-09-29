@@ -1,6 +1,6 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./test";
 
-import { login } from "./helpers";
+import { ensureE2ERateLimitScope, login } from "./helpers";
 import { expireCurrentSession } from "./helpers/expire-current-session";
 
 const adminEmail = process.env.E2E_ADMIN_EMAIL ?? "admin@prospecta.test";
@@ -29,6 +29,7 @@ test.describe("login visual refresh", () => {
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
+    await ensureE2ERateLimitScope(page);
     await page.goto("/login");
 
     await expect(page.getByTestId("login-brand-panel")).toBeHidden();

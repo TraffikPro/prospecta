@@ -13,6 +13,7 @@ import {
   getLeadById,
   getLeads,
   getLeadsGroupedByStage,
+  getPipelineView,
   moveLeadStage,
 } from "./lead.service";
 
@@ -172,6 +173,57 @@ describe("lead ownership isolation", { skip: !hasDatabase }, () => {
     );
     assert.equal(groupedIds.includes(leadBId), false);
     assert.ok(groupedIds.includes(leadAId));
+
+    const pipeline = await getPipelineView(memberAViewer, {
+      stage: "NEW",
+      page: "1",
+    });
+    const pipelineIds = Object.values(pipeline.grouped).flatMap((column) =>
+      column.map((lead) => lead.id),
+    );
+    assert.equal(pipeline.counts.NEW, 1);
+    assert.equal(pipeline.counts.QUALIFIED, 0);
+    assert.equal(pipelineIds.includes(leadBId), false);
+    assert.ok(pipelineIds.includes(leadAId));
+    assert.equal("email" in pipeline.grouped.NEW[0]!, false);
+    assert.equal("owner" in pipeline.grouped.NEW[0]!, false);
+  });
+
+  it("paginates one pipeline stage while preserving exact scoped counts", async () => {
+    await prisma.lead.createMany({
+      data: Array.from({ length: 30 }, (_, index) => ({
+        companyName: `Pipeline Page ${index} ${suffix}`,
+        stage: "NEW" as const,
+        source: "MANUAL" as const,
+        ownerId: memberAId,
+      })),
+    });
+
+    const first = await getPipelineView(memberAViewer, {
+      stage: "NEW",
+      page: 1,
+    });
+    const second = await getPipelineView(memberAViewer, {
+      stage: "NEW",
+      page: 2,
+    });
+    const firstIds = new Set(first.grouped.NEW.map((lead) => lead.id));
+
+    assert.equal(first.counts.NEW, 31);
+    assert.equal(first.grouped.NEW.length, 25);
+    assert.equal(first.totalPages, 2);
+    assert.equal(second.page, 2);
+    assert.equal(second.grouped.NEW.length, 6);
+    assert.equal(
+      second.grouped.NEW.some((lead) => firstIds.has(lead.id)),
+      false,
+    );
+    assert.equal(
+      Object.values(second.grouped)
+        .flat()
+        .some((lead) => lead.id === leadBId),
+      false,
+    );
   });
 
   it("MEMBER A does not receive existingLeadId for MEMBER B contact", async () => {

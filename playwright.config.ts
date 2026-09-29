@@ -25,5 +25,8 @@ export default defineConfig({
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
+    env: {
+      PROSPECTA_E2E_RATE_LIMIT_SCOPING: "1",
+    },
   },
 });

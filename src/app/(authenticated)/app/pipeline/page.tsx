@@ -12,9 +12,16 @@ import { PipelineBoard } from "@/features/pipeline/components/pipeline-board";
 import { AuthenticationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
-import { getLeadsGroupedByStage } from "@/server/services/lead.service";
+import { getPipelineView } from "@/server/services/lead.service";
 
-export default async function PipelinePage() {
+type PageProps = {
+  searchParams: Promise<{
+    stage?: string | string[];
+    page?: string | string[];
+  }>;
+};
+
+export default async function PipelinePage({ searchParams }: PageProps) {
   const sessionUser = await getSessionUser();
   try {
     requireAnyRole(sessionUser, ["ADMIN", "MEMBER"]);
@@ -25,9 +32,13 @@ export default async function PipelinePage() {
     throw error;
   }
 
-  const grouped = await getLeadsGroupedByStage(sessionUser!);
+  const params = await searchParams;
+  const view = await getPipelineView(sessionUser!, {
+    stage: Array.isArray(params.stage) ? params.stage[0] : params.stage,
+    page: Array.isArray(params.page) ? params.page[0] : params.page,
+  });
   const totalLeads = LEAD_STAGE_ORDER.reduce(
-    (sum, stage) => sum + grouped[stage].length,
+    (sum, stage) => sum + view.counts[stage],
     0,
   );
 
@@ -63,7 +74,13 @@ export default async function PipelinePage() {
           }
         />
       ) : (
-        <PipelineBoard grouped={grouped} />
+        <PipelineBoard
+          grouped={view.grouped}
+          counts={view.counts}
+          selectedStage={view.selectedStage}
+          page={view.page}
+          totalPages={view.totalPages}
+        />
       )}
     </PageFrame>
   );

@@ -1,11 +1,13 @@
 ---
-description: Prioridades de teste e o que evitar
-globs: **/*.{test,spec}.{ts,tsx},**/__tests__/**/*
+globs: **/*.{test,spec}.{ts,tsx},**/__tests__/**/*,e2e/**/*
 alwaysApply: false
 ---
 
 # Testing
 
+- Reproduzir bug com teste falhando antes de corrigir. O teste que falha pela razão relatada é a especificação do fix.
+- Rodar o teste relevante primeiro; ampliar a suíte o suficiente para regressão antes de concluir.
+- Teste flaky é defeito. Corrigir a corrida ou o estado compartilhado; não mascarar com retry.
 - Priorizar fluxos críticos: schema Zod de lead/atividade, transição de stage, dedupe e-mail/telefone, formatter de template WhatsApp/e-mail, import CSV, ACL `MEMBER` bloqueado em import/delete.
 - Testar repositories/services quando existirem (unit/integration enxutos).
 - Mudanças em leads devem cobrir: `ADMIN` acessa registros de owners diferentes; MEMBER A acessa somente os próprios; MEMBER A não recebe ID, empresa, etapa, origem ou atividade de MEMBER B; leitura e mutação cross-owner são negadas; duplicidade cross-owner não retorna `existingLeadId`; APIs internas sem Bearer válido falham fechadas.

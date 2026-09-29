@@ -1,5 +1,4 @@
 ---
-description: UI do pipeline, lead detail e formulários
 globs: src/app/**/*.{ts,tsx},src/components/**/*.{ts,tsx},src/features/**/*.{ts,tsx}
 alwaysApply: false
 ---
@@ -12,7 +11,8 @@ alwaysApply: false
 - Não construir dashboard/gráficos na V1.
 - Desktop-first para sócios `MEMBER`; utilizável no celular.
 - Ações só `ADMIN` ocultas/desabilitadas com clareza; server é a barreira.
-- Server Components por padrão; Client só com interação.
+- Server Components por padrão; Client Components só com interação ou estado de UI.
+- Módulo alcançável por Client Component não importa código server-only (Prisma, secrets, filesystem).
 - **UI oficial:** Chakra UI v3 only ([ADR 0011](../../docs/adr/0011-ui-stack-keep-tailwind.md)).
 - `src/theme/`, `src/components/ui/`, `src/components/layout/`; Provider no root layout.
 - **Proibido:** classes Tailwind, CSS Modules novos, híbridos.

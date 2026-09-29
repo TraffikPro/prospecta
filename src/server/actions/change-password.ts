@@ -33,7 +33,7 @@ export async function changePasswordAction(
 
   const change = await runUserOperationWithRateLimit({
     userId: sessionUser.id,
-    policy: RATE_LIMIT_POLICIES.changePasswordUser,
+    policy: RATE_LIMIT_POLICIES.changeCredentialUser,
     operation: async () => {
       const parsed = changePasswordSchema.safeParse({
         currentPassword: formData.get("currentPassword"),

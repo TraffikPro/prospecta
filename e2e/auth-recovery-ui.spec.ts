@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./test";
 
 import { login } from "./helpers";
 import { expireCurrentSession } from "./helpers/expire-current-session";

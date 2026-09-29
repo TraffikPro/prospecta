@@ -1,6 +1,6 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./test";
 
-import { login } from "./helpers";
+import { ensureE2ERateLimitScope, login } from "./helpers";
 import { setMustChangePassword } from "./helpers/set-must-change-password";
 import { hashPassword } from "../src/server/auth/password";
 import { loadEnvConfig } from "@next/env";
@@ -37,6 +37,7 @@ test.describe("must change password (Fatia 3)", () => {
   }) => {
     await setMustChangePassword(memberEmail, true);
 
+    await ensureE2ERateLimitScope(page);
     await page.goto("/login");
     await page.getByLabel("E-mail").fill(memberEmail);
     await page.getByLabel("Senha", { exact: true }).fill(memberPassword);

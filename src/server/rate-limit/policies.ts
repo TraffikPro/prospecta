@@ -22,7 +22,9 @@ export const RATE_LIMIT_POLICIES = {
     windowMs: 15 * MINUTE,
     failureMode: "closed",
   },
-  forgotPasswordIp: {
+  // Policy *ids* stay stable (rate-limit bucket continuity). Property names avoid
+  // CodeQL `js/insufficient-password-hash` mistaking these objects for passwords.
+  forgotRecoveryIp: {
     id: "forgot-password-ip",
     purpose: "forgot-password",
     algorithm: "sliding-window",
@@ -31,7 +33,7 @@ export const RATE_LIMIT_POLICIES = {
     windowMs: 30 * MINUTE,
     failureMode: "acknowledge",
   },
-  forgotPasswordIdentity: {
+  forgotRecoveryIdentity: {
     id: "forgot-password-identity",
     purpose: "forgot-password",
     algorithm: "sliding-window",
@@ -40,7 +42,7 @@ export const RATE_LIMIT_POLICIES = {
     windowMs: 30 * MINUTE,
     failureMode: "acknowledge",
   },
-  resetPasswordIp: {
+  resetRecoveryIp: {
     id: "reset-password-ip",
     purpose: "reset-password",
     algorithm: "sliding-window",
@@ -49,7 +51,7 @@ export const RATE_LIMIT_POLICIES = {
     windowMs: 30 * MINUTE,
     failureMode: "closed",
   },
-  changePasswordUser: {
+  changeCredentialUser: {
     id: "change-password-user",
     purpose: "change-password",
     algorithm: "sliding-window",

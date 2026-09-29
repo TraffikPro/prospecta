@@ -16,6 +16,24 @@ export type LeadWithOwner = Lead & {
   };
 };
 
+const pipelineLeadSelect = {
+  id: true,
+  companyName: true,
+  source: true,
+  stage: true,
+  intelligence: true,
+  nextFollowUpAt: true,
+  lostReason: true,
+} satisfies Prisma.LeadSelect;
+
+export type PipelineLead = Prisma.LeadGetPayload<{
+  select: typeof pipelineLeadSelect;
+}>;
+
+export type PipelineLeadListScope =
+  | { ownerId: string }
+  | { scope: "all" };
+
 export type CreateLeadData = {
   companyName: string;
   contactName?: string | null;
@@ -110,6 +128,40 @@ export async function listLeads(): Promise<LeadWithOwner[]> {
       },
     },
     orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function countPipelineLeadsByStage(
+  options: PipelineLeadListScope,
+): Promise<Array<{ stage: LeadStage; count: number }>> {
+  const ownerId = "ownerId" in options ? options.ownerId : undefined;
+  const grouped = await prisma.lead.groupBy({
+    by: ["stage"],
+    where: ownerId ? { ownerId } : undefined,
+    _count: { _all: true },
+  });
+  return grouped.map((row) => ({
+    stage: row.stage,
+    count: row._count._all,
+  }));
+}
+
+export async function listPipelineLeadsPage(input: {
+  scope: PipelineLeadListScope;
+  stage: LeadStage;
+  skip: number;
+  take: number;
+}): Promise<PipelineLead[]> {
+  const ownerId = "ownerId" in input.scope ? input.scope.ownerId : undefined;
+  return prisma.lead.findMany({
+    where: {
+      stage: input.stage,
+      ...(ownerId ? { ownerId } : {}),
+    },
+    select: pipelineLeadSelect,
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    skip: input.skip,
+    take: input.take,
   });
 }
 

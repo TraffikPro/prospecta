@@ -151,3 +151,39 @@ export async function updateAcquisitionJobStatus(
     data,
   });
 }
+
+export async function updateAcquisitionJobStatusWithMonotonicAssignedCount(
+  id: string,
+  data: {
+    status: AcquisitionJobStatus;
+    startedAt?: Date | null;
+    finishedAt?: Date | null;
+    foundCount?: number | null;
+    qualifiedCount?: number | null;
+    createdTotal?: number | null;
+    createdHigh?: number | null;
+    existingCount?: number | null;
+    failedCount?: number | null;
+    assignedCount: number;
+    requestedSlots?: number | null;
+    errorMessage?: string | null;
+  },
+): Promise<AcquisitionJob> {
+  return prisma.$transaction(async (tx) => {
+    const locked = await tx.$queryRaw<Array<{ assignedCount: number | null }>>`
+      SELECT "assignedCount"
+      FROM "AcquisitionJob"
+      WHERE id = ${id}
+      FOR UPDATE
+    `;
+    const currentAssignedCount = locked[0]?.assignedCount ?? 0;
+
+    return tx.acquisitionJob.update({
+      where: { id },
+      data: {
+        ...data,
+        assignedCount: Math.max(currentAssignedCount, data.assignedCount),
+      },
+    });
+  });
+}

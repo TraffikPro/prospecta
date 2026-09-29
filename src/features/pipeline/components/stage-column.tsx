@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
-
+import Link from "next/link";
 import type { LeadStage } from "@prisma/client";
-import { Box, SimpleGrid, Stack } from "@chakra-ui/react";
+import { Box, HStack, SimpleGrid, Stack, Text } from "@chakra-ui/react";
 
 import { AppEmptyState } from "@/components/ui/app-empty-state";
 import { Button } from "@/components/ui/button";
@@ -13,24 +12,26 @@ import {
   type LeadStageCardData,
 } from "./lead-stage-card";
 
-/** Cards shown before “Ver todos” on desktop. */
-export const PIPELINE_DESKTOP_PREVIEW = 3;
-
 type StageColumnProps = {
   stage: LeadStage;
   leads: LeadStageCardData[];
+  totalCount: number;
+  selected: boolean;
+  page: number;
+  totalPages: number;
   formatFollowUp: (value: Date | string) => string;
 };
 
 export function StageColumn({
   stage,
   leads,
+  totalCount,
+  selected,
+  page,
+  totalPages,
   formatFollowUp,
 }: StageColumnProps) {
-  const [showAll, setShowAll] = useState(false);
-  const hasMore = leads.length > PIPELINE_DESKTOP_PREVIEW;
-  const visible =
-    showAll || !hasMore ? leads : leads.slice(0, PIPELINE_DESKTOP_PREVIEW);
+  const hasMore = totalCount > leads.length;
 
   return (
     <Box data-testid={`pipeline-stage-${stage}`}>
@@ -44,7 +45,7 @@ export function StageColumn({
         ) : (
           <>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap="3">
-              {visible.map((lead) => (
+              {leads.map((lead) => (
                 <LeadStageCard
                   key={lead.id}
                   lead={lead}
@@ -56,19 +57,45 @@ export function StageColumn({
                 />
               ))}
             </SimpleGrid>
-            {hasMore && !showAll ? (
+            {!selected && hasMore ? (
               <Button
-                type="button"
+                asChild
                 variant="outline"
                 colorPalette="gray"
                 size="md"
                 minH="touch"
                 alignSelf="flex-start"
-                onClick={() => setShowAll(true)}
                 data-testid={`pipeline-show-all-${stage}`}
               >
-                Ver todos ({leads.length})
+                <Link href={`/app/pipeline?stage=${stage}&page=1`}>
+                  Ver todos ({totalCount})
+                </Link>
               </Button>
+            ) : null}
+            {selected && totalPages > 1 ? (
+              <HStack justify="space-between" gap="3" flexWrap="wrap">
+                {page > 1 ? (
+                  <Button asChild variant="outline" colorPalette="gray" size="sm">
+                    <Link href={`/app/pipeline?stage=${stage}&page=${page - 1}`}>
+                      Anterior
+                    </Link>
+                  </Button>
+                ) : (
+                  <Box />
+                )}
+                <Text fontSize="sm" color="fg.muted">
+                  Página {page} de {totalPages}
+                </Text>
+                {page < totalPages ? (
+                  <Button asChild variant="outline" colorPalette="gray" size="sm">
+                    <Link href={`/app/pipeline?stage=${stage}&page=${page + 1}`}>
+                      Próxima
+                    </Link>
+                  </Button>
+                ) : (
+                  <Box />
+                )}
+              </HStack>
             ) : null}
           </>
         )}

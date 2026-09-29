@@ -76,6 +76,32 @@ describe("applyAcquisitionJobCallback", () => {
     assert.ok(stored.finishedAt);
   });
 
+  it("repeated SUCCEEDED callback is idempotent (lost-response safe)", async () => {
+    const before = await prisma.acquisitionJob.findUniqueOrThrow({
+      where: { id: jobId },
+    });
+    assert.equal(before.status, "SUCCEEDED");
+
+    const repeated = await applyAcquisitionJobCallback(jobId, {
+      status: "SUCCEEDED",
+      foundCount: 999,
+      qualifiedCount: 999,
+      createdTotal: 999,
+      createdHigh: 999,
+      existingCount: 999,
+      failedCount: 999,
+    });
+    assert.equal(repeated.status, "SUCCEEDED");
+
+    const after = await prisma.acquisitionJob.findUniqueOrThrow({
+      where: { id: jobId },
+    });
+    // Counts must not be overwritten by a terminal repeat.
+    assert.equal(after.createdHigh, before.createdHigh);
+    assert.equal(after.foundCount, before.foundCount);
+    assert.equal(after.status, "SUCCEEDED");
+  });
+
   it("rejects transition out of SUCCEEDED", async () => {
     await assert.rejects(
       () =>
