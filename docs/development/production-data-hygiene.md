@@ -18,7 +18,8 @@
 Wired into:
 
 - `e2e/global-setup.ts` (all Playwright runs);
-- `e2e/helpers/create-intelligence-lead.ts`.
+- `e2e/helpers/create-intelligence-lead.ts`;
+- `prisma/seed.ts` (refuses production fingerprints).
 
 Break-glass (approved hygiene only, local shell, never in CI/Vercel):
 

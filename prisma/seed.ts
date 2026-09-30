@@ -1,5 +1,6 @@
 import { PrismaClient, UserRole } from "@prisma/client";
 import { hashPassword } from "../src/server/auth/password";
+import { assertSafeForMutableTestsOrThrow } from "../src/lib/safety/production-mutation-guard";
 
 const prisma = new PrismaClient();
 
@@ -19,6 +20,12 @@ function requireEnv(name: string): string {
 }
 
 async function main() {
+  assertSafeForMutableTestsOrThrow({
+    databaseUrl: process.env.DATABASE_URL,
+    appUrl: process.env.NEXT_PUBLIC_APP_URL,
+    breakGlass: process.env.PROSPECTA_ALLOW_PROD_DB_MUTATION,
+  });
+
   const adminPassword = requireEnv("SEED_ADMIN_PASSWORD");
   const memberPassword = requireEnv("SEED_MEMBER_PASSWORD");
 
