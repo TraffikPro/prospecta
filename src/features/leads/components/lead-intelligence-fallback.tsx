@@ -1,6 +1,7 @@
 import type { LeadSource } from "@prisma/client";
-import { Heading, Stack } from "@chakra-ui/react";
+import { Stack, Text } from "@chakra-ui/react";
 
+import { SectionHeading } from "@/components/layout/page-heading";
 import { AppEmptyState } from "@/components/ui/app-empty-state";
 
 type LeadIntelligenceFallbackProps = {
@@ -21,17 +22,28 @@ export function LeadIntelligenceFallback({
   return (
     <Stack
       as="section"
-      gap="2"
+      gap="3"
+      borderWidth="1px"
+      borderColor="border"
+      borderRadius="surface"
+      px="4"
+      py="4"
       aria-labelledby="intelligence-heading"
       data-testid="lead-intelligence-fallback"
       data-source={source}
     >
-      <Heading as="h2" id="intelligence-heading" size="sm">
-        Inteligência do lead
-      </Heading>
+      <Stack gap="1">
+        <SectionHeading id="intelligence-heading">
+          Qualificação do lead
+        </SectionHeading>
+        <Text textStyle="meta">
+          Evidência persistida para apoiar a abordagem — não substitui o
+          histórico de contato.
+        </Text>
+      </Stack>
       <AppEmptyState
         variant="compact"
-        title="Inteligência não disponível"
+        title="Qualificação não disponível"
         description={description}
       />
     </Stack>

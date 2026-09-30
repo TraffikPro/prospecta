@@ -59,7 +59,7 @@ test.describe("must change password (Fatia 3)", () => {
 
     await expect(page).toHaveURL(/\/app\/my-leads/);
     await expect(
-      page.getByRole("heading", { name: "Minha operação", exact: true }),
+      page.getByRole("heading", { name: "Minha fila", exact: true }),
     ).toBeVisible();
 
     await page.getByTestId("nav-profile-trigger").click();

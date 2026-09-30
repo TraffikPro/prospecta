@@ -11,6 +11,11 @@ import {
   type FollowUpState,
   type NextActionView,
 } from "@/features/leads/next-action";
+import {
+  MY_QUEUE_FILTER_PAGE_SIZE,
+  MY_QUEUE_SECTION_RENDER_LIMIT,
+  clampPage,
+} from "@/lib/pagination";
 
 export type MyQueueBucket = "overdue" | "due_today" | "no_contact" | "other";
 
@@ -37,6 +42,8 @@ export type MyQueueLeadInput = {
 export type MyQueueItem = {
   id: string;
   companyName: string;
+  /** Commercial stage — already loaded for next-action; exposed for dense queue rows. */
+  stage: LeadStage;
   score: number | null;
   qualification: LeadQualification | null;
   campaign: string | null;
@@ -60,10 +67,19 @@ export type MyQueueView = {
   sections: Array<{
     bucket: MyQueueBucket;
     title: string;
+    /** Rows rendered on this response (may be truncated). */
     items: MyQueueItem[];
+    /** Truthful bucket size after filter (before render bound). */
+    totalCount: number;
+    truncated: boolean;
   }>;
-  /** Flat list in priority order (useful when a filter is active). */
+  /** Flat list of rendered items in priority order. */
   items: MyQueueItem[];
+  /** Truthful filtered total (before page/section bounds). */
+  filteredTotal: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
 };
 
 /** Operational priority: overdue → today → no contact → rest. */
@@ -93,7 +109,7 @@ export const MY_QUEUE_FILTERS: Array<{
 ];
 
 export const MY_QUEUE_EMPTY_BY_FILTER: Record<MyQueueFilter, string> = {
-  all: "Nenhum lead ativo na sua fila. Leads WON/LOST ficam de fora.",
+  all: "Nenhum lead precisa de ação agora.",
   new: "Nenhum lead aguardando primeiro contato neste filtro.",
   "follow-up": "Nenhum follow-up para hoje neste filtro.",
   overdue: "Nenhum lead atrasado neste filtro.",
@@ -183,10 +199,18 @@ export function formatCampaignLabel(campaign: string): string {
 
 export function buildMyQueue(
   leads: MyQueueLeadInput[],
-  options: { now?: Date; filter?: MyQueueFilter } = {},
+  options: {
+    now?: Date;
+    filter?: MyQueueFilter;
+    page?: number;
+    sectionLimit?: number;
+    filterPageSize?: number;
+  } = {},
 ): MyQueueView {
   const now = options.now ?? new Date();
   const filter = options.filter ?? "all";
+  const sectionLimit = options.sectionLimit ?? MY_QUEUE_SECTION_RENDER_LIMIT;
+  const filterPageSize = options.filterPageSize ?? MY_QUEUE_FILTER_PAGE_SIZE;
 
   const items: MyQueueItem[] = leads.map((lead) => {
     const latest = lead.activities[0] ?? null;
@@ -212,6 +236,7 @@ export function buildMyQueue(
     return {
       id: lead.id,
       companyName: lead.companyName,
+      stage: lead.stage,
       score,
       qualification,
       campaign,
@@ -242,16 +267,83 @@ export function buildMyQueue(
 
   const filtered = items.filter((item) => matchesFilter(item, filter));
 
-  const sections = SECTION_ORDER.map((bucket) => ({
-    bucket,
-    title: SECTION_TITLE[bucket],
-    items: filtered.filter((i) => i.bucket === bucket),
-  })).filter((section) => section.items.length > 0);
+  if (filter === "all") {
+    const sections = SECTION_ORDER.map((bucket) => {
+      const bucketItems = filtered.filter((i) => i.bucket === bucket);
+      const rendered = bucketItems.slice(0, sectionLimit);
+      return {
+        bucket,
+        title: SECTION_TITLE[bucket],
+        items: rendered,
+        totalCount: bucketItems.length,
+        truncated: bucketItems.length > rendered.length,
+      };
+    }).filter((section) => section.totalCount > 0);
+
+    return {
+      filter,
+      summary,
+      sections,
+      items: sections.flatMap((section) => section.items),
+      filteredTotal: filtered.length,
+      page: 1,
+      pageSize: sectionLimit,
+      totalPages: 1,
+    };
+  }
+
+  const { page, totalPages, skip, take } = clampPage(
+    options.page ?? 1,
+    filtered.length,
+    filterPageSize,
+  );
+  const pageItems = filtered.slice(skip, skip + take);
+  const sections = SECTION_ORDER.map((bucket) => {
+    const bucketItems = pageItems.filter((i) => i.bucket === bucket);
+    const fullBucketCount = filtered.filter((i) => i.bucket === bucket).length;
+    return {
+      bucket,
+      title: SECTION_TITLE[bucket],
+      items: bucketItems,
+      totalCount: fullBucketCount,
+      truncated: false,
+    };
+  }).filter((section) => section.items.length > 0);
 
   return {
     filter,
     summary,
     sections,
-    items: filtered,
+    items: pageItems,
+    filteredTotal: filtered.length,
+    page,
+    pageSize: filterPageSize,
+    totalPages,
   };
+}
+
+export function myQueueHref(input: {
+  filter?: MyQueueFilter;
+  page?: number;
+}): string {
+  const params = new URLSearchParams();
+  const filter = input.filter ?? "all";
+  if (filter !== "all") params.set("filter", filter);
+  if (input.page && input.page > 1) params.set("page", String(input.page));
+  const query = params.toString();
+  return query ? `/app/my-leads?${query}` : "/app/my-leads";
+}
+
+/** Map urgency bucket → filter deep-link for "ver todos". */
+export function filterForBucket(bucket: MyQueueBucket): MyQueueFilter | null {
+  switch (bucket) {
+    case "overdue":
+      return "overdue";
+    case "due_today":
+      return "follow-up";
+    case "no_contact":
+      return "new";
+    case "other":
+      return null;
+  }
 }

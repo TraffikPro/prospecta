@@ -32,7 +32,7 @@ const RAW_CATALOG = [
     title: "Atelier Dental",
     niche: "DENTISTRY",
     description:
-      "Modelo premium para odontologia estética — foco em confiança, procedimentos e diferenciação visual.",
+      "Site-conceito para odontologia estética — procedimentos, agendamento e diferenciação visual.",
     features: [
       "Procedimentos",
       "Antes e depois (conceito)",

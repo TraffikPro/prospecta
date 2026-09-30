@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { LeadStage } from "@prisma/client";
-import { Box, HStack, SimpleGrid, Stack, Text } from "@chakra-ui/react";
+import { Box, HStack, Stack, Text } from "@chakra-ui/react";
 
 import { AppEmptyState } from "@/components/ui/app-empty-state";
 import { Button } from "@/components/ui/button";
@@ -34,17 +34,17 @@ export function StageColumn({
   const hasMore = totalCount > leads.length;
 
   return (
-    <Box data-testid={`pipeline-stage-${stage}`}>
-      <Stack gap="3">
+    <Box data-testid={`pipeline-stage-body-${stage}`}>
+      <Stack gap="2">
         {leads.length === 0 ? (
           <AppEmptyState
             variant="compact"
-            title="Nenhum lead nesta etapa."
+            title="Nenhum lead"
             data-testid={`pipeline-stage-empty-${stage}`}
           />
         ) : (
           <>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap="3">
+            <Stack gap="1.5">
               {leads.map((lead) => (
                 <LeadStageCard
                   key={lead.id}
@@ -56,13 +56,13 @@ export function StageColumn({
                   }
                 />
               ))}
-            </SimpleGrid>
+            </Stack>
             {!selected && hasMore ? (
               <Button
                 asChild
                 variant="outline"
                 colorPalette="gray"
-                size="md"
+                size="sm"
                 minH="touch"
                 alignSelf="flex-start"
                 data-testid={`pipeline-show-all-${stage}`}
@@ -75,7 +75,13 @@ export function StageColumn({
             {selected && totalPages > 1 ? (
               <HStack justify="space-between" gap="3" flexWrap="wrap">
                 {page > 1 ? (
-                  <Button asChild variant="outline" colorPalette="gray" size="sm">
+                  <Button
+                    asChild
+                    variant="outline"
+                    colorPalette="gray"
+                    size="sm"
+                    minH="touch"
+                  >
                     <Link href={`/app/pipeline?stage=${stage}&page=${page - 1}`}>
                       Anterior
                     </Link>
@@ -87,7 +93,13 @@ export function StageColumn({
                   Página {page} de {totalPages}
                 </Text>
                 {page < totalPages ? (
-                  <Button asChild variant="outline" colorPalette="gray" size="sm">
+                  <Button
+                    asChild
+                    variant="outline"
+                    colorPalette="gray"
+                    size="sm"
+                    minH="touch"
+                  >
                     <Link href={`/app/pipeline?stage=${stage}&page=${page + 1}`}>
                       Próxima
                     </Link>

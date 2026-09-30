@@ -19,9 +19,9 @@ export const portfolioModelSchema = z.object({
   features: z.array(z.string().min(1)).min(1),
   /** Public demo path or absolute URL. Relative paths resolve against the app origin. */
   previewUrl: z.string().min(1),
-  /** Optional static cover under /public; cards fall back to accent cover. */
+  /** Optional static cover under /public; cards fall back to typographic cover. */
   coverImage: z.string().optional(),
-  /** Chakra color token key for gradient cover when coverImage is absent. */
+  /** Accent strip on typographic cover when coverImage is absent (not a mesh gradient). */
   coverAccent: z.enum(["teal", "slate", "amber"]).default("teal"),
 });
 

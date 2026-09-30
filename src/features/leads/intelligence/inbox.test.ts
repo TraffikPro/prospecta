@@ -38,6 +38,8 @@ describe("buildIntelligenceInbox", () => {
       id: "1",
       companyName: "Clínica B",
       source: "GOOGLE_PLACES" as const,
+      stage: "CONTACTED" as const,
+      owner: { name: "Ana" },
       intelligence: {
         score: 80,
         signals: ["HIGH_RATING"],
@@ -48,6 +50,8 @@ describe("buildIntelligenceInbox", () => {
       id: "2",
       companyName: "Clínica A",
       source: "GOOGLE_PLACES" as const,
+      stage: "NEW" as const,
+      owner: { name: "Ana" },
       intelligence: {
         score: 90,
         signals: ["NO_WEBSITE"],
@@ -59,6 +63,8 @@ describe("buildIntelligenceInbox", () => {
       id: "3",
       companyName: "Manual Co",
       source: "MANUAL" as const,
+      stage: "QUALIFIED" as const,
+      owner: { name: "Bruno" },
       intelligence: {
         score: 55,
         qualification: "MEDIUM" as const,
@@ -69,12 +75,14 @@ describe("buildIntelligenceInbox", () => {
       id: "4",
       companyName: "Sem score",
       source: "GOOGLE_PLACES" as const,
+      stage: "NEW" as const,
       intelligence: { signals: ["NO_WEBSITE"] },
     },
     {
       id: "5",
       companyName: "Vazio",
       source: "GOOGLE_PLACES" as const,
+      stage: "NEW" as const,
       intelligence: null,
     },
   ];
@@ -88,6 +96,8 @@ describe("buildIntelligenceInbox", () => {
       items.map((item) => item.companyName),
       ["Clínica A", "Clínica B", "Manual Co"],
     );
+    assert.equal(items[0]?.stage, "NEW");
+    assert.equal(items[0]?.ownerName, "Ana");
   });
 
   it("filters by HIGH and GOOGLE_PLACES", () => {

@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  APP_NAV_ITEMS,
+  MOBILE_PRIMARY_NAV,
   isNavPathActive,
   morePageSections,
   profileRoleLabel,
@@ -45,7 +47,7 @@ describe("visibleNavItems", () => {
     );
   });
 
-  it("shows acquisition to opted-in MEMBER without Equipe", () => {
+  it("hides Aquisição from opted-in MEMBER (FREE_PULL is ADMIN-only)", () => {
     const items = visibleNavItems(memberAcquisition);
     assert.deepEqual(
       items.map((item) => item.id),
@@ -56,12 +58,11 @@ describe("visibleNavItems", () => {
         "pipeline",
         "leads",
         "portfolio",
-        "acquisition",
       ],
     );
     assert.equal(
-      items.find((item) => item.id === "acquisition")?.group,
-      "commercial",
+      items.some((item) => item.id === "acquisition"),
+      false,
     );
   });
 });
@@ -120,5 +121,18 @@ describe("profileRoleLabel", () => {
   it("uses product language for software roles", () => {
     assert.equal(profileRoleLabel("ADMIN"), "Administrador");
     assert.equal(profileRoleLabel("MEMBER"), "Membro");
+  });
+});
+
+describe("Prioridades naming (F4)", () => {
+  it("exposes Prioridades as the user-facing label for /app/intelligence", () => {
+    const item = APP_NAV_ITEMS.find((nav) => nav.id === "intelligence");
+    assert.equal(item?.href, "/app/intelligence");
+    assert.equal(item?.label, "Prioridades");
+    assert.equal(
+      MOBILE_PRIMARY_NAV.find((nav) => nav.href === "/app/intelligence")
+        ?.label,
+      "Prioridades",
+    );
   });
 });

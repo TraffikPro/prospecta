@@ -24,10 +24,10 @@ async function noHorizontalOverflow(page: {
   );
 }
 
-test.describe("portfolio commercial v1 desktop", () => {
+test.describe("demos commercial gallery (F13) desktop", () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test("catalog, absolute copy, public demos, session retained", async ({
+  test("catalog, typographic covers, absolute copy, public demos", async ({
     page,
     context,
     baseURL,
@@ -40,20 +40,29 @@ test.describe("portfolio commercial v1 desktop", () => {
     await page.goto("/app/portfolio");
 
     await expect(
-      page.getByRole("heading", { name: "Portfólio comercial", exact: true }),
+      page.getByRole("heading", { name: "Demos comerciais", exact: true }),
     ).toBeVisible();
     await expect(page.getByTestId("portfolio-disclaimer")).toBeVisible();
     await expect(page.getByTestId("portfolio-grid")).toBeVisible();
+    await expect(page.getByText("Portfólio", { exact: true })).toHaveCount(0);
 
     const cards = page.getByTestId("portfolio-card");
     await expect(cards).toHaveCount(3);
 
     for (const card of await cards.all()) {
-      await expect(card.getByTestId("portfolio-card-disclaimer")).toBeVisible();
+      await expect(card.getByTestId("portfolio-cover-accent")).toHaveAttribute(
+        "data-cover-kind",
+        "typographic",
+      );
       await expect(card.getByTestId("portfolio-demo-label")).toContainText(
         "DevFlow Labs",
       );
+      await expect(card.getByTestId("portfolio-open-demo")).toContainText(
+        "Abrir demo",
+      );
       await expect(card).not.toContainText(FORBIDDEN_CLAIM);
+      // Page-level disclaimer only — not repeated inside each card.
+      await expect(card.getByTestId("portfolio-card-disclaimer")).toHaveCount(0);
     }
 
     const firstCard = cards.first();
@@ -65,7 +74,6 @@ test.describe("portfolio commercial v1 desktop", () => {
     const copied = await page.evaluate(() => navigator.clipboard.readText());
     expect(copied).toMatch(/^https?:\/\/.+/);
     expect(copied).toMatch(/\/portfolio\/odontologia-[a-z-]+\/index\.html$/);
-    // Prefer canonical NEXT_PUBLIC_APP_URL (production) when the client bundle has it.
     const allowedBases = [
       process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, ""),
       baseURL ? new URL(baseURL).origin : undefined,
@@ -92,22 +100,37 @@ test.describe("portfolio commercial v1 desktop", () => {
 
     await page.goto("/app/portfolio");
     await expect(
-      page.getByRole("heading", { name: "Portfólio comercial", exact: true }),
+      page.getByRole("heading", { name: "Demos comerciais", exact: true }),
     ).toBeVisible();
     await expect(page).not.toHaveURL(/\/login/);
   });
 });
 
-test.describe("portfolio commercial v1 mobile", () => {
+test.describe("demos commercial gallery (F13) medium", () => {
+  test.use({ viewport: { width: 768, height: 900 } });
+
+  test("two-column friendly grid without Portfólio naming", async ({
+    page,
+  }) => {
+    await login(page, memberEmail, memberPassword);
+    await page.goto("/app/portfolio");
+    await expect(page.getByTestId("portfolio-grid")).toBeVisible();
+    await expect(page.getByTestId("portfolio-card")).toHaveCount(3);
+    await expect(page.getByText("Portfólio", { exact: true })).toHaveCount(0);
+    expect(await noHorizontalOverflow(page)).toBe(true);
+  });
+});
+
+test.describe("demos commercial gallery (F13) mobile", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
   test("reachable from Mais without overflow", async ({ page }) => {
     await login(page, memberEmail, memberPassword);
     await page.goto("/app/more");
-    await page.getByRole("link", { name: "Portfólio", exact: true }).click();
+    await page.getByRole("link", { name: "Demos", exact: true }).click();
     await expect(page).toHaveURL(/\/app\/portfolio/);
     await expect(
-      page.getByRole("heading", { name: "Portfólio comercial", exact: true }),
+      page.getByRole("heading", { name: "Demos comerciais", exact: true }),
     ).toBeVisible();
     await expect(page.getByTestId("mobile-nav-more")).toBeVisible();
 
@@ -115,6 +138,9 @@ test.describe("portfolio commercial v1 mobile", () => {
 
     const cards = page.getByTestId("portfolio-card");
     await expect(cards).toHaveCount(3);
-    await expect(cards.first().getByTestId("portfolio-card-disclaimer")).toBeVisible();
+    await expect(cards.first().getByTestId("portfolio-open-demo")).toBeVisible();
+    await expect(
+      cards.first().getByTestId("portfolio-cover-accent"),
+    ).toHaveAttribute("data-cover-kind", "typographic");
   });
 });

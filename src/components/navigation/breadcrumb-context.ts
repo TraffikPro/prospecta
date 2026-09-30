@@ -28,7 +28,7 @@ export function originLabel(origin: LeadNavOrigin): string {
     case "my-leads":
       return "Minha fila";
     case "intelligence":
-      return "Inteligência";
+      return "Prioridades";
     case "pipeline":
       return "Pipeline";
     case "leads":

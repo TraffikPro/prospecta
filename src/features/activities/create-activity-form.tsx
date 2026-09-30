@@ -7,7 +7,6 @@ import { useActionState, useEffect, useMemo, useState } from "react";
 
 import {
   Alert,
-  Card,
   Field,
   Heading,
   Input,
@@ -72,132 +71,137 @@ export function CreateActivityForm({
   }, [state.ok, router]);
 
   return (
-    <Card.Root variant="outline" borderRadius="card">
-      <Card.Body>
-        <form action={formAction}>
-          <Stack gap="4" maxW={{ base: "full", lg: "lg" }} w="full">
-            <input type="hidden" name="leadId" value={leadId} />
+    <Stack
+      borderWidth="1px"
+      borderColor="border"
+      borderRadius="surface"
+      bg="bg"
+      px="4"
+      py="4"
+    >
+      <form action={formAction}>
+        <Stack gap="4" maxW={{ base: "full", lg: "lg" }} w="full">
+          <input type="hidden" name="leadId" value={leadId} />
 
-            <Heading as="h2" size="md" id="register-activity-heading">
-              Registrar atividade
-            </Heading>
+          <Heading as="h2" textStyle="sectionTitle" id="register-activity-heading">
+            Registrar atividade
+          </Heading>
 
+          <Field.Root required>
+            <Field.Label>Tipo</Field.Label>
+            <NativeSelect.Root size="lg">
+              <NativeSelect.Field
+                name="type"
+                value={type}
+                minH="touch"
+                onChange={(event) =>
+                  setType(event.target.value as "WHATSAPP" | "EMAIL" | "NOTE")
+                }
+              >
+                <option value="WHATSAPP">WhatsApp</option>
+                <option value="EMAIL">E-mail</option>
+                <option value="NOTE">Nota</option>
+              </NativeSelect.Field>
+              <NativeSelect.Indicator />
+            </NativeSelect.Root>
+          </Field.Root>
+
+          {type !== "NOTE" ? (
             <Field.Root required>
-              <Field.Label>Tipo</Field.Label>
+              <Field.Label>Resultado</Field.Label>
               <NativeSelect.Root size="lg">
                 <NativeSelect.Field
-                  name="type"
-                  value={type}
-                  minH="11"
+                  name="outcome"
+                  value={outcome}
+                  minH="touch"
                   onChange={(event) =>
-                    setType(event.target.value as "WHATSAPP" | "EMAIL" | "NOTE")
+                    setOutcome(event.target.value as ActivityOutcome)
                   }
                 >
-                  <option value="WHATSAPP">WhatsApp</option>
-                  <option value="EMAIL">E-mail</option>
-                  <option value="NOTE">Nota</option>
+                  {outcomes.map((value) => (
+                    <option key={value} value={value}>
+                      {activityOutcomeLabels[value]}
+                    </option>
+                  ))}
                 </NativeSelect.Field>
                 <NativeSelect.Indicator />
               </NativeSelect.Root>
             </Field.Root>
+          ) : null}
 
-            {type !== "NOTE" ? (
-              <Field.Root required>
-                <Field.Label>Resultado</Field.Label>
-                <NativeSelect.Root size="lg">
-                  <NativeSelect.Field
-                    name="outcome"
-                    value={outcome}
-                    minH="11"
-                    onChange={(event) =>
-                      setOutcome(event.target.value as ActivityOutcome)
-                    }
-                  >
-                    {outcomes.map((value) => (
-                      <option key={value} value={value}>
-                        {activityOutcomeLabels[value]}
-                      </option>
-                    ))}
-                  </NativeSelect.Field>
-                  <NativeSelect.Indicator />
-                </NativeSelect.Root>
-              </Field.Root>
-            ) : null}
+          <Field.Root required>
+            <Field.Label>Descrição</Field.Label>
+            <Textarea
+              name="body"
+              required
+              rows={4}
+              minH="28"
+              fontSize="md"
+              placeholder="O que aconteceu no contato?"
+              value={body}
+              onChange={(event) => setBody(event.target.value)}
+            />
+          </Field.Root>
 
-            <Field.Root required>
-              <Field.Label>Descrição</Field.Label>
-              <Textarea
-                name="body"
-                required
-                rows={4}
-                minH="28"
-                fontSize="md"
-                placeholder="O que aconteceu no contato?"
-                value={body}
-                onChange={(event) => setBody(event.target.value)}
-              />
-            </Field.Root>
+          <Field.Root required={requiresFollowUp}>
+            <Field.Label>
+              Próximo passo (data)
+              {requiresFollowUp ? " — obrigatório" : " (opcional)"}
+            </Field.Label>
+            <Input
+              name="nextFollowUpAt"
+              type="datetime-local"
+              required={requiresFollowUp}
+              minH="touch"
+              fontSize="md"
+              value={nextFollowUpAt}
+              onChange={(event) => setNextFollowUpAt(event.target.value)}
+            />
+          </Field.Root>
 
-            <Field.Root required={requiresFollowUp}>
-              <Field.Label>
-                Próximo passo (data)
-                {requiresFollowUp ? " — obrigatório" : " (opcional)"}
-              </Field.Label>
-              <Input
-                name="nextFollowUpAt"
-                type="datetime-local"
-                required={requiresFollowUp}
-                minH="11"
-                fontSize="md"
-                value={nextFollowUpAt}
-                onChange={(event) => setNextFollowUpAt(event.target.value)}
-              />
-            </Field.Root>
-
-            {state.error ? (
-              <Alert.Root status="error" variant="subtle" role="alert">
-                <Alert.Indicator />
-                <Alert.Content>
-                  <Alert.Description>{state.error}</Alert.Description>
-                </Alert.Content>
-              </Alert.Root>
-            ) : null}
-            {state.ok ? (
-              <Button
-                asChild
-                variant="outline"
-                minH="11"
-                width={{ base: "full", md: "fit-content" }}
-                data-testid="activity-success-back"
-              >
-                <NextLink href={returnHref}>Voltar</NextLink>
-              </Button>
-            ) : null}
-
-            <Stack
-              gap="2"
-              position={{ base: "sticky", md: "static" }}
-              bottom={{ base: "4", md: "auto" }}
-              bg={{ base: "bg", md: "transparent" }}
-              py={{ base: "2", md: "0" }}
-              mt="2"
-              zIndex="1"
-              borderTopWidth={{ base: "1px", md: "0" }}
-              borderColor="border"
+          {state.error ? (
+            <Alert.Root status="error" variant="subtle" role="alert">
+              <Alert.Indicator />
+              <Alert.Content>
+                <Alert.Description>{state.error}</Alert.Description>
+              </Alert.Content>
+            </Alert.Root>
+          ) : null}
+          {state.ok ? (
+            <Button
+              asChild
+              variant="outline"
+              minH="touch"
+              width={{ base: "full", md: "fit-content" }}
+              data-testid="activity-success-back"
             >
-              <Button
-                type="submit"
-                width={{ base: "full", md: "fit-content" }}
-                minH="11"
-                loading={pending}
-                disabled={pending}
-              >
-                {pending ? "Salvando…" : "Salvar atividade"}
-              </Button>
-            </Stack>
+              <NextLink href={returnHref}>Voltar</NextLink>
+            </Button>
+          ) : null}
+
+          <Stack
+            gap="2"
+            position={{ base: "sticky", md: "static" }}
+            bottom={{ base: "4", md: "auto" }}
+            bg={{ base: "bg", md: "transparent" }}
+            py={{ base: "2", md: "0" }}
+            mt="2"
+            zIndex="1"
+            borderTopWidth={{ base: "1px", md: "0" }}
+            borderColor="border"
+          >
+            <Button
+              type="submit"
+              width={{ base: "full", md: "fit-content" }}
+              minH="touch"
+              loading={pending}
+              disabled={pending}
+            >
+              {pending ? "Salvando…" : "Salvar atividade"}
+            </Button>
           </Stack>
-        </form>
-      </Card.Body>
-    </Card.Root>
+        </Stack>
+      </form>
+    </Stack>
   );
 }

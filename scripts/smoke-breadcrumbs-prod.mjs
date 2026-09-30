@@ -133,7 +133,7 @@ try {
     // Pipeline → lead → back
     await page.goto(`${baseURL}/app/pipeline`);
     const pipelineLink = page
-      .getByTestId("pipeline-desktop")
+      .getByTestId("pipeline-board")
       .getByRole("link", { name: "Abrir lead" })
       .first();
     if ((await pipelineLink.count()) === 0) {

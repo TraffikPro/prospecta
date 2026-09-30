@@ -99,7 +99,7 @@ export function AppShell({
             _focusVisible={{
               outlineWidth: "2px",
               outlineStyle: "solid",
-              outlineColor: "blue.500",
+              outlineColor: "brand.focusRing",
               outlineOffset: "2px",
             }}
           >

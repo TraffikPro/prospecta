@@ -1,4 +1,4 @@
-import { Heading, Stack } from "@chakra-ui/react";
+import { Stack } from "@chakra-ui/react";
 import { forbidden, notFound, redirect } from "next/navigation";
 
 import { ActivityTimeline } from "@/features/activities/activity-timeline";
@@ -107,17 +107,20 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
   });
 
   return (
-    <PageFrame width="detailWide" gap={{ base: "6", md: "8" }}>
+    <PageFrame width="detailWide" gap={{ base: "5", md: "6" }}>
       <ContextualNav items={crumbItems} />
 
       <LeadInfoCard
         companyName={lead.companyName}
+        contactName={lead.contactName}
         email={lead.email}
         phone={lead.phone}
         stage={lead.stage}
         source={lead.source}
         ownerName={lead.owner.name}
         ownerEmail={lead.owner.email}
+        lostReason={lead.lostReason}
+        intelligence={intelligence}
       />
 
       <LeadDetailLayout
@@ -129,31 +132,13 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
           />
         }
         contact={<LeadContactActions phone={lead.phone} email={lead.email} />}
-        intelligence={
-          <Stack gap={{ base: "6", lg: "8" }}>
-            <CommercialPlaybookSection view={playbook} />
-            {intelligence ? (
-              <section aria-labelledby="intelligence-heading">
-                <Heading
-                  as="h2"
-                  id="intelligence-heading"
-                  position="absolute"
-                  width="1px"
-                  height="1px"
-                  padding="0"
-                  margin="-1px"
-                  overflow="hidden"
-                  clipPath="inset(50%)"
-                  whiteSpace="nowrap"
-                  borderWidth="0"
-                >
-                  Inteligência do lead
-                </Heading>
-                <IntelligenceCard intelligence={intelligence} />
-              </section>
-            ) : (
-              <LeadIntelligenceFallback source={lead.source} />
-            )}
+        history={
+          <Stack as="section" gap="3" aria-labelledby="history-heading">
+            <SectionHeading id="history-heading">Histórico</SectionHeading>
+            <ActivityTimeline
+              activities={activities}
+              nextFollowUpAt={lead.nextFollowUpAt}
+            />
           </Stack>
         }
         activity={
@@ -169,13 +154,14 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
             <CreateActivityForm leadId={lead.id} returnHref={returnHref} />
           </section>
         }
-        history={
-          <Stack as="section" gap="3" aria-labelledby="history-heading">
-            <SectionHeading id="history-heading">Histórico</SectionHeading>
-            <ActivityTimeline
-              activities={activities}
-              nextFollowUpAt={lead.nextFollowUpAt}
-            />
+        intelligence={
+          <Stack gap={{ base: "5", lg: "6" }}>
+            {intelligence ? (
+              <IntelligenceCard intelligence={intelligence} />
+            ) : (
+              <LeadIntelligenceFallback source={lead.source} />
+            )}
+            <CommercialPlaybookSection view={playbook} />
           </Stack>
         }
         stage={

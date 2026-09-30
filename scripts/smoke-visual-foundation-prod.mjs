@@ -48,10 +48,10 @@ async function main() {
       pass("desktop-member-my-leads");
 
       await page.goto(`${baseURL}/app/pipeline`);
-      await expect(page.getByTestId("pipeline-desktop")).toBeVisible();
-      await expect(page.getByTestId("pipeline-desktop-stage-NEW")).toBeVisible();
-      await expect(page.getByTestId("pipeline-desktop-stage-LOST")).toBeVisible();
-      const box = await page.getByTestId("pipeline-desktop").boundingBox();
+      await expect(page.getByTestId("pipeline-board")).toBeVisible();
+      await expect(page.getByTestId("pipeline-stage-NEW")).toBeVisible();
+      await expect(page.getByTestId("pipeline-stage-LOST")).toBeVisible();
+      const box = await page.getByTestId("pipeline-board").boundingBox();
       if (!box || box.y >= 900) throw new Error("pipeline not in first fold");
       pass("desktop-pipeline-first-fold");
     } catch (e) {
@@ -74,8 +74,8 @@ async function main() {
       pass("mobile-my-leads-no-overflow");
 
       await page.goto(`${baseURL}/app/pipeline`);
-      await expect(page.getByTestId("pipeline-mobile")).toBeVisible();
-      await expect(page.getByTestId("pipeline-desktop")).toBeHidden();
+      await expect(page.getByTestId("pipeline-board")).toBeVisible();
+      await expect(page.getByTestId("pipeline-stage-NEW")).toBeVisible();
       const overflow2 = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
       if (overflow2) throw new Error("horizontal overflow on pipeline");
       pass("mobile-pipeline-no-overflow");

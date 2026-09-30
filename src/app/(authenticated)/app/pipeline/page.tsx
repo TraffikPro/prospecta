@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Link as ChakraLink } from "@chakra-ui/react";
+import { Link as ChakraLink, Text } from "@chakra-ui/react";
 
 import { PageFrame } from "@/components/layout/page-frame";
 import { PageHeading } from "@/components/layout/page-heading";
@@ -43,11 +43,11 @@ export default async function PipelinePage({ searchParams }: PageProps) {
   );
 
   return (
-    <PageFrame width="list" gap="6">
+    <PageFrame width="list" gap="5">
       <ContextualNav items={[{ label: "Pipeline" }]} />
       <PageHeading
         title="Pipeline"
-        meta="Etapas recolhíveis — abra a que precisa e use Ver todos quando houver muitos leads."
+        meta="Onde estão as oportunidades no ciclo comercial — por etapa, sem misturar com a fila do dia."
         actions={
           <ChakraLink
             asChild
@@ -57,7 +57,7 @@ export default async function PipelinePage({ searchParams }: PageProps) {
             display="inline-flex"
             alignItems="center"
           >
-            <Link href="/app/leads">Ver lista</Link>
+            <Link href="/app/leads">Ver inventário</Link>
           </ChakraLink>
         }
       />
@@ -66,7 +66,7 @@ export default async function PipelinePage({ searchParams }: PageProps) {
         <AppEmptyState
           data-testid="pipeline-empty"
           title="Nenhum lead no pipeline."
-          description="Cadastre um lead ou sincronize oportunidades para começar a mover etapas."
+          description="Cadastre um lead para começar a acompanhar as etapas comerciais."
           action={
             <Button asChild size="md" minH="touch">
               <Link href="/app/leads/new">Cadastrar lead</Link>
@@ -74,13 +74,22 @@ export default async function PipelinePage({ searchParams }: PageProps) {
           }
         />
       ) : (
-        <PipelineBoard
-          grouped={view.grouped}
-          counts={view.counts}
-          selectedStage={view.selectedStage}
-          page={view.page}
-          totalPages={view.totalPages}
-        />
+        <>
+          <Text
+            fontSize="sm"
+            color="fg.muted"
+            data-testid="pipeline-total-count"
+          >
+            {totalLeads === 1 ? "1 lead" : `${totalLeads} leads`} no ciclo
+          </Text>
+          <PipelineBoard
+            grouped={view.grouped}
+            counts={view.counts}
+            selectedStage={view.selectedStage}
+            page={view.page}
+            totalPages={view.totalPages}
+          />
+        </>
       )}
     </PageFrame>
   );

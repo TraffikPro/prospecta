@@ -27,6 +27,11 @@ function formatFollowUp(value: Date | string): string {
   }).format(date);
 }
 
+/**
+ * Stage-section overview (not Kanban / DnD).
+ * Single DOM tree for all breakpoints — avoids duplicate accessible content
+ * and ambiguous pipeline-* testids from CSS-hidden twins.
+ */
 export function PipelineBoard({
   grouped,
   counts,
@@ -35,77 +40,37 @@ export function PipelineBoard({
   totalPages,
 }: PipelineBoardProps) {
   return (
-    <>
-      <Box display={{ base: "none", md: "block" }} data-testid="pipeline-desktop">
-        <Accordion.Root
-          key={selectedStage}
-          collapsible
-          multiple={false}
-          defaultValue={[selectedStage]}
-        >
-          <Stack gap="2">
-            {LEAD_STAGE_ORDER.map((stage) => {
-              const leads = grouped[stage];
-              return (
-                <Accordion.Item
-                  key={stage}
-                  value={stage}
-                  borderWidth="1px"
-                  borderColor="border"
-                  borderRadius="card"
-                  bg="bg"
-                  px="3"
-                  data-testid={`pipeline-desktop-stage-${stage}`}
-                >
-                  <Accordion.ItemTrigger minH="touch" py="3">
-                    <Box flex="1" textAlign="left">
-                      <StageBadge stage={stage} count={counts[stage]} />
-                    </Box>
-                    <Accordion.ItemIndicator />
-                  </Accordion.ItemTrigger>
-                  <Accordion.ItemContent>
-                    <Accordion.ItemBody pb="4">
-                      <StageColumn
-                        stage={stage}
-                        leads={leads}
-                        totalCount={counts[stage]}
-                        selected={stage === selectedStage}
-                        page={stage === selectedStage ? page : 1}
-                        totalPages={stage === selectedStage ? totalPages : 1}
-                        formatFollowUp={formatFollowUp}
-                      />
-                    </Accordion.ItemBody>
-                  </Accordion.ItemContent>
-                </Accordion.Item>
-              );
-            })}
-          </Stack>
-        </Accordion.Root>
-      </Box>
-
-      <Box display={{ base: "block", md: "none" }} data-testid="pipeline-mobile">
-        <Accordion.Root
-          key={selectedStage}
-          collapsible
-          defaultValue={[selectedStage]}
-          multiple={false}
-        >
+    <Box data-testid="pipeline-board">
+      <Accordion.Root
+        key={selectedStage}
+        collapsible
+        multiple={false}
+        defaultValue={[selectedStage]}
+      >
+        <Stack gap="2">
           {LEAD_STAGE_ORDER.map((stage) => {
             const leads = grouped[stage];
+            const isTerminal = stage === "WON" || stage === "LOST";
             return (
               <Accordion.Item
                 key={stage}
                 value={stage}
-                data-testid={`pipeline-mobile-stage-${stage}`}
+                borderWidth="1px"
+                borderColor="border"
+                borderRadius="surface"
+                bg="bg"
+                px="3"
+                opacity={isTerminal && counts[stage] === 0 ? 0.85 : 1}
+                data-testid={`pipeline-stage-${stage}`}
               >
-                <Accordion.ItemTrigger minH="touch" py="3">
+                <Accordion.ItemTrigger minH="touch" py="2.5">
                   <Box flex="1" textAlign="left">
                     <StageBadge stage={stage} count={counts[stage]} />
                   </Box>
                   <Accordion.ItemIndicator />
                 </Accordion.ItemTrigger>
                 <Accordion.ItemContent>
-                  <Accordion.ItemBody pb="4">
+                  <Accordion.ItemBody pb="3" pt="1">
                     <StageColumn
                       stage={stage}
                       leads={leads}
@@ -120,8 +85,8 @@ export function PipelineBoard({
               </Accordion.Item>
             );
           })}
-        </Accordion.Root>
-      </Box>
-    </>
+        </Stack>
+      </Accordion.Root>
+    </Box>
   );
 }

@@ -49,13 +49,13 @@ test.describe("visual foundation desktop", () => {
     await login(page, memberEmail, memberPassword);
     await page.goto("/app/pipeline");
     await expect(page.getByRole("heading", { name: "Pipeline", exact: true })).toBeVisible();
-    const desktop = page.getByTestId("pipeline-desktop");
-    await expect(desktop).toBeVisible();
-    await expect(desktop.getByTestId("pipeline-desktop-stage-NEW")).toBeVisible();
-    await expect(desktop.getByTestId("pipeline-desktop-stage-MEETING")).toBeVisible();
-    await expect(desktop.getByTestId("pipeline-desktop-stage-LOST")).toBeVisible();
+    const board = page.getByTestId("pipeline-board");
+    await expect(board).toBeVisible();
+    await expect(page.getByTestId("pipeline-stage-NEW")).toBeVisible();
+    await expect(page.getByTestId("pipeline-stage-MEETING")).toBeVisible();
+    await expect(page.getByTestId("pipeline-stage-LOST")).toBeVisible();
 
-    const foldBox = await desktop.boundingBox();
+    const foldBox = await board.boundingBox();
     expect(foldBox).toBeTruthy();
     // Stage headers must fit the first viewport without needing a long scroll hunt.
     expect(foldBox!.y).toBeLessThan(900);
@@ -85,7 +85,7 @@ test.describe("visual foundation mobile critical", () => {
   }) => {
     await login(page, memberEmail, memberPassword);
     await page.goto("/app/my-leads");
-    await expect(page.getByRole("heading", { name: "Minha operação" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Minha fila" })).toBeVisible();
     await expect(page.getByTestId("mobile-nav-my-leads")).toBeVisible();
     await expect(page.getByTestId("mobile-nav-my-leads")).toContainText("Fila");
 
@@ -99,8 +99,7 @@ test.describe("visual foundation mobile critical", () => {
   test("pipeline mobile accordion remains available", async ({ page }) => {
     await login(page, memberEmail, memberPassword);
     await page.goto("/app/pipeline");
-    await expect(page.getByTestId("pipeline-mobile")).toBeVisible();
-    await expect(page.getByTestId("pipeline-desktop")).toBeHidden();
-    await expect(page.getByTestId("pipeline-mobile-stage-NEW")).toBeVisible();
+    await expect(page.getByTestId("pipeline-board")).toBeVisible();
+    await expect(page.getByTestId("pipeline-stage-NEW")).toBeVisible();
   });
 });

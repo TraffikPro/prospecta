@@ -29,12 +29,18 @@ import {
   type MyQueueView,
 } from "@/features/leads/my-queue";
 import {
+  PIPELINE_PAGE_SIZE,
+  PIPELINE_STAGE_PREVIEW_SIZE,
+} from "@/features/pipeline/pipeline.constants";
+import {
   createLead as createLeadRecord,
+  countLeadsInventory,
   countPipelineLeadsByStage,
   findDuplicate,
   findLeadById,
   findLeadBySourceExternalId,
   listLeads,
+  listLeadsInventory,
   listLeadsForOwnerQueue,
   listPipelineLeadsPage,
   listLeadsScoped,
@@ -42,12 +48,17 @@ import {
   type PipelineLead,
   type LeadWithOwner,
 } from "@/server/repositories/lead.repository";
+import { LIST_PAGE_SIZE, clampPage } from "@/lib/pagination";
 import {
   assertCanAccessLead,
   duplicateLeadIdForActor,
   leadListScopeForViewer,
   type ActorRef,
 } from "@/server/auth/lead-access";
+import {
+  buildLeadInventoryWhere,
+  type LeadInventoryFilters,
+} from "@/features/leads/lead-inventory";
 import type { SessionUser } from "@/server/auth/types";
 
 export type CreateLeadCommand = {
@@ -121,35 +132,71 @@ export async function getLeadById(id: string): Promise<LeadWithOwner | null> {
   return findLeadById(id);
 }
 
-export async function getLeads(viewer: SessionUser): Promise<LeadWithOwner[]> {
+export type LeadInventoryPage = {
+  leads: LeadWithOwner[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+};
+
+export async function getLeads(
+  viewer: SessionUser,
+  filters?: LeadInventoryFilters,
+): Promise<LeadInventoryPage> {
   const scope = leadListScopeForViewer(viewer);
-  if (scope.access === "owner") {
-    return listLeadsScoped({ ownerId: scope.ownerId });
-  }
-  return listLeads();
+  const effective: LeadInventoryFilters = filters ?? {
+    q: "",
+    stage: "ALL",
+    ownerId: null,
+    page: 1,
+  };
+  const where = buildLeadInventoryWhere({ scope, filters: effective });
+  const total = await countLeadsInventory(where);
+  const { page, totalPages, skip, take } = clampPage(
+    effective.page,
+    total,
+    LIST_PAGE_SIZE,
+  );
+  const leads = await listLeadsInventory(where, { skip, take });
+  return {
+    leads,
+    total,
+    page,
+    pageSize: LIST_PAGE_SIZE,
+    totalPages,
+  };
 }
 
 /**
  * Operational queue for one owner.
- * Loads owned active leads once, then applies filter/sort on the server
+ * Loads owned active leads once, then applies filter/sort/projection on the server
  * (derived buckets need Activity + nextFollowUpAt — not a pure Prisma WHERE).
  */
 export async function getMyQueueForOwner(
   ownerId: string,
-  filter?: MyQueueFilter,
+  options: { filter?: MyQueueFilter; page?: number } = {},
 ): Promise<MyQueueView> {
   const leads = await listLeadsForOwnerQueue(ownerId);
-  return buildMyQueue(leads, { filter });
+  return buildMyQueue(leads, {
+    filter: options.filter,
+    page: options.page,
+  });
 }
 
 export type IntelligenceInboxResult = {
   items: IntelligenceInboxLead[];
   counts: ReturnType<typeof countByQualification>;
+  totalMatching: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
 };
 
 export async function getIntelligenceInbox(
   filters: IntelligenceInboxFilters,
   viewer: SessionUser,
+  options: { page?: number } = {},
 ): Promise<IntelligenceInboxResult> {
   const scope = leadListScopeForViewer(viewer);
   const leads = await listLeadsWithIntelligence(
@@ -161,10 +208,20 @@ export async function getIntelligenceInbox(
     qualification: "ALL",
     source: "ALL",
   });
-  const items = buildIntelligenceInbox(leads, filters);
+  const filtered = buildIntelligenceInbox(leads, filters);
+  const { page, totalPages, skip, take } = clampPage(
+    options.page ?? 1,
+    filtered.length,
+    LIST_PAGE_SIZE,
+  );
+  const items = filtered.slice(skip, skip + take);
   return {
     items,
     counts: countByQualification(allItems),
+    totalMatching: filtered.length,
+    page,
+    pageSize: LIST_PAGE_SIZE,
+    totalPages,
   };
 }
 
@@ -188,8 +245,7 @@ export async function getLeadsGroupedByStage(
   return grouped;
 }
 
-export const PIPELINE_PAGE_SIZE = 25;
-export const PIPELINE_STAGE_PREVIEW_SIZE = 3;
+export { PIPELINE_PAGE_SIZE, PIPELINE_STAGE_PREVIEW_SIZE } from "@/features/pipeline/pipeline.constants";
 
 export type PipelineView = {
   grouped: Record<LeadStage, PipelineLead[]>;

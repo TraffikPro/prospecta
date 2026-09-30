@@ -1,28 +1,27 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Stack, Text } from "@chakra-ui/react";
 
 import type { PortfolioModel } from "../portfolio.schema";
-
-const ACCENT_GRADIENT: Record<
-  NonNullable<PortfolioModel["coverAccent"]>,
-  string
-> = {
-  teal: "linear-gradient(135deg, #0f766e 0%, #99f6e4 100%)",
-  slate: "linear-gradient(135deg, #1e293b 0%, #94a3b8 100%)",
-  amber: "linear-gradient(135deg, #92400e 0%, #fcd34d 100%)",
-};
+import { portfolioNicheLabels } from "../portfolio.labels";
 
 type PortfolioCoverProps = {
   model: PortfolioModel;
 };
 
+/**
+ * Gallery preview surface for a Demo tile.
+ * Prefers a real coverImage when published; otherwise a restrained typographic
+ * cover (no decorative mesh gradients — F13).
+ */
 export function PortfolioCover({ model }: PortfolioCoverProps) {
   if (model.coverImage) {
     return (
       <Box
         w="100%"
-        h="140px"
-        borderTopRadius="card"
+        h="148px"
+        borderTopRadius="surface"
         overflow="hidden"
+        borderBottomWidth="1px"
+        borderColor="border"
         data-testid="portfolio-cover-image"
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- catalog cover paths are static public assets */}
@@ -39,24 +38,41 @@ export function PortfolioCover({ model }: PortfolioCoverProps) {
 
   return (
     <Box
-      h="140px"
+      h="132px"
       w="100%"
-      borderTopRadius="card"
-      backgroundImage={ACCENT_GRADIENT[accent]}
-      display="flex"
-      alignItems="flex-end"
-      px="4"
-      py="3"
+      borderTopRadius="surface"
+      bg="bg.muted"
+      borderBottomWidth="1px"
+      borderColor="border"
+      position="relative"
+      overflow="hidden"
       data-testid="portfolio-cover-accent"
+      data-cover-kind="typographic"
+      data-cover-accent={accent}
     >
-      <Text
-        color="white"
-        fontWeight="semibold"
-        fontSize="lg"
-        textShadow="0 1px 2px rgba(0,0,0,0.35)"
-      >
-        {model.title}
-      </Text>
+      <Box
+        position="absolute"
+        left="0"
+        top="0"
+        bottom="0"
+        w="1"
+        bg={
+          accent === "slate"
+            ? "gray.fg"
+            : accent === "amber"
+              ? "orange.solid"
+              : "brand.solid"
+        }
+        aria-hidden
+      />
+      <Stack h="full" justify="center" gap="1" px="4" py="3" pl="5">
+        <Text fontSize="xs" fontWeight="medium" color="fg.muted">
+          {portfolioNicheLabels[model.niche]}
+        </Text>
+        <Text fontSize="sm" color="fg.muted">
+          Site-conceito · prévia tipográfica
+        </Text>
+      </Stack>
     </Box>
   );
 }

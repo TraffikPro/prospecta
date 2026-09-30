@@ -10,6 +10,8 @@ export type {
   IntelligenceSourceFilter,
 } from "./inbox";
 export { parseLeadIntelligence } from "./parse-intelligence";
+export { buildPriorityEvidence } from "./priority-evidence";
+export type { PriorityEvidence } from "./priority-evidence";
 export {
   qualificationColorPalette,
   qualificationFromScore,

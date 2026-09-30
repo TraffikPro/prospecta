@@ -30,6 +30,13 @@ const userSelect = {
   weeklyQuota: {
     select: { weeklyTarget: true },
   },
+  _count: {
+    select: {
+      ownedLeads: {
+        where: { stage: { notIn: ["WON", "LOST"] } },
+      },
+    },
+  },
 } satisfies Prisma.UserSelect;
 
 type UserRow = Prisma.UserGetPayload<{ select: typeof userSelect }>;
@@ -48,6 +55,7 @@ function toAdminUserRow(user: UserRow): AdminUserRow {
     isActive: user.isActive,
     canRunAcquisition: user.canRunAcquisition,
     weeklyTarget: user.weeklyQuota?.weeklyTarget ?? null,
+    openOwnedLeads: user._count.ownedLeads,
   };
 }
 

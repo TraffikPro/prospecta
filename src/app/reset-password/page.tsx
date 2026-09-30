@@ -2,6 +2,10 @@ import { Alert, Heading, Stack, Text, Link as ChakraLink } from "@chakra-ui/reac
 import NextLink from "next/link";
 import { redirect } from "next/navigation";
 
+import {
+  RESET_SUBTITLE,
+  RESET_TITLE,
+} from "@/features/auth/auth-entry-copy";
 import { PublicAuthShell } from "@/features/auth/components/public-auth-shell";
 import { ResetPasswordForm } from "@/features/auth/reset-password-form";
 import { postAuthPath } from "@/server/auth/login-redirect";
@@ -31,9 +35,9 @@ export default async function ResetPasswordPage({
       <Stack gap="6">
         <Stack gap="1">
           <Heading as="h1" textStyle="pageTitle">
-            Nova senha
+            {RESET_TITLE}
           </Heading>
-          <Text textStyle="meta">Defina uma nova senha para continuar.</Text>
+          <Text textStyle="meta">{RESET_SUBTITLE}</Text>
         </Stack>
 
         {token ? (

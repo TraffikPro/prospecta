@@ -1,72 +1,58 @@
-import { Box, Card, Flex, Text } from "@chakra-ui/react";
+import { Box, Card, Flex, Stack } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 
-import { AuthBrandPanel } from "./auth-brand-panel";
-import { ProspectaMark } from "./prospecta-mark";
+import { LOGIN_BRAND_CONTEXT } from "@/features/auth/auth-entry-copy";
+
+import { AuthEntryBrand } from "./auth-entry-brand";
 
 type AuthShellProps = {
   children: ReactNode;
 };
 
 /**
- * Login layout shell: desktop brand split + mobile top bar.
- * Validated only on `/login` in this slice — not a global identity layout yet.
+ * Login entry shell — centered form, compact identity, no marketing split.
+ * Form remains the primary visual job; brand establishes product trust only.
  */
 export function AuthShell({ children }: AuthShellProps) {
   return (
-    <Box as="main" minH="100vh" bg="bg.subtle" overflowX="hidden">
-      <Box
-        display="grid"
-        gridTemplateColumns={{ base: "1fr", lg: "55fr 45fr" }}
-        minH="100vh"
+    <Box
+      as="main"
+      minH="100dvh"
+      bg="bg.subtle"
+      overflowX="hidden"
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      px={{ base: "5", md: "8" }}
+      py={{ base: "6", md: "10" }}
+    >
+      <Stack
+        width="full"
+        maxW="400px"
+        gap="6"
+        align="stretch"
+        data-testid="login-auth-shell"
       >
-        <Box display={{ base: "none", lg: "block" }}>
-          <AuthBrandPanel />
-        </Box>
+        <AuthEntryBrand
+          testId="login-brand-panel"
+          context={LOGIN_BRAND_CONTEXT}
+        />
 
-        <Flex direction="column" minH="100vh" bg="bg.subtle">
-          <Flex
-            display={{ base: "flex", lg: "none" }}
-            align="center"
-            gap="2.5"
-            px="6"
-            py="5"
-            bg="brand.950"
-            data-testid="login-mobile-brand-bar"
-          >
-            <ProspectaMark size={32} light />
-            <Text
-              as="span"
-              fontSize="sm"
-              fontWeight="semibold"
-              color="white"
-              lineHeight="short"
-              data-testid="prospecta-wordmark"
-            >
-              Prospecta · por DevFlow Labs
-            </Text>
-          </Flex>
+        <Card.Root
+          width="full"
+          variant="outline"
+          borderRadius="surface"
+          bg="bg"
+        >
+          <Card.Body px={{ base: "5", md: "8" }} py={{ base: "6", md: "8" }}>
+            {children}
+          </Card.Body>
+        </Card.Root>
 
-          <Flex
-            flex="1"
-            align="center"
-            justify="center"
-            px={{ base: "5", lg: "12" }}
-            py={{ base: "8", lg: "10" }}
-          >
-            <Card.Root
-              width="full"
-              maxW="440px"
-              variant="outline"
-              borderRadius="card"
-            >
-              <Card.Body px={{ base: "6", lg: "10" }} py={{ base: "8", lg: "10" }}>
-                {children}
-              </Card.Body>
-            </Card.Root>
-          </Flex>
-        </Flex>
-      </Box>
+        {/* Legacy E2E marker — identity lives in login-brand-panel. */}
+        <Flex display="none" data-testid="login-mobile-brand-bar" aria-hidden />
+      </Stack>
     </Box>
   );
 }

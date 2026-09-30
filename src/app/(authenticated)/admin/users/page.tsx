@@ -27,7 +27,7 @@ export default async function AdminUsersPage() {
   const users = await getAdminUsers();
 
   return (
-    <PageFrame width="list" gap="6">
+    <PageFrame width="list" gap="5">
       <ContextualNav
         items={[
           { label: "Mais", href: "/app/more" },
@@ -36,7 +36,7 @@ export default async function AdminUsersPage() {
       />
       <PageHeading
         title="Equipe"
-        meta="Gerencie operadores, autorização de aquisição e meta semanal da carteira."
+        meta="Quem está na operação, papel e distribuição de responsabilidade comercial."
       />
 
       <UsersTable users={users} />

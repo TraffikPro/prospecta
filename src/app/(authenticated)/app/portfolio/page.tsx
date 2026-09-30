@@ -8,6 +8,10 @@ import { ContextualNav } from "@/components/navigation";
 import { AppEmptyState } from "@/components/ui/app-empty-state";
 import { Button } from "@/components/ui/button";
 import {
+  DEMOS_PAGE_META,
+  DEMOS_PAGE_TITLE,
+} from "@/features/portfolio/demo-presentation";
+import {
   listAvailableNiches,
   PORTFOLIO_CATALOG,
 } from "@/features/portfolio/portfolio.catalog";
@@ -45,12 +49,9 @@ export default async function PortfolioPage({ searchParams }: PageProps) {
   const models = filterPortfolioCatalog(PORTFOLIO_CATALOG, nicheFilter);
 
   return (
-    <PageFrame width="list" gap="6">
-      <ContextualNav items={[{ label: "Portfólio" }]} />
-      <PageHeading
-        title="Portfólio comercial"
-        meta="Escolha um modelo demonstrativo do nicho, copie o link e apresente na conversa."
-      />
+    <PageFrame width="list" gap="5">
+      <ContextualNav items={[{ label: "Demos" }]} />
+      <PageHeading title={DEMOS_PAGE_TITLE} meta={DEMOS_PAGE_META} />
 
       <Text fontSize="sm" color="fg.muted" data-testid="portfolio-disclaimer">
         {PORTFOLIO_DISCLAIMER}
@@ -68,7 +69,13 @@ export default async function PortfolioPage({ searchParams }: PageProps) {
           description="Volte para Todos ou peça a publicação de novos sites-conceito do nicho."
           action={
             nicheFilter !== "ALL" ? (
-              <Button asChild size="md" minH="touch" variant="outline" colorPalette="gray">
+              <Button
+                asChild
+                size="md"
+                minH="touch"
+                variant="outline"
+                colorPalette="gray"
+              >
                 <Link href="/app/portfolio">Ver todos os modelos</Link>
               </Button>
             ) : null
@@ -77,7 +84,7 @@ export default async function PortfolioPage({ searchParams }: PageProps) {
       ) : (
         <SimpleGrid
           columns={{ base: 1, md: 2, xl: 3 }}
-          gap="4"
+          gap={{ base: "4", md: "5" }}
           data-testid="portfolio-grid"
         >
           {models.map((model) => (

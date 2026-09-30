@@ -63,34 +63,21 @@ async function smokePath(browser, label, viewport, path) {
   try {
     await page.goto(`${baseURL}${path}`, { waitUntil: "networkidle" });
     const m = await measure(page);
-    if (viewport.width >= 1024) {
-      record(`${label} brand panel`, m.brandVisible);
-      record(`${label} mobile bar hidden`, !m.mobileBarVisible);
-    } else {
-      record(`${label} brand panel hidden`, !m.brandVisible);
-      record(`${label} mobile bar`, m.mobileBarVisible);
-      record(
-        `${label} single wordmark`,
-        m.visibleWordmarks === 1,
-        `count=${m.visibleWordmarks}`,
-      );
-    }
+    // F12: centered public entry — brand identity visible on all viewports.
+    record(`${label} brand identity`, m.brandVisible);
+    record(`${label} legacy mobile bar hidden`, !m.mobileBarVisible);
+    record(
+      `${label} single wordmark`,
+      m.visibleWordmarks === 1,
+      `count=${m.visibleWordmarks}`,
+    );
     record(`${label} no PipelineGraphic`, !m.hasPipelineLeadLabel);
     record(`${label} no token in body`, !m.tokenInBody);
-    // Desktop targets 440px; mobile is fluid within padded viewport (maxW=440).
-    if (viewport.width >= 1024) {
-      record(
-        `${label} card ~440`,
-        m.cardW >= 400 && m.cardW <= 448,
-        `w=${m.cardW}`,
-      );
-    } else {
-      record(
-        `${label} card fits viewport`,
-        m.cardW > 0 && m.cardW <= viewport.width,
-        `w=${m.cardW}`,
-      );
-    }
+    record(
+      `${label} card fits`,
+      m.cardW > 0 && m.cardW <= Math.min(400, viewport.width),
+      `w=${m.cardW}`,
+    );
     record(`${label} CTA first fold`, m.ctaInFold);
     record(`${label} no overflow`, !m.overflow);
     record(`${label} h1 present`, Boolean(m.h1), m.h1);

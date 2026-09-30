@@ -5,18 +5,20 @@ import { Badge } from "@chakra-ui/react";
 
 import { roleLabels } from "@/features/admin/role.labels";
 
-const ROLE_PALETTE: Record<UserRole, "purple" | "blue"> = {
-  ADMIN: "purple",
-  MEMBER: "blue",
-};
-
 type RoleBadgeProps = {
   role: UserRole;
 };
 
+/** Role is text-first; palette is secondary (not color-only). */
 export function RoleBadge({ role }: RoleBadgeProps) {
   return (
-    <Badge colorPalette={ROLE_PALETTE[role]} variant="subtle" size="sm">
+    <Badge
+      colorPalette="gray"
+      variant={role === "ADMIN" ? "solid" : "subtle"}
+      size="sm"
+      data-testid="admin-user-role"
+      data-role={role}
+    >
       {roleLabels[role]}
     </Badge>
   );

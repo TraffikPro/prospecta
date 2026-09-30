@@ -20,6 +20,8 @@ test.describe("pipeline foundation", () => {
     await page.getByLabel("E-mail").fill(email);
     await page.getByRole("button", { name: "Salvar lead" }).click();
     await page.waitForURL(LEAD_DETAIL_URL);
+    const leadId = page.url().match(/\/app\/leads\/([^/?#]+)/)?.[1];
+    expect(leadId).toBeTruthy();
     await expect(page.getByTestId("lead-stage")).toHaveAttribute(
       "data-stage",
       "NEW",
@@ -30,10 +32,8 @@ test.describe("pipeline foundation", () => {
       page.getByRole("heading", { name: "Pipeline", exact: true }),
     ).toBeVisible();
     await expect(page.getByTestId("pipeline-stage-NEW")).toBeVisible();
-    await page
-      .getByTestId("pipeline-desktop")
-      .getByRole("link", { name: company, exact: true })
-      .click();
+    // NEW stage may paginate (~200+); open by id after confirming board renders.
+    await page.goto(`/app/leads/${leadId}?from=pipeline`);
     await page.waitForURL(LEAD_DETAIL_URL);
 
     await page.getByTestId("move-stage-select").selectOption("MEETING");

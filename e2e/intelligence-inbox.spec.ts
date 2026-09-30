@@ -18,7 +18,7 @@ test.describe("intelligence inbox", () => {
       ownerEmail: memberEmail,
       externalId: `e2e-inbox-high-${stamp}`,
       intelligence: {
-        score: 92,
+        score: 100,
         qualification: "HIGH",
         signals: ["NO_WEBSITE", "HIGH_REVIEWS"],
         diagnostic: "Sem website com volume de avaliações.",
@@ -32,7 +32,8 @@ test.describe("intelligence inbox", () => {
       ownerEmail: memberEmail,
       externalId: `e2e-inbox-medium-${stamp}`,
       intelligence: {
-        score: 58,
+        // Explicit MEDIUM wins over score band; high score keeps card on page 1.
+        score: 100,
         qualification: "MEDIUM",
         signals: ["HIGH_RATING"],
         diagnostic: "Boa nota, prioridade média.",
@@ -44,18 +45,34 @@ test.describe("intelligence inbox", () => {
     await page.goto("/app/intelligence");
 
     await expect(
-      page.getByRole("heading", { name: "Oportunidades prioritárias" }),
+      page.getByRole("heading", { name: "Prioridades" }),
     ).toBeVisible();
     await expect(page.getByTestId("intelligence-inbox-list")).toBeVisible();
+    // Unfiltered list is paginated — top score must appear on page 1.
     await expect(page.getByText(highCompany)).toBeVisible();
-    await expect(page.getByText(mediumCompany)).toBeVisible();
 
-    await page.getByRole("link", { name: "Prioridade alta", exact: true }).click();
-    await page.waitForURL(/qualification=HIGH/);
+    await page.goto("/app/intelligence?qualification=MEDIUM");
+    await expect(page).toHaveURL(/qualification=MEDIUM/);
+    await expect(page.getByText(mediumCompany)).toBeVisible();
+    await expect(page.getByText(highCompany)).toHaveCount(0);
+
+    await page.goto("/app/intelligence?qualification=HIGH");
+    await expect(page).toHaveURL(/qualification=HIGH/);
     await expect(page.getByText(highCompany)).toBeVisible();
     await expect(page.getByText(mediumCompany)).toHaveCount(0);
+    await expect(page).not.toHaveURL(/page=/);
 
-    await page.getByText(highCompany).click();
+    await expect(
+      page
+        .getByTestId("intelligence-inbox-card")
+        .filter({ hasText: highCompany })
+        .getByTestId("intelligence-inbox-signals"),
+    ).toContainText("Website não identificado");
+
+    await page
+      .getByTestId("intelligence-inbox-row-link")
+      .filter({ hasText: highCompany })
+      .click();
     await page.waitForURL(new RegExp(`/app/leads/.+`));
     await expect(page.getByTestId("lead-intelligence-card")).toBeVisible();
   });

@@ -153,7 +153,7 @@ export function AppSidebar({
                   w="full"
                   minW="0"
                   px={collapsed ? "0" : "2"}
-                  borderRadius="md"
+                  borderRadius="control"
                   fontSize="sm"
                   fontWeight={active ? "semibold" : "medium"}
                   bg={active ? "bg.muted" : "transparent"}
@@ -232,7 +232,7 @@ export function AppSidebar({
             colorPalette="gray"
             w="full"
             minH="touch"
-            borderRadius="md"
+            borderRadius="control"
             px={collapsed ? "0" : "2"}
             py="2"
             justifyContent={collapsed ? "center" : "flex-start"}

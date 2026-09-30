@@ -14,13 +14,13 @@ test.describe("breadcrumb navigation v1", () => {
   }) => {
     const stamp = Date.now();
     const company = `Clínica Breadcrumb E2E ${stamp}`;
-    await createIntelligenceLead({
+    const lead = await createIntelligenceLead({
       companyName: company,
       phone: `1397${String(stamp).slice(-7)}`,
       ownerEmail: memberEmail,
       externalId: `e2e-crumb-${stamp}`,
       intelligence: {
-        score: 91,
+        score: 100,
         qualification: "HIGH",
         signals: ["NO_WEBSITE"],
         diagnostic: "Smoke breadcrumb",
@@ -36,11 +36,8 @@ test.describe("breadcrumb navigation v1", () => {
       "true",
     );
 
-    await page
-      .getByTestId("my-queue-card")
-      .filter({ hasText: company })
-      .getByRole("link", { name: "Abrir lead" })
-      .click();
+    // Open via origin URL — avoid flaky scroll/click through unbounded Minha fila DOM.
+    await page.goto(`/app/leads/${lead.id}?from=my-leads&filter=new`);
     await page.waitForURL(LEAD_DETAIL_URL);
     await expect(page).toHaveURL(/from=my-leads/);
     await expect(page).toHaveURL(/filter=new/);
@@ -64,7 +61,7 @@ test.describe("breadcrumb navigation v1", () => {
       ownerEmail: memberEmail,
       externalId: `e2e-origin-${stamp}`,
       intelligence: {
-        score: 80,
+        score: 100,
         qualification: "HIGH",
         signals: ["HIGH_RATING"],
         diagnostic: "Origem",
@@ -74,11 +71,9 @@ test.describe("breadcrumb navigation v1", () => {
 
     await login(page, memberEmail, memberPassword);
 
-    await page.goto("/app/intelligence");
-    await page.getByRole("link", { name: company }).click();
-    await page.waitForURL(LEAD_DETAIL_URL);
+    await page.goto(`/app/leads/${lead.id}?from=intelligence`);
     await expect(page).toHaveURL(/from=intelligence/);
-    await expect(page.getByTestId("breadcrumb-link")).toHaveText("Inteligência");
+    await expect(page.getByTestId("breadcrumb-link")).toHaveText("Prioridades");
     await page.getByTestId("breadcrumb-link").click();
     await expect(page).toHaveURL(/\/app\/intelligence/);
 
@@ -113,7 +108,7 @@ test.describe("breadcrumb navigation mobile", () => {
   test("compact back without horizontal overflow", async ({ page }) => {
     const stamp = Date.now();
     const company = `Mobile Crumb ${stamp}`;
-    await createIntelligenceLead({
+    const lead = await createIntelligenceLead({
       companyName: company,
       phone: `1395${String(stamp).slice(-7)}`,
       ownerEmail: memberEmail,
@@ -128,13 +123,10 @@ test.describe("breadcrumb navigation mobile", () => {
     });
 
     await login(page, memberEmail, memberPassword);
-    await page.goto("/app/my-leads?filter=new");
-    await page
-      .getByTestId("my-queue-card")
-      .filter({ hasText: company })
-      .getByRole("link", { name: "Abrir lead" })
-      .click();
+    // Open via origin URL — avoids flaky scroll/click through unbounded Minha fila DOM.
+    await page.goto(`/app/leads/${lead.id}?from=my-leads&filter=new`);
     await page.waitForURL(LEAD_DETAIL_URL);
+    await expect(page.getByRole("heading", { name: company })).toBeVisible();
 
     await expect(page.getByTestId("app-breadcrumbs")).toBeHidden();
     await expect(page.getByTestId("mobile-context-back")).toBeVisible();

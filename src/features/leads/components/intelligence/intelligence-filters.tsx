@@ -84,7 +84,7 @@ export function IntelligenceFilters({ filters }: IntelligenceFiltersProps) {
     <Stack gap="3" data-testid="intelligence-inbox-filters">
       <Stack gap="1">
         <Text fontSize="xs" fontWeight="semibold" color="fg.muted">
-          Score
+          Qualificação
         </Text>
         <HStack gap="3" flexWrap="wrap">
           {QUALIFICATION_OPTIONS.map((option) => (

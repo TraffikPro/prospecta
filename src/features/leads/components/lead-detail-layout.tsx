@@ -41,9 +41,9 @@ const STATIC_RAIL: RailStickyStyles = {
 
 /**
  * Lead Detail Fatia A — desktop ~65/35 + mobile operational order.
+ * Mobile: next → contact → stage → main (history/activity/intelligence) → origin.
+ * Desktop: main left; operational rail sticky when it fits the viewport.
  * Stable DOM (no breakpoint remount): keyboard order matches mobile visual order.
- * Desktop rail shares one grid cell (stacked) so main-column row tracks do not
- * insert gaps between Next / Contact / Stage. Sticky when the group fits.
  */
 export function LeadDetailLayout({
   nextAction,
@@ -138,8 +138,8 @@ export function LeadDetailLayout({
         base: `
           "next"
           "contact"
-          "main"
           "stage"
+          "main"
           "origin"
         `,
         lg: `
@@ -170,11 +170,6 @@ export function LeadDetailLayout({
       >
         {contact}
       </Box>
-      <Stack gridArea="main" gap={{ base: "6", lg: "8" }} minW={0}>
-        {intelligence}
-        {activity}
-        {history}
-      </Stack>
       <Box
         ref={stageRef}
         gridArea={{ base: "stage", lg: "rail" }}
@@ -184,6 +179,11 @@ export function LeadDetailLayout({
       >
         {stage}
       </Box>
+      <Stack gridArea="main" gap={{ base: "6", lg: "8" }} minW={0}>
+        {history}
+        {activity}
+        {intelligence}
+      </Stack>
       <Box gridArea="origin" minW={0}>
         {origin}
       </Box>

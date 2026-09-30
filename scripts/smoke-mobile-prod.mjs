@@ -126,7 +126,7 @@ try {
 
   await page.getByTestId("mobile-nav-pipeline").click();
   await expect(page).toHaveURL(/\/app\/pipeline/);
-  await expect(page.getByTestId("pipeline-mobile")).toBeVisible();
+  await expect(page.getByTestId("pipeline-board")).toBeVisible();
   results.push(["pipeline mobile accordion", "PASS"]);
   results.push([
     "no horizontal overflow (pipeline)",

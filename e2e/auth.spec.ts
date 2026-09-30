@@ -42,11 +42,14 @@ test.describe("auth + ACL", () => {
 
   test("MEMBER receives 403 on ADMIN ACL proof route", async ({ page }) => {
     await login(page, memberEmail, memberPassword);
-    const response = await page.goto("/admin/users");
-    expect(response?.status()).toBe(403);
+    await page.goto("/admin/users");
+    // Next streaming may report 200 for the loading shell; content is authoritative.
     await expect(
       page.getByText(/403|Acesso negado|não possui permissão/i).first(),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 15_000 });
+    await expect(
+      page.getByRole("heading", { name: "Equipe", exact: true }),
+    ).toHaveCount(0);
   });
 
   test("ADMIN can open users list", async ({ page }) => {
@@ -56,6 +59,14 @@ test.describe("auth + ACL", () => {
       page.getByRole("heading", { name: "Equipe", exact: true }),
     ).toBeVisible();
     await expect(page.getByTestId("admin-users")).toBeVisible();
+    await expect(page.getByTestId("admin-users-count")).toBeVisible();
+    const table = page.getByTestId("admin-users-table");
+    await expect(table).toBeVisible();
+    await expect(table.getByTestId("admin-user-row").first()).toBeVisible();
+    await expect(table.getByTestId("admin-user-role").first()).toBeVisible();
+    await expect(
+      table.getByTestId("admin-user-open-leads").first(),
+    ).toBeVisible();
   });
 
   test("invalid credentials do not reveal whether email exists", async ({

@@ -1,4 +1,4 @@
-import type { LeadSource } from "@prisma/client";
+import type { LeadSource, LeadStage } from "@prisma/client";
 
 import { parseLeadIntelligence } from "./parse-intelligence";
 import { resolveQualification } from "./qualification";
@@ -16,6 +16,8 @@ export type IntelligenceInboxLead = {
   id: string;
   companyName: string;
   source: LeadSource;
+  stage: LeadStage;
+  ownerName: string;
   intelligence: LeadIntelligence;
   qualification: LeadQualification;
   score: number;
@@ -43,10 +45,31 @@ export function parseInboxFilters(input: {
   return { qualification, source };
 }
 
+export function intelligenceInboxHref(input: {
+  qualification?: IntelligenceQualificationFilter;
+  source?: IntelligenceSourceFilter;
+  page?: number;
+}): string {
+  const params = new URLSearchParams();
+  if (input.qualification && input.qualification !== "ALL") {
+    params.set("qualification", input.qualification);
+  }
+  if (input.source && input.source !== "ALL") {
+    params.set("source", input.source);
+  }
+  if (input.page && input.page > 1) {
+    params.set("page", String(input.page));
+  }
+  const query = params.toString();
+  return query ? `/app/intelligence?${query}` : "/app/intelligence";
+}
+
 type InboxCandidate = {
   id: string;
   companyName: string;
   source: LeadSource;
+  stage: LeadStage;
+  owner?: { name: string } | null;
   intelligence: unknown;
 };
 
@@ -89,6 +112,8 @@ export function buildIntelligenceInbox(
       id: lead.id,
       companyName: lead.companyName,
       source: lead.source,
+      stage: lead.stage,
+      ownerName: lead.owner?.name?.trim() || "—",
       intelligence,
       qualification,
       score: intelligence.score,

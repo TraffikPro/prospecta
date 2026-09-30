@@ -1,11 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import type { LeadSource, LeadStage } from "@prisma/client";
-import { Card, Link as ChakraLink, Stack, Text } from "@chakra-ui/react";
+import { Box, HStack, Stack, Text } from "@chakra-ui/react";
 
 import { buildLeadDetailHref } from "@/components/navigation";
-import { Button } from "@/components/ui/button";
-import { LeadSourceBadge } from "@/features/leads/components/lead-source-badge";
 import { parseLeadIntelligence } from "@/features/leads/intelligence/parse-intelligence";
+import { leadSourceLabels } from "@/features/leads/lead.labels";
 
 export type LeadStageCardData = {
   id: string;
@@ -22,50 +23,66 @@ type LeadStageCardProps = {
   followUpLabel: string | null;
 };
 
+/**
+ * Compact Pipeline lead row — identity + light commercial context.
+ * Stage transitions remain on Lead Detail (not on this board).
+ */
 export function LeadStageCard({ lead, followUpLabel }: LeadStageCardProps) {
   const intelligence = parseLeadIntelligence(lead.intelligence);
-  const score = intelligence?.score;
+  const score =
+    typeof intelligence?.score === "number" ? intelligence.score : null;
   const href = buildLeadDetailHref(lead.id, "pipeline");
 
   return (
-    <Card.Root variant="outline" borderRadius="card" h="full">
-      <Card.Body>
-        <Stack gap="3" h="full" justify="space-between">
-          <Stack gap="2">
-            <Text fontSize="sm" fontWeight="semibold">
-              <ChakraLink asChild color="fg" _hover={{ color: "brand.fg" }}>
-                <Link href={href}>{lead.companyName}</Link>
-              </ChakraLink>
+    <Box
+      as="article"
+      data-testid="pipeline-lead-row"
+      data-lead-id={lead.id}
+      data-stage={lead.stage}
+      borderWidth="1px"
+      borderColor="border"
+      borderRadius="surface"
+      bg="bg"
+      _hover={{ bg: "bg.subtle" }}
+    >
+      <Link
+        href={href}
+        data-testid="pipeline-lead-link"
+        aria-label={lead.companyName}
+        style={{ textDecoration: "none", color: "inherit", display: "block" }}
+      >
+        <Stack
+          gap="1"
+          px="3"
+          py="2.5"
+          minH="touch"
+          justify="center"
+        >
+          <HStack gap="2" flexWrap="wrap" align="baseline">
+            <Text fontSize="sm" fontWeight="semibold" lineClamp={1}>
+              {lead.companyName}
             </Text>
-            <LeadSourceBadge source={lead.source} />
-            {typeof score === "number" ? (
-              <Text fontSize="sm" color="fg.muted">
+            {score != null ? (
+              <Text fontSize="xs" color="fg.muted" whiteSpace="nowrap">
                 Score {score}
               </Text>
             ) : null}
+          </HStack>
+          <HStack gap="3" flexWrap="wrap" fontSize="xs" color="fg.muted">
+            <Text as="span">
+              {leadSourceLabels[lead.source] ?? lead.source}
+            </Text>
             {followUpLabel ? (
-              <Text fontSize="sm" color="fg.muted">
-                Follow-up {followUpLabel}
-              </Text>
+              <Text as="span">Follow-up {followUpLabel}</Text>
             ) : null}
             {lead.stage === "LOST" && lead.lostReason ? (
-              <Text fontSize="sm" color="fg.muted">
+              <Text as="span" lineClamp={1}>
                 Motivo: {lead.lostReason}
               </Text>
             ) : null}
-          </Stack>
-          <Button
-            asChild
-            size="md"
-            minH="touch"
-            variant="outline"
-            colorPalette="gray"
-            alignSelf="stretch"
-          >
-            <Link href={href}>Abrir lead</Link>
-          </Button>
+          </HStack>
         </Stack>
-      </Card.Body>
-    </Card.Root>
+      </Link>
+    </Box>
   );
 }

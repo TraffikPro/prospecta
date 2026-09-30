@@ -56,7 +56,7 @@ test.describe("password reset (Fatia 2)", () => {
     await login(page, memberEmail, nextPassword);
     await expect(page).toHaveURL(/\/app\/my-leads/);
     await expect(
-      page.getByRole("heading", { name: "Minha operação", exact: true }),
+      page.getByRole("heading", { name: "Minha fila", exact: true }),
     ).toBeVisible();
   });
 

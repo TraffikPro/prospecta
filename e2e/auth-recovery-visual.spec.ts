@@ -1,10 +1,11 @@
 import { expect, test } from "./test";
 
-test.describe("auth recovery visual consistency (Fatia A)", () => {
-  test("desktop forgot shows reduced public brand panel", async ({ page }) => {
+test.describe("auth recovery visual consistency (F12)", () => {
+  test("desktop forgot shows compact public brand", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/forgot-password");
 
+    await expect(page.getByTestId("public-auth-shell")).toBeVisible();
     await expect(page.getByTestId("public-auth-brand-panel")).toBeVisible();
     await expect(page.getByTestId("public-auth-mobile-brand-bar")).toBeHidden();
     await expect(
@@ -12,19 +13,19 @@ test.describe("auth recovery visual consistency (Fatia A)", () => {
     ).toBeVisible();
     await expect(
       page.getByText("Acesse novamente sua operação."),
-    ).toBeVisible();
+    ).toHaveCount(0);
     await expect(page.getByText("Lead", { exact: true })).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Enviar" })).toBeInViewport();
   });
 
-  test("mobile forgot shows top bar once, no overflow, CTA in fold", async ({
+  test("mobile forgot: single wordmark, no overflow, CTA in fold", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/forgot-password");
 
-    await expect(page.getByTestId("public-auth-brand-panel")).toBeHidden();
-    await expect(page.getByTestId("public-auth-mobile-brand-bar")).toBeVisible();
+    await expect(page.getByTestId("public-auth-brand-panel")).toBeVisible();
+    await expect(page.getByTestId("public-auth-mobile-brand-bar")).toBeHidden();
     await expect(
       page.locator('[data-testid="prospecta-wordmark"]:visible'),
     ).toHaveCount(1);

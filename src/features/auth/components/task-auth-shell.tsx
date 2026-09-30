@@ -1,64 +1,46 @@
-import { Box, Card, Flex, Stack, Text } from "@chakra-ui/react";
+import { Box, Card, Stack } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 
-import { ProspectaMark } from "./prospecta-mark";
+import { AuthEntryBrand } from "./auth-entry-brand";
 
 type TaskAuthShellProps = {
   children: ReactNode;
 };
 
 /**
- * First-access / task identity layout: centered card, compact brand, no split.
- * No PipelineGraphic and no promotional headline.
+ * First-access / must-change-password shell: centered card, compact brand.
+ * Aligned with login/public entry (F12) — no split, no promotional headline.
  */
 export function TaskAuthShell({ children }: TaskAuthShellProps) {
   return (
     <Box
       as="main"
-      minH="100vh"
+      minH="100dvh"
       bg="bg.subtle"
       overflowX="hidden"
       display="flex"
       flexDirection="column"
       alignItems="center"
       justifyContent="center"
-      px={{ base: "5", lg: "12" }}
-      py={{ base: "8", lg: "10" }}
+      px={{ base: "5", md: "8" }}
+      py={{ base: "6", md: "10" }}
     >
       <Stack
         width="full"
-        maxW="440px"
+        maxW="400px"
         gap="6"
         align="stretch"
         data-testid="task-auth-shell"
       >
-        <Flex
-          align="center"
-          justify="center"
-          gap="2.5"
-          data-testid="task-auth-brand"
-        >
-          <ProspectaMark size={32} />
-          <Box>
-            <Text
-              as="span"
-              display="block"
-              fontSize="md"
-              fontWeight="semibold"
-              color="fg"
-              lineHeight="1.1"
-              data-testid="prospecta-wordmark"
-            >
-              Prospecta
-            </Text>
-            <Text as="span" display="block" fontSize="xs" color="fg.muted">
-              por DevFlow Labs
-            </Text>
-          </Box>
-        </Flex>
+        <AuthEntryBrand testId="task-auth-brand" />
 
-        <Card.Root width="full" maxW="440px" variant="outline" borderRadius="card">
-          <Card.Body px={{ base: "6", lg: "10" }} py={{ base: "8", lg: "10" }}>
+        <Card.Root
+          width="full"
+          variant="outline"
+          borderRadius="surface"
+          bg="bg"
+        >
+          <Card.Body px={{ base: "5", md: "8" }} py={{ base: "6", md: "8" }}>
             {children}
           </Card.Body>
         </Card.Root>

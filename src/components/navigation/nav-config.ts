@@ -1,6 +1,7 @@
 export type NavGroupId = "overview" | "operation" | "commercial" | "management";
 
-export type NavVisibility = "all" | "acquisition" | "admin";
+/** `admin` = ADMIN role only. FREE_PULL Aquisição matches server `requireRole(..., "ADMIN")`. */
+export type NavVisibility = "all" | "admin";
 
 export type NavMatch = "exact" | "prefix";
 
@@ -61,7 +62,7 @@ export const APP_NAV_ITEMS: readonly AppNavItem[] = [
   {
     id: "intelligence",
     href: "/app/intelligence",
-    label: "Inteligência",
+    label: "Prioridades",
     icon: "intelligence",
     group: "operation",
     visibility: "all",
@@ -88,7 +89,7 @@ export const APP_NAV_ITEMS: readonly AppNavItem[] = [
   {
     id: "portfolio",
     href: "/app/portfolio",
-    label: "Portfólio",
+    label: "Demos",
     icon: "portfolio",
     group: "commercial",
     visibility: "all",
@@ -100,7 +101,7 @@ export const APP_NAV_ITEMS: readonly AppNavItem[] = [
     label: "Aquisição",
     icon: "acquisition",
     group: "management",
-    visibility: "acquisition",
+    visibility: "admin",
     match: "prefix",
     testId: "nav-acquisition",
   },
@@ -141,7 +142,7 @@ export const MOBILE_PRIMARY_NAV = [
   },
   {
     href: "/app/intelligence",
-    label: "Inteligência",
+    label: "Prioridades",
     testId: "mobile-nav-intelligence",
   },
   {
@@ -168,13 +169,7 @@ export function canSeeNavItem(item: AppNavItem, access: NavAccess): boolean {
   if (item.visibility === "all") {
     return true;
   }
-  if (item.visibility === "admin") {
-    return access.role === "ADMIN";
-  }
-  return (
-    access.role === "ADMIN" ||
-    (access.role === "MEMBER" && access.canRunAcquisition)
-  );
+  return access.role === "ADMIN";
 }
 
 export function isNavPathActive(
@@ -188,20 +183,8 @@ export function isNavPathActive(
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-function withAcquisitionGroup(
-  item: AppNavItem,
-  access: NavAccess,
-): AppNavItem {
-  if (item.id === "acquisition" && access.role === "MEMBER") {
-    return { ...item, group: "commercial" };
-  }
-  return item;
-}
-
 export function visibleNavItems(access: NavAccess): AppNavItem[] {
-  return APP_NAV_ITEMS.filter((item) => canSeeNavItem(item, access)).map(
-    (item) => withAcquisitionGroup(item, access),
-  );
+  return APP_NAV_ITEMS.filter((item) => canSeeNavItem(item, access));
 }
 
 export function visibleNavGroups(access: NavAccess): NavGroup[] {

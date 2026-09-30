@@ -1,6 +1,10 @@
 import { Alert, Heading, Stack, Text } from "@chakra-ui/react";
 import { redirect } from "next/navigation";
 
+import {
+  LOGIN_SUBTITLE,
+  LOGIN_TITLE,
+} from "@/features/auth/auth-entry-copy";
 import { AuthShell } from "@/features/auth/components/auth-shell";
 import { LoginForm } from "@/features/auth/login-form";
 import {
@@ -32,9 +36,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       <Stack gap="6">
         <Stack gap="1">
           <Heading as="h1" textStyle="pageTitle">
-            Bem-vindo de volta
+            {LOGIN_TITLE}
           </Heading>
-          <Text textStyle="meta">Entre com sua conta para continuar.</Text>
+          <Text textStyle="meta">{LOGIN_SUBTITLE}</Text>
         </Stack>
 
         {showSessionExpired ? (

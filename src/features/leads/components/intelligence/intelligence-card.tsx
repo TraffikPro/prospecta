@@ -1,7 +1,8 @@
 "use client";
 
-import { Alert, Card, Heading, Stack, Text } from "@chakra-ui/react";
+import { Stack, Text } from "@chakra-ui/react";
 
+import { SectionHeading } from "@/components/layout/page-heading";
 import type { LeadIntelligence } from "@/features/leads/intelligence/types";
 
 import { PlacesEvidence } from "./places-evidence";
@@ -13,50 +14,54 @@ type IntelligenceCardProps = {
   intelligence: LeadIntelligence;
 };
 
+/**
+ * Full-record intelligence context for Lead Detail.
+ * Section + border (not nested decorative cards). Score stays compact.
+ */
 export function IntelligenceCard({ intelligence }: IntelligenceCardProps) {
   return (
-    <Card.Root
-      variant="outline"
-      borderRadius="card"
+    <Stack
+      as="section"
+      gap="5"
+      borderWidth="1px"
+      borderColor="border"
+      borderRadius="surface"
+      bg="bg"
+      px="4"
+      py="4"
       data-testid="lead-intelligence-card"
+      aria-labelledby="intelligence-heading"
     >
-      <Card.Header pb="2">
-        <Heading as="h2" size="md">
-          Inteligência do lead
-        </Heading>
-        <Text fontSize="sm" color="fg.muted">
-          Qualificação gerada para apoiar a abordagem comercial
+      <Stack gap="1">
+        <SectionHeading id="intelligence-heading">
+          Qualificação do lead
+        </SectionHeading>
+        <Text textStyle="meta">
+          Evidência persistida para apoiar a abordagem — não substitui o
+          histórico de contato.
         </Text>
-      </Card.Header>
-      <Card.Body>
-        <Stack gap="6">
-          <ScoreDisplay intelligence={intelligence} />
-          <PlacesEvidence
-            rating={intelligence.rating}
-            reviews={intelligence.reviews}
-            googleMapsUrl={intelligence.googleMapsUrl}
-          />
-          <SignalList signals={intelligence.signals} />
+      </Stack>
 
-          {intelligence.diagnostic ? (
-            <Stack gap="2" data-testid="intelligence-diagnostic">
-              <Text fontSize="sm" fontWeight="semibold">
-                Diagnóstico
-              </Text>
-              <Alert.Root status="info" variant="subtle">
-                <Alert.Indicator />
-                <Alert.Content>
-                  <Alert.Description whiteSpace="pre-wrap">
-                    {intelligence.diagnostic}
-                  </Alert.Description>
-                </Alert.Content>
-              </Alert.Root>
-            </Stack>
-          ) : null}
+      <ScoreDisplay intelligence={intelligence} />
+      <PlacesEvidence
+        rating={intelligence.rating}
+        reviews={intelligence.reviews}
+        googleMapsUrl={intelligence.googleMapsUrl}
+      />
+      <SignalList signals={intelligence.signals} />
 
-          {intelligence.pitch ? <PitchBox pitch={intelligence.pitch} /> : null}
+      {intelligence.diagnostic ? (
+        <Stack gap="2" data-testid="intelligence-diagnostic">
+          <Text fontSize="sm" fontWeight="semibold">
+            Diagnóstico
+          </Text>
+          <Text fontSize="sm" whiteSpace="pre-wrap" color="fg">
+            {intelligence.diagnostic}
+          </Text>
         </Stack>
-      </Card.Body>
-    </Card.Root>
+      ) : null}
+
+      {intelligence.pitch ? <PitchBox pitch={intelligence.pitch} /> : null}
+    </Stack>
   );
 }

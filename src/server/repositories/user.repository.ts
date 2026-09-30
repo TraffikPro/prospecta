@@ -10,6 +10,8 @@ export type AdminUserRow = {
   isActive: boolean;
   canRunAcquisition: boolean;
   weeklyTarget: number | null;
+  /** Non-terminal owned leads (WON/LOST excluded) — one query aggregation. */
+  openOwnedLeads: number;
 };
 
 export async function listUsersForAdmin(): Promise<AdminUserRow[]> {
@@ -24,6 +26,13 @@ export async function listUsersForAdmin(): Promise<AdminUserRow[]> {
       weeklyQuota: {
         select: { weeklyTarget: true },
       },
+      _count: {
+        select: {
+          ownedLeads: {
+            where: { stage: { notIn: ["WON", "LOST"] } },
+          },
+        },
+      },
     },
     orderBy: [{ role: "asc" }, { name: "asc" }],
   });
@@ -36,5 +45,6 @@ export async function listUsersForAdmin(): Promise<AdminUserRow[]> {
     isActive: user.isActive,
     canRunAcquisition: user.canRunAcquisition,
     weeklyTarget: user.weeklyQuota?.weeklyTarget ?? null,
+    openOwnedLeads: user._count.ownedLeads,
   }));
 }

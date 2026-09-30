@@ -1,6 +1,10 @@
 import { Heading, Stack, Text } from "@chakra-ui/react";
 import { redirect } from "next/navigation";
 
+import {
+  FORGOT_SUBTITLE,
+  FORGOT_TITLE,
+} from "@/features/auth/auth-entry-copy";
 import { PublicAuthShell } from "@/features/auth/components/public-auth-shell";
 import { ForgotPasswordForm } from "@/features/auth/forgot-password-form";
 import { postAuthPath } from "@/server/auth/login-redirect";
@@ -19,11 +23,9 @@ export default async function ForgotPasswordPage() {
       <Stack gap="6">
         <Stack gap="1">
           <Heading as="h1" textStyle="pageTitle">
-            Recuperar acesso
+            {FORGOT_TITLE}
           </Heading>
-          <Text textStyle="meta">
-            Digite seu email e enviaremos instruções.
-          </Text>
+          <Text textStyle="meta">{FORGOT_SUBTITLE}</Text>
         </Stack>
         <ForgotPasswordForm />
       </Stack>

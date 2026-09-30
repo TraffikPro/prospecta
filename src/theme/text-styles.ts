@@ -1,6 +1,9 @@
 import { defineTextStyles } from "@chakra-ui/react";
 
-/** Visual Foundation v1 — page hierarchy tokens. */
+/**
+ * Visual Foundation — operational typography hierarchy (F2).
+ * Prefer these over ad-hoc fontSize in authenticated product UI.
+ */
 export const textStyles = defineTextStyles({
   pageTitle: {
     description: "H1 — page title",
@@ -16,6 +19,22 @@ export const textStyles = defineTextStyles({
     value: {
       fontSize: "1.125rem",
       fontWeight: "600",
+      lineHeight: "1.35",
+    },
+  },
+  body: {
+    description: "Primary operational body copy",
+    value: {
+      fontSize: "0.875rem",
+      fontWeight: "400",
+      lineHeight: "1.45",
+    },
+  },
+  data: {
+    description: "Dense table / list / form field content",
+    value: {
+      fontSize: "0.875rem",
+      fontWeight: "400",
       lineHeight: "1.35",
     },
   },

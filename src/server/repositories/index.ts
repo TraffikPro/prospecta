@@ -3,6 +3,8 @@ export {
   findDuplicate,
   findLeadById,
   listLeads,
+  listLeadsInventory,
+  countLeadsInventory,
   listLeadsWithIntelligence,
 } from "./lead.repository";
 export {

@@ -5,6 +5,14 @@ import { textStyles } from "./text-styles";
 /**
  * Prospecta design tokens (Chakra UI v3).
  * Brand: teal/slate — B2B CRM, not purple defaults.
+ *
+ * Radius policy (F2):
+ * - control — buttons, inputs, nav chips (6px)
+ * - surface — panels/cards/sections with border (12px)
+ * - button / card — aliases kept for existing call sites
+ *
+ * Elevation: prefer border + bg over shadow for ordinary content.
+ * No product-level shadow tokens — overlays use Chakra defaults only when needed.
  */
 const config = defineConfig({
   theme: {
@@ -86,8 +94,14 @@ const config = defineConfig({
         touch: { value: "2.75rem" },
       },
       radii: {
-        card: { value: "0.75rem" },
+        /** Controls: button, input, compact chips (6px). */
+        control: { value: "0.375rem" },
+        /** Surfaces: cards, bordered panels (12px). */
+        surface: { value: "0.75rem" },
+        /** @deprecated Prefer `control` — kept for existing call sites. */
         button: { value: "0.375rem" },
+        /** @deprecated Prefer `surface` — kept for existing call sites. */
+        card: { value: "0.75rem" },
       },
     },
     semanticTokens: {

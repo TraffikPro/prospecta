@@ -17,13 +17,17 @@ export function LeadContactActions({ phone, email }: LeadContactActionsProps) {
   const hasChannel = Boolean(whatsappUrl || email);
 
   return (
-    <Stack gap="1.5" data-testid="lead-contact-actions">
-      <Text
-        fontSize="xs"
-        fontWeight="semibold"
-        color="fg.muted"
-        lineHeight="1.2"
-      >
+    <Stack
+      gap="2"
+      borderWidth="1px"
+      borderColor="border"
+      borderRadius="surface"
+      bg="bg"
+      px="3"
+      py="3"
+      data-testid="lead-contact-actions"
+    >
+      <Text fontSize="sm" fontWeight="semibold" lineHeight="1.2">
         Contato
       </Text>
 
@@ -35,9 +39,9 @@ export function LeadContactActions({ phone, email }: LeadContactActionsProps) {
           description="Este lead não possui telefone ou e-mail cadastrado."
         />
       ) : (
-        <HStack gap="1.5" align="stretch" flexWrap="nowrap">
+        <HStack gap="2" align="stretch" flexWrap="nowrap">
           {whatsappUrl ? (
-            <Button asChild size="md" minH="11" flex="1" minW="0" px="2">
+            <Button asChild size="md" minH="touch" flex="1" minW="0">
               <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                 Contatar
               </a>
@@ -47,12 +51,11 @@ export function LeadContactActions({ phone, email }: LeadContactActionsProps) {
             <Button
               asChild
               size="md"
-              minH="11"
+              minH="touch"
               variant="outline"
               colorPalette="gray"
               flex="1"
               minW="0"
-              px="2"
             >
               <a href={`mailto:${email}`}>E-mail</a>
             </Button>
@@ -60,14 +63,7 @@ export function LeadContactActions({ phone, email }: LeadContactActionsProps) {
         </HStack>
       )}
 
-      <Button
-        asChild
-        size="md"
-        minH="11"
-        variant="outline"
-        width="full"
-        fontSize="sm"
-      >
+      <Button asChild size="md" minH="touch" variant="outline" width="full">
         <NextLink href="#register-activity">
           {hasChannel ? "Registrar resultado" : "Registrar atividade"}
         </NextLink>

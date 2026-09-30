@@ -51,7 +51,7 @@ async function run() {
   await shot(dm, "desktop-1440-my-leads");
   await dm.goto("/app/pipeline");
   await dm.getByRole("heading", { name: "Pipeline", exact: true }).waitFor();
-  await dm.getByTestId("pipeline-desktop").waitFor();
+  await dm.getByTestId("pipeline-board").waitFor();
   await shot(dm, "desktop-1440-pipeline");
   await desktopMember.close();
 
@@ -69,7 +69,7 @@ async function run() {
   await m.getByRole("heading", { name: "Minha operação" }).waitFor();
   await shot(m, "mobile-390-my-leads");
   await m.goto("/app/pipeline");
-  await m.getByTestId("pipeline-mobile").waitFor();
+  await m.getByTestId("pipeline-board").waitFor();
   await shot(m, "mobile-390-pipeline");
   await mobile.close();
 

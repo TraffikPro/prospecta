@@ -85,38 +85,28 @@ async function smokeViewport(browser, label, viewport) {
   try {
     await page.goto(`${baseURL}/login`, { waitUntil: "networkidle" });
     await expect(
-      page.getByRole("heading", { name: "Bem-vindo de volta", exact: true }),
+      page.getByRole("heading", { name: "Entrar", exact: true }),
     ).toBeVisible({ timeout: 20_000 });
-    record(`${label} h1 Bem-vindo de volta`, true);
+    record(`${label} h1 Entrar`, true);
 
     const m = await measureLogin(page);
-    if (viewport.width >= 1024) {
-      record(`${label} brand panel visible`, m.brandVisible);
-      record(`${label} mobile bar hidden`, !m.mobileBarVisible);
-      record(
-        `${label} split ~55%`,
-        m.brandW >= viewport.width * 0.5 && m.brandW <= viewport.width * 0.6,
-        `brandW=${m.brandW}`,
-      );
-      record(
-        `${label} card ~440px`,
-        m.cardW >= 400 && m.cardW <= 448,
-        `cardW=${m.cardW}`,
-      );
-    } else {
-      record(`${label} brand panel hidden`, !m.brandVisible);
-      record(`${label} mobile bar visible`, m.mobileBarVisible);
-      record(
-        `${label} single visible wordmark`,
-        m.visibleWordmarks === 1,
-        `count=${m.visibleWordmarks}`,
-      );
-      record(
-        `${label} top bar compact`,
-        m.mobileBarH > 0 && m.mobileBarH <= 96,
-        `h=${m.mobileBarH}`,
-      );
-    }
+    // F12: centered entry — brand identity visible on all viewports; no split panel.
+    record(`${label} brand identity visible`, m.brandVisible);
+    record(`${label} legacy mobile bar hidden`, !m.mobileBarVisible);
+    record(
+      `${label} single visible wordmark`,
+      m.visibleWordmarks === 1,
+      `count=${m.visibleWordmarks}`,
+    );
+    record(
+      `${label} card <=400px`,
+      m.cardW > 0 && m.cardW <= 400,
+      `cardW=${m.cardW}`,
+    );
+    record(
+      `${label} no Transforme copy`,
+      !/Transforme oportunidades/i.test(await page.locator("body").innerText()),
+    );
 
     record(`${label} CTA first fold`, m.ctaInFirstFold);
     record(`${label} no horizontal overflow`, !m.overflow);

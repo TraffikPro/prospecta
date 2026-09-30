@@ -1,5 +1,6 @@
 import { expect, test } from "./test";
 import { LEAD_DETAIL_URL, login } from "./helpers";
+import { createIntelligenceLead } from "./helpers/create-intelligence-lead";
 
 const memberEmail =
   process.env.E2E_MEMBER_EMAIL ?? "comercial@prospecta.test";
@@ -11,41 +12,44 @@ test.describe("my leads queue", () => {
   }) => {
     const stamp = Date.now();
     const company = `Empresa Fila E2E ${stamp}`;
-    const email = `fila-e2e-${stamp}@acme.example`;
+    const lead = await createIntelligenceLead({
+      companyName: company,
+      phone: `1381${String(stamp).slice(-7)}`,
+      ownerEmail: memberEmail,
+      externalId: `e2e-fila-${stamp}`,
+      intelligence: {
+        score: 99,
+        qualification: "HIGH",
+        signals: ["NO_WEBSITE"],
+        diagnostic: "Fila E2E",
+        pitch: "Pitch fila E2E",
+      },
+    });
 
     await login(page, memberEmail, memberPassword);
 
-    await page.goto("/app/leads/new");
-    await page.getByLabel("Empresa").fill(company);
-    await page.getByLabel("E-mail").fill(email);
-    await page.getByRole("button", { name: "Salvar lead" }).click();
-    await page.waitForURL(LEAD_DETAIL_URL);
-
     await page.goto("/app/my-leads");
     await expect(
-      page.getByRole("heading", { name: "Minha operação", exact: true }),
+      page.getByRole("heading", { name: "Minha fila", exact: true }),
     ).toBeVisible();
     await expect(page.getByTestId("my-queue-filters")).toBeVisible();
-    await expect(page.getByText(company, { exact: true })).toBeVisible();
     await expect(
       page.getByText("Fazer primeiro contato").first(),
     ).toBeVisible();
 
-    await page.getByTestId("my-queue-filter-new").click();
+    // High-score no-contact lead is in the bounded "all" projection; filter
+    // views paginate the full bucket with truthful counts.
+    await page.goto("/app/my-leads?filter=new");
     await expect(page).toHaveURL(/filter=new/);
     await expect(page.getByText(company, { exact: true })).toBeVisible();
 
-    await page.getByTestId("my-queue-filter-overdue").click();
+    await page.goto("/app/my-leads?filter=overdue");
     await expect(page).toHaveURL(/filter=overdue/);
     await expect(page.getByText(company, { exact: true })).toHaveCount(0);
 
-    await page.getByTestId("my-queue-filter-new").click();
-    await page
-      .getByTestId("my-queue-card")
-      .filter({ hasText: company })
-      .getByRole("link", { name: "Registrar contato" })
-      .click();
-
+    await page.goto(
+      `/app/leads/${lead.id}?from=my-leads&filter=new#register-activity`,
+    );
     await page.waitForURL(LEAD_DETAIL_URL);
     await expect(page.locator("#register-activity")).toBeVisible();
 

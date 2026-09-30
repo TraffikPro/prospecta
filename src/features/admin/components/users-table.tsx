@@ -3,17 +3,12 @@
 import { useActionState } from "react";
 
 import type { UserRole } from "@prisma/client";
-import {
-  Avatar,
-  Card,
-  Heading,
-  HStack,
-  SimpleGrid,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { Box, HStack, Stack, Text } from "@chakra-ui/react";
 
+import { AppEmptyState } from "@/components/ui/app-empty-state";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Table } from "@/components/ui/table";
 import { SUGGESTED_WEEKLY_TARGET } from "@/features/portfolio/portfolio.rules";
 import {
   setWeeklyQuotaAction,
@@ -26,6 +21,10 @@ import {
 
 import { RoleBadge } from "./role-badge";
 import { StatusBadge } from "./status-badge";
+import {
+  formatOpenOwnedLeads,
+  formatTeamMemberCount,
+} from "@/features/admin/team-presentation";
 
 export type AdminUserCard = {
   id: string;
@@ -35,6 +34,7 @@ export type AdminUserCard = {
   isActive: boolean;
   canRunAcquisition: boolean;
   weeklyTarget: number | null;
+  openOwnedLeads: number;
 };
 
 type UsersTableProps = {
@@ -52,17 +52,17 @@ function AcquisitionPermissionControls({ user }: { user: AdminUserCard }) {
 
   if (user.role === "ADMIN") {
     return (
-      <Text fontSize="xs" color="fg.muted">
+      <Text fontSize="xs" color="fg.muted" data-testid="admin-user-acquisition">
         Aquisição: incluída no papel Admin
       </Text>
     );
   }
 
   return (
-    <Stack gap="1">
+    <Stack gap="1" data-testid="admin-user-acquisition">
       <HStack gap="2" flexWrap="wrap" align="center">
         <Text fontSize="xs" color="fg.muted">
-          Aquisição: {user.canRunAcquisition ? "autorizado" : "bloqueado"}
+          {user.canRunAcquisition ? "Aquisição autorizada" : "Aquisição bloqueada"}
         </Text>
         <form action={formAction}>
           <input type="hidden" name="userId" value={user.id} />
@@ -73,8 +73,10 @@ function AcquisitionPermissionControls({ user }: { user: AdminUserCard }) {
           />
           <Button
             type="submit"
-            size="xs"
+            size="sm"
+            minH="touch"
             variant="outline"
+            colorPalette="gray"
             loading={pending}
             disabled={pending}
           >
@@ -99,32 +101,36 @@ function WeeklyQuotaControls({ user }: { user: AdminUserCard }) {
   const formDefault = user.weeklyTarget ?? SUGGESTED_WEEKLY_TARGET;
 
   return (
-    <form action={formAction}>
+    <form action={formAction} data-testid="admin-user-quota">
       <Stack gap="1">
         <Text fontSize="xs" color="fg.muted">
           Meta semanal (HIGH)
-          {user.weeklyTarget == null ? " — ainda não configurada" : ""}
+          {user.weeklyTarget == null ? " — não configurada" : ""}
         </Text>
         <HStack gap="2" flexWrap="wrap" align="center">
           <input type="hidden" name="userId" value={user.id} />
-          <input
+          <Input
             type="number"
             name="weeklyTarget"
             min={1}
             max={50}
             defaultValue={formDefault}
             disabled={pending}
-            style={{ minHeight: 36, width: 72, padding: "0.25rem 0.5rem" }}
+            w="20"
+            minH="touch"
+            size="sm"
             aria-label={`Meta semanal de ${user.name}`}
           />
           <Button
             type="submit"
-            size="xs"
+            size="sm"
+            minH="touch"
             variant="outline"
+            colorPalette="gray"
             loading={pending}
             disabled={pending}
           >
-            Salvar meta
+            Salvar
           </Button>
         </HStack>
         {state.error ? (
@@ -142,42 +148,132 @@ function WeeklyQuotaControls({ user }: { user: AdminUserCard }) {
   );
 }
 
+function MobileMemberRow({ user }: { user: AdminUserCard }) {
+  return (
+    <Box
+      as="article"
+      borderWidth="1px"
+      borderColor="border"
+      borderRadius="surface"
+      bg="bg"
+      px="3"
+      py="3"
+      data-testid="admin-user-row"
+      data-user-id={user.id}
+      data-role={user.role}
+    >
+      <Stack gap="3">
+        <Stack gap="1" minW={0}>
+          <Text fontWeight="semibold" fontSize="sm" lineClamp={1}>
+            {user.name}
+          </Text>
+          <Text fontSize="xs" color="fg.muted" overflowWrap="anywhere">
+            {user.email}
+          </Text>
+          <HStack gap="2" flexWrap="wrap" align="center">
+            <RoleBadge role={user.role} />
+            <StatusBadge isActive={user.isActive} />
+          </HStack>
+          <Text fontSize="xs" color="fg.muted" data-testid="admin-user-open-leads">
+            {formatOpenOwnedLeads(user.openOwnedLeads)}
+          </Text>
+        </Stack>
+        <AcquisitionPermissionControls user={user} />
+        <WeeklyQuotaControls user={user} />
+      </Stack>
+    </Box>
+  );
+}
+
 export function UsersTable({ users }: UsersTableProps) {
   if (users.length === 0) {
     return (
-      <Text fontSize="sm" color="fg.muted">
-        Nenhum usuário cadastrado
-      </Text>
+      <AppEmptyState
+        data-testid="admin-users-empty"
+        title="Nenhum usuário cadastrado"
+        description="Contas operacionais são provisionadas pelo seed ou pelo administrador do ambiente — não há convite nesta tela."
+      />
     );
   }
 
   return (
-    <SimpleGrid columns={{ base: 1, md: 2 }} gap="4" data-testid="admin-users">
-      {users.map((user) => (
-        <Card.Root key={user.id} variant="outline" borderRadius="card">
-          <Card.Body>
-            <Stack direction="row" gap="3" align="flex-start">
-              <Avatar.Root size="md">
-                <Avatar.Fallback name={user.name} />
-              </Avatar.Root>
-              <Stack gap="2" flex="1" minW="0">
-                <Heading as="h2" size="sm" fontWeight="semibold" truncate>
-                  {user.name}
-                </Heading>
-                <Text fontSize="sm" color="fg.muted" truncate>
-                  {user.email}
-                </Text>
-                <Stack direction="row" gap="2" flexWrap="wrap">
+    <Stack gap="4" data-testid="admin-users">
+      <Text fontSize="sm" color="fg.muted" data-testid="admin-users-count">
+        {formatTeamMemberCount(users.length)}
+      </Text>
+
+      <Stack
+        gap="2"
+        display={{ base: "flex", md: "none" }}
+        data-testid="admin-users-mobile"
+      >
+        {users.map((user) => (
+          <MobileMemberRow key={user.id} user={user} />
+        ))}
+      </Stack>
+
+      <Box display={{ base: "none", md: "block" }} overflowX="auto">
+        <Table.Root data-testid="admin-users-table">
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeader>Pessoa</Table.ColumnHeader>
+              <Table.ColumnHeader>Papel</Table.ColumnHeader>
+              <Table.ColumnHeader hideBelow="lg">Status</Table.ColumnHeader>
+              <Table.ColumnHeader>Leads abertos</Table.ColumnHeader>
+              <Table.ColumnHeader>Aquisição</Table.ColumnHeader>
+              <Table.ColumnHeader>Meta semanal</Table.ColumnHeader>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {users.map((user) => (
+              <Table.Row
+                key={user.id}
+                _hover={{ bg: "bg.subtle" }}
+                data-testid="admin-user-row"
+                data-user-id={user.id}
+                data-role={user.role}
+              >
+                <Table.Cell minW="0">
+                  <Stack gap="0" minW="0">
+                    <Text fontWeight="medium" fontSize="sm" lineClamp={1}>
+                      {user.name}
+                    </Text>
+                    <Text
+                      fontSize="xs"
+                      color="fg.muted"
+                      overflowWrap="anywhere"
+                    >
+                      {user.email}
+                    </Text>
+                  </Stack>
+                </Table.Cell>
+                <Table.Cell>
                   <RoleBadge role={user.role} />
+                </Table.Cell>
+                <Table.Cell hideBelow="lg">
                   <StatusBadge isActive={user.isActive} />
-                </Stack>
-                <AcquisitionPermissionControls user={user} />
-                <WeeklyQuotaControls user={user} />
-              </Stack>
-            </Stack>
-          </Card.Body>
-        </Card.Root>
-      ))}
-    </SimpleGrid>
+                </Table.Cell>
+                <Table.Cell>
+                  <Text
+                    fontSize="sm"
+                    color="fg.muted"
+                    whiteSpace="nowrap"
+                    data-testid="admin-user-open-leads"
+                  >
+                    {user.openOwnedLeads}
+                  </Text>
+                </Table.Cell>
+                <Table.Cell>
+                  <AcquisitionPermissionControls user={user} />
+                </Table.Cell>
+                <Table.Cell>
+                  <WeeklyQuotaControls user={user} />
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
+      </Box>
+    </Stack>
   );
 }

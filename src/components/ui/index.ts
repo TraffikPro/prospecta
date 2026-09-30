@@ -9,5 +9,6 @@ export {
   type PasswordInputProps,
 } from "./password-input";
 export { Provider } from "./provider";
+export { AppTableRoot, Table, type TableRootProps } from "./table";
 export { Tooltip, type TooltipProps } from "./tooltip";
 export { notifyError, notifySuccess, toaster, Toaster } from "./toaster";

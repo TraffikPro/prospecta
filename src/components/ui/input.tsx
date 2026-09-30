@@ -7,6 +7,7 @@ import {
 
 export type InputProps = ChakraInputProps;
 
-export function Input({ borderRadius = "button", ...props }: InputProps) {
+/** Form control — control radius by default (matches Button). */
+export function Input({ borderRadius = "control", ...props }: InputProps) {
   return <ChakraInput borderRadius={borderRadius} {...props} />;
 }

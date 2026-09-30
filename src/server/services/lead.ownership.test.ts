@@ -141,21 +141,21 @@ describe("lead ownership isolation", { skip: !hasDatabase }, () => {
   });
 
   it("ADMIN receives leads from different owners", async () => {
-    const leads = await getLeads(adminViewer);
+    const { leads } = await getLeads(adminViewer);
     const ids = leads.map((lead) => lead.id);
     assert.ok(ids.includes(leadAId));
     assert.ok(ids.includes(leadBId));
   });
 
   it("MEMBER A receives only own leads", async () => {
-    const leads = await getLeads(memberAViewer);
+    const { leads } = await getLeads(memberAViewer);
     assert.equal(leads.length, 1);
     assert.equal(leads[0]?.id, leadAId);
     assert.equal(leads[0]?.ownerId, memberAId);
   });
 
   it("MEMBER A never receives MEMBER B id, company, stage or source", async () => {
-    const leads = await getLeads(memberAViewer);
+    const { leads } = await getLeads(memberAViewer);
     const serialized = JSON.stringify(leads);
     assert.equal(serialized.includes(leadBId), false);
     assert.equal(serialized.includes(`Empresa Beta ${suffix}`), false);
@@ -257,7 +257,7 @@ describe("lead ownership isolation", { skip: !hasDatabase }, () => {
   });
 
   it("MEMBER continues to access and mutate own leads", async () => {
-    const listed = await getLeads(memberBViewer);
+    const { leads: listed } = await getLeads(memberBViewer);
     assert.equal(listed[0]?.id, leadBId);
 
     const detail = await getLeadById(leadBId);

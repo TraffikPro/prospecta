@@ -1,71 +1,133 @@
 "use client";
 
-import { Card, Heading, HStack, Stack, Text } from "@chakra-ui/react";
+import { Box, HStack, Stack, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 
 import { buildLeadDetailHref } from "@/components/navigation";
 import type { IntelligenceInboxLead } from "@/features/leads/intelligence/inbox";
-
-import { PitchPreview } from "./pitch-preview";
-import { QualificationBadge } from "./qualification-badge";
-import { SignalTag } from "./signal-tag";
+import { buildPriorityEvidence } from "@/features/leads/intelligence/priority-evidence";
+import { leadSourceLabels, leadStageLabels, qualificationLabels } from "@/features/leads/lead.labels";
 
 type LeadScoreCardProps = {
   item: IntelligenceInboxLead;
+  showOwner?: boolean;
 };
 
-export function LeadScoreCard({ item }: LeadScoreCardProps) {
-  const topSignals = item.intelligence.signals.slice(0, 3);
+/**
+ * Dense Prioridades row — score + evidence, not a marketing card.
+ */
+export function LeadScoreCard({
+  item,
+  showOwner = false,
+}: LeadScoreCardProps) {
+  const href = buildLeadDetailHref(item.id, "intelligence");
+  const evidence = buildPriorityEvidence(item.intelligence);
+  const hasEvidence =
+    evidence.signalLabels.length > 0 ||
+    Boolean(evidence.reasonLine) ||
+    Boolean(evidence.placesLine);
 
   return (
-    <Card.Root
-      asChild
-      variant="outline"
-      borderRadius="card"
+    <Box
+      as="article"
       data-testid="intelligence-inbox-card"
-      _hover={{ borderColor: "brand.focusRing", bg: "bg.subtle" }}
+      data-lead-id={item.id}
+      data-score={item.score}
+      data-qualification={item.qualification}
+      borderWidth="1px"
+      borderColor="border"
+      borderRadius="surface"
+      bg="bg"
+      _hover={{ bg: "bg.subtle" }}
     >
-      <NextLink href={buildLeadDetailHref(item.id, "intelligence")}>
-        <Card.Body py="4" px="4">
-          <Stack gap="3">
-            <HStack justify="space-between" align="start" gap="3">
-              <HStack align="baseline" gap="3">
-                <Text
-                  fontSize="2xl"
-                  fontWeight="bold"
-                  lineHeight="1"
-                  data-testid="intelligence-inbox-score"
-                >
-                  {item.score}
+      <NextLink
+        href={href}
+        data-testid="intelligence-inbox-row-link"
+        style={{ textDecoration: "none", color: "inherit", display: "block" }}
+      >
+        <Stack
+          direction={{ base: "column", sm: "row" }}
+          align={{ base: "stretch", sm: "flex-start" }}
+          gap={{ base: "2", sm: "4" }}
+          px={{ base: "3", md: "4" }}
+          py={{ base: "3", md: "3" }}
+          minH="touch"
+        >
+          <Stack
+            gap="0"
+            align="flex-start"
+            flexShrink={0}
+            minW={{ sm: "4.5rem" }}
+          >
+            <Text
+              fontSize="xl"
+              fontWeight="bold"
+              lineHeight="1"
+              letterSpacing="tight"
+              data-testid="intelligence-inbox-score"
+              aria-label={`Score ${item.score} de 100`}
+            >
+              {item.score}
+            </Text>
+            <Text fontSize="xs" color="fg.muted" whiteSpace="nowrap">
+              {qualificationLabels[item.qualification]}
+            </Text>
+          </Stack>
+
+          <Stack gap="1" flex="1" minW="0">
+            <HStack gap="2" flexWrap="wrap" align="baseline">
+              <Text fontWeight="semibold" fontSize="sm" lineClamp={1}>
+                {item.companyName}
+              </Text>
+              <Text fontSize="xs" color="fg.muted">
+                {leadStageLabels[item.stage]}
+              </Text>
+              {showOwner ? (
+                <Text fontSize="xs" color="fg.muted" lineClamp={1}>
+                  {item.ownerName}
                 </Text>
-                <Stack gap="1">
-                  <Heading as="h3" size="sm">
-                    {item.companyName}
-                  </Heading>
-                  <Text fontSize="xs" color="fg.muted">
-                    {item.source}
-                  </Text>
-                </Stack>
-              </HStack>
-              <QualificationBadge qualification={item.qualification} size="sm" />
+              ) : null}
             </HStack>
 
-            {topSignals.length > 0 ? (
-              <HStack gap="2" flexWrap="wrap">
-                {topSignals.map((signal) => (
-                  <SignalTag key={signal} signal={signal} />
-                ))}
-              </HStack>
-            ) : null}
+            {hasEvidence ? (
+              <Stack gap="1">
+                {evidence.signalLabels.length > 0 ? (
+                  <Text
+                    fontSize="sm"
+                    color="fg"
+                    data-testid="intelligence-inbox-signals"
+                  >
+                    {evidence.signalLabels.join(" · ")}
+                  </Text>
+                ) : null}
+                {evidence.reasonLine ? (
+                  <Text
+                    fontSize="sm"
+                    color="fg.muted"
+                    lineClamp={2}
+                    data-testid="intelligence-inbox-reason"
+                  >
+                    {evidence.reasonLine}
+                  </Text>
+                ) : null}
+                {evidence.placesLine ? (
+                  <Text fontSize="xs" color="fg.muted">
+                    {evidence.placesLine}
+                  </Text>
+                ) : null}
+              </Stack>
+            ) : (
+              <Text fontSize="sm" color="fg.muted">
+                Score disponível — critérios detalhados no lead.
+              </Text>
+            )}
 
-            {item.intelligence.pitch ? (
-              <PitchPreview pitch={item.intelligence.pitch} />
-            ) : item.intelligence.diagnostic ? (
-              <PitchPreview pitch={item.intelligence.diagnostic} />
-            ) : null}
+            <Text fontSize="xs" color="fg.muted">
+              {leadSourceLabels[item.source] ?? item.source}
+            </Text>
           </Stack>
-        </Card.Body>
+        </Stack>
       </NextLink>
-    </Card.Root>
+    </Box>
   );
 }

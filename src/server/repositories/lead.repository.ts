@@ -131,6 +131,30 @@ export async function listLeads(): Promise<LeadWithOwner[]> {
   });
 }
 
+/** Inventory listing with optional WHERE (ownership must already be encoded). */
+export async function listLeadsInventory(
+  where: Prisma.LeadWhereInput,
+  options: { skip: number; take: number } = { skip: 0, take: 25 },
+): Promise<LeadWithOwner[]> {
+  return prisma.lead.findMany({
+    where,
+    include: {
+      owner: {
+        select: { id: true, name: true, email: true },
+      },
+    },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    skip: options.skip,
+    take: options.take,
+  });
+}
+
+export async function countLeadsInventory(
+  where: Prisma.LeadWhereInput,
+): Promise<number> {
+  return prisma.lead.count({ where });
+}
+
 export async function countPipelineLeadsByStage(
   options: PipelineLeadListScope,
 ): Promise<Array<{ stage: LeadStage; count: number }>> {

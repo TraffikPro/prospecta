@@ -27,12 +27,12 @@ async function restoreMember(): Promise<void> {
   }
 }
 
-test.describe("first access visual consistency (Fatia B)", () => {
+test.describe("first access visual consistency (F12)", () => {
   test.afterEach(async () => {
     await restoreMember();
   });
 
-  test("desktop task shell: compact brand, no public split, logout kept", async ({
+  test("desktop task shell: compact brand, no marketing split, logout kept", async ({
     page,
   }) => {
     await setMustChangePassword(memberEmail, true);
@@ -54,7 +54,7 @@ test.describe("first access visual consistency (Fatia B)", () => {
     await expect(page.getByTestId("must-change-password-alert")).toBeVisible();
     await expect(page.getByRole("button", { name: "Sair" })).toBeVisible();
     await expect(
-      page.getByText("Acesse novamente sua operação."),
+      page.getByText("Transforme oportunidades em próximas ações."),
     ).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Alterar senha" })).toBeInViewport();
   });

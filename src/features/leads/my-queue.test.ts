@@ -66,8 +66,12 @@ describe("buildMyQueue", () => {
     assert.equal(view.summary.overdue, 1);
     assert.equal(view.summary.inConversation, 1);
     assert.equal(view.sections[0]?.bucket, "overdue");
+    assert.equal(view.sections[0]?.items[0]?.stage, "CONTACTED");
+    assert.equal(view.sections[0]?.totalCount, 1);
+    assert.equal(view.sections[0]?.truncated, false);
     assert.equal(view.sections[1]?.bucket, "no_contact");
     assert.equal(view.sections[1]?.items[0]?.companyName, "Alto Score");
+    assert.equal(view.sections[1]?.items[0]?.stage, "NEW");
     assert.equal(
       view.sections[1]?.items[0]?.campaign,
       "santos-odontologia-2026-07",
@@ -76,6 +80,13 @@ describe("buildMyQueue", () => {
       view.sections[1]?.items[0]?.nextAction.actionLabel,
       "Fazer primeiro contato",
     );
+  });
+
+  it("exposes empty-state copy for an empty owned queue", () => {
+    const view = buildMyQueue([], { now });
+    assert.equal(view.summary.total, 0);
+    assert.equal(view.items.length, 0);
+    assert.equal(view.sections.length, 0);
   });
 
   it("filters overdue and conversation", () => {
@@ -118,6 +129,49 @@ describe("buildMyQueue", () => {
     });
     assert.equal(conversation.items.length, 1);
     assert.equal(conversation.items[0]?.companyName, "Respondeu");
+  });
+
+  it("bounds rendered rows per section while keeping truthful counts", () => {
+    const leads = Array.from({ length: 5 }, (_, index) => ({
+      id: `o-${index}`,
+      companyName: `Overdue ${index}`,
+      stage: "CONTACTED" as const,
+      nextFollowUpAt: new Date("2026-07-20T12:00:00.000Z"),
+      intelligence: { score: 90 - index, qualification: "HIGH" as const, signals: ["x"] },
+      activities: [
+        { type: "WHATSAPP" as const, outcome: "SENT_NO_REPLY" as const },
+      ],
+    }));
+
+    const view = buildMyQueue(leads, { now, sectionLimit: 2 });
+    assert.equal(view.summary.overdue, 5);
+    assert.equal(view.sections[0]?.totalCount, 5);
+    assert.equal(view.sections[0]?.items.length, 2);
+    assert.equal(view.sections[0]?.truncated, true);
+    assert.equal(view.filteredTotal, 5);
+  });
+
+  it("paginates a single filter without dropping higher-urgency rows outside the page", () => {
+    const leads = Array.from({ length: 30 }, (_, index) => ({
+      id: `n-${index}`,
+      companyName: `New ${String(index).padStart(2, "0")}`,
+      stage: "NEW" as const,
+      nextFollowUpAt: null,
+      intelligence: { score: 50, qualification: "MEDIUM" as const, signals: ["x"] },
+      activities: [],
+    }));
+
+    const page2 = buildMyQueue(leads, {
+      now,
+      filter: "new",
+      page: 2,
+      filterPageSize: 25,
+    });
+    assert.equal(page2.filteredTotal, 30);
+    assert.equal(page2.page, 2);
+    assert.equal(page2.totalPages, 2);
+    assert.equal(page2.items.length, 5);
+    assert.equal(page2.summary.noContact, 30);
   });
 });
 

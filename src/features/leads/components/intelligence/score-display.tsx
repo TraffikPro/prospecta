@@ -15,6 +15,7 @@ type ScoreDisplayProps = {
   intelligence: LeadIntelligence;
 };
 
+/** Compact score context for Lead Detail — comparison lives on Prioridades. */
 export function ScoreDisplay({ intelligence }: ScoreDisplayProps) {
   const qualification = resolveQualification(intelligence);
   const score = intelligence.score;
@@ -23,23 +24,28 @@ export function ScoreDisplay({ intelligence }: ScoreDisplayProps) {
     : "brand";
 
   return (
-    <Stack gap="3" data-testid="intelligence-score">
-      <Stack direction="row" align="baseline" gap="3" flexWrap="wrap">
+    <Stack gap="2" data-testid="intelligence-score">
+      <Stack direction="row" align="center" gap="3" flexWrap="wrap">
         {typeof score === "number" ? (
-          <Text fontSize="3xl" fontWeight="bold" lineHeight="1" letterSpacing="tight">
+          <Text
+            fontSize="xl"
+            fontWeight="semibold"
+            lineHeight="1"
+            letterSpacing="tight"
+          >
             {score}
-            <Text as="span" fontSize="md" fontWeight="medium" color="fg.muted">
+            <Text as="span" fontSize="sm" fontWeight="medium" color="fg.muted">
               {" "}
               / 100
             </Text>
           </Text>
         ) : (
-          <Text fontSize="lg" color="fg.muted">
+          <Text fontSize="sm" color="fg.muted">
             Score indisponível
           </Text>
         )}
         {qualification ? (
-          <QualificationBadge qualification={qualification} size="lg" />
+          <QualificationBadge qualification={qualification} size="md" />
         ) : null}
       </Stack>
 
@@ -50,7 +56,13 @@ export function ScoreDisplay({ intelligence }: ScoreDisplayProps) {
       ) : null}
 
       {typeof score === "number" ? (
-        <Progress.Root value={score} max={100} colorPalette={palette} size="sm">
+        <Progress.Root
+          value={score}
+          max={100}
+          colorPalette={palette}
+          size="xs"
+          aria-hidden="true"
+        >
           <Progress.Track>
             <Progress.Range />
           </Progress.Track>
