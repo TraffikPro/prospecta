@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Prospecta — GitHub social preview</title>
+    <style>
+      :root {
+        --brand-50: #f0fdfa;
+        --brand-100: #ccfbf1;
+        --brand-200: #99f6e4;
+        --brand-600: #0d9488;
+        --brand-800: #115e59;
+        --brand-950: #042f2e;
+        --danger: #b91c1c;
+        --bg: #f4f6f8;
+        --surface: #ffffff;
+        --border: #e2e8f0;
+        --fg: #1a202c;
+        --fg-muted: #718096;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 1280px;
+        height: 640px;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: "Segoe UI", system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .frame {
+        width: 1280px;
+        height: 640px;
+        display: flex;
+        flex-direction: column;
+        background: var(--bg);
+      }
+
+      .identity {
+        flex-shrink: 0;
+        height: 96px;
+        padding: 0 36px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--brand-950);
+        color: #fff;
+        border-bottom: 3px solid var(--brand-600);
+      }
+
+      .identity-left {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .name {
+        font-size: 34px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1;
+      }
+
+      .descriptor {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--brand-200);
+        letter-spacing: -0.01em;
+      }
+
+      .badge {
+        font-size: 13px;
+        font-weight: 650;
+        color: var(--brand-100);
+        border: 1px solid rgba(153, 246, 228, 0.35);
+        border-radius: 999px;
+        padding: 8px 14px;
+        letter-spacing: 0.01em;
+      }
+
+      .stage {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        padding: 18px 22px 22px;
+        gap: 14px;
+      }
+
+      .sidebar {
+        width: 188px;
+        flex-shrink: 0;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .brand {
+        font-size: 14px;
+        font-weight: 700;
+        padding: 0 8px 4px;
+      }
+
+      .nav-label {
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--fg-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 4px 8px;
+      }
+
+      .nav-item {
+        min-height: 34px;
+        display: flex;
+        align-items: center;
+        padding: 0 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        color: var(--fg);
+        opacity: 0.72;
+      }
+
+      .nav-item.active {
+        opacity: 1;
+        font-weight: 700;
+        background: var(--brand-50);
+        color: var(--brand-800);
+      }
+
+      .main {
+        flex: 1;
+        min-width: 0;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 18px 22px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .title-row {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      h1 {
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .subtitle {
+        font-size: 13px;
+        color: var(--fg-muted);
+      }
+
+      .filters {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .filter {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--fg-muted);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 6px 12px;
+        background: #fff;
+      }
+
+      .filter.active {
+        color: #fff;
+        background: var(--brand-600);
+        border-color: var(--brand-600);
+      }
+
+      .section-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--danger);
+        margin-top: 2px;
+      }
+
+      .cards {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--danger);
+        border-radius: 8px;
+        padding: 12px 14px;
+        background: #fff;
+      }
+
+      .card-copy {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .company {
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+
+      .meta {
+        font-size: 12px;
+        color: var(--fg-muted);
+      }
+
+      .action-copy {
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .buttons {
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+
+      .btn {
+        font-size: 12px;
+        font-weight: 700;
+        border-radius: 6px;
+        padding: 8px 14px;
+        border: 1px solid var(--border);
+        background: #fff;
+        color: var(--fg);
+      }
+
+      .btn.primary {
+        background: var(--brand-600);
+        border-color: var(--brand-600);
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame" data-fixture="prospecta-github-social-preview">
+      <header class="identity">
+        <div class="identity-left">
+          <div class="name">Prospecta</div>
+          <div class="descriptor">Operational B2B prospecting CRM</div>
+        </div>
+        <div class="badge">Product Engineering Case</div>
+      </header>
+
+      <div class="stage">
+        <aside class="sidebar" aria-hidden="true">
+          <div class="brand">Prospecta</div>
+          <div>
+            <div class="nav-label">Operação</div>
+            <div class="nav-item active">Minha fila</div>
+            <div class="nav-item">Prioridades</div>
+            <div class="nav-item">Pipeline</div>
+          </div>
+          <div>
+            <div class="nav-label">Base comercial</div>
+            <div class="nav-item">Leads</div>
+            <div class="nav-item">Demos</div>
+          </div>
+        </aside>
+
+        <main class="main">
+          <div class="title-row">
+            <h1>Minha fila</h1>
+            <p class="subtitle">
+              Próximos leads que precisam de ação — atrasados e follow-ups
+              primeiro
+            </p>
+          </div>
+
+          <div class="filters">
+            <span class="filter active">Todos (3)</span>
+            <span class="filter">Atrasados (2)</span>
+            <span class="filter">Follow-up hoje (1)</span>
+            <span class="filter">Novo contato (0)</span>
+          </div>
+
+          <div class="section-label">Atrasados (2)</div>
+
+          <div class="cards">
+            <article class="card">
+              <div class="card-copy">
+                <div class="company">Horizonte Dental</div>
+                <div class="meta">Contatado 2 · Prioridade alta</div>
+                <div class="action-copy">Enviar follow-up</div>
+                <div class="meta">Enviado sem resposta · Follow-up: 15/08/2026</div>
+              </div>
+              <div class="buttons">
+                <span class="btn">Registrar</span>
+                <span class="btn primary">Abrir</span>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-copy">
+                <div class="company">Studio Norte Fitness</div>
+                <div class="meta">Contatado 1 · Prioridade média</div>
+                <div class="action-copy">Retomar contato</div>
+                <div class="meta">Sem resposta · Follow-up: 14/08/2026</div>
+              </div>
+              <div class="buttons">
+                <span class="btn">Registrar</span>
+                <span class="btn primary">Abrir</span>
+              </div>
+            </article>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
