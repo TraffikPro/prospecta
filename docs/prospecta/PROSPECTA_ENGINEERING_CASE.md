@@ -241,12 +241,18 @@ See CRM evidence pack. Do not equate to production SLA.
 
 | Suite | Result | Class |
 | --- | ---: | --- |
-| CRM `src/**/*.test.ts` (Postgres) | **346 / 346** | PUBLIC_REPRODUCIBLE |
+| CRM `src/**/*.test.ts` (Postgres, Node test runner) | **374 / 374** | PUBLIC_REPRODUCIBLE |
 | Generator `src/**/*.test.ts` | **84 / 84** | PUBLIC_REPRODUCIBLE |
 
 Suites are **independent** (different repos, different runners). Prefer stating
-both numbers separately. Do **not** market a blended “430 tests” without
-context — it implies one suite.
+both numbers separately. Do **not** market a blended total without context —
+it implies one suite.
+
+CRM Product UI V2 release gate also recorded Playwright E2E **50 / 50** (0
+retries), typecheck, lint, and build PASS
+([F14 report](../audits/PROSPECTA_PRODUCT_UI_F14_RELEASE_REPORT.md)) —
+**PUBLIC_DOCUMENTED** release evidence, separate from the `src/**/*.test.ts`
+suite.
 
 CRM CI also: lint, typecheck, build, Gitleaks, `pnpm audit --audit-level high`,
 CodeQL. Generator CI: typecheck + test.
@@ -257,7 +263,7 @@ CodeQL. Generator CI: typecheck + test.
 
 | Area | CRM | Generator | Evidence type |
 | --- | --- | --- | --- |
-| Source tests | 346/346 | 84/84 | PUBLIC_REPRODUCIBLE (CI/repo) |
+| Source tests | 374/374 | 84/84 | PUBLIC_REPRODUCIBLE (CI/repo) |
 | Concurrent ingest | automated matrix | producer of sync traffic | PUBLIC_REPRODUCIBLE |
 | Callback HTTP retries | consumer idempotency | `fetchWithRetry` + fault tests | PUBLIC_REPRODUCIBLE |
 | Score V2 unit | consumer of `intelligence` | engine tests | PUBLIC_REPRODUCIBLE |
