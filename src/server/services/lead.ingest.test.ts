@@ -60,6 +60,8 @@ describe("ingestExternalLead", () => {
     assert.equal(stored.source, "GOOGLE_PLACES");
     assert.equal(stored.externalId, externalId);
     assert.equal(stored.ownerId, ownerId);
+    assert.equal(stored.whatsappConsentStatus, "UNKNOWN");
+    assert.equal(stored.phoneE164, null);
     assert.ok(stored.notes?.includes("Score: 90/100"));
     assert.deepEqual(stored.intelligence, payload.intelligence);
 

@@ -23,12 +23,15 @@ import { sanitizeLeadNotes } from "@/features/leads/intelligence/sanitize-notes"
 import { getNextAction, pickLatestOutcome } from "@/features/leads/next-action";
 import { MoveStageForm } from "@/features/leads/move-stage-form";
 import { LeadReassignForm } from "@/features/portfolio/components/lead-reassign-form";
+import { WhatsAppAuthorizedChannel } from "@/features/whatsapp-consent/components/whatsapp-authorized-channel";
+import { suggestPhoneE164 } from "@/features/whatsapp-consent/phone-e164";
 import { AuthenticationError } from "@/server/auth/errors";
 import { requireAnyRole } from "@/server/auth/guards";
 import { getSessionUser } from "@/server/auth/session";
 import { getActivitiesForLead } from "@/server/services/activity.service";
 import { getLeadById } from "@/server/services/lead.service";
 import { listAssignableOperators } from "@/server/services/portfolio.service";
+import { listWhatsAppConsentForLead } from "@/server/services/whatsapp-consent.service";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -80,6 +83,7 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
     id: sessionUser!.id,
     role: sessionUser!.role,
   });
+  const consentHistory = await listWhatsAppConsentForLead(lead.id);
   const intelligence = parseLeadIntelligence(lead.intelligence);
   const displayNotes = sanitizeLeadNotes(lead.notes, {
     signals: intelligence?.signals,
@@ -131,6 +135,22 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
         contact={<LeadContactActions phone={lead.phone} email={lead.email} />}
         intelligence={
           <Stack gap={{ base: "6", lg: "8" }}>
+            <WhatsAppAuthorizedChannel
+              leadId={lead.id}
+              status={lead.whatsappConsentStatus}
+              phoneE164={lead.phoneE164}
+              suggestedE164={suggestPhoneE164(lead.phone)}
+              history={consentHistory.map((item) => ({
+                id: item.id,
+                status: item.status,
+                source: item.source,
+                purpose: item.purpose,
+                purposeNote: item.purposeNote,
+                evidenceAt: item.evidenceAt.toISOString(),
+                createdAt: item.createdAt.toISOString(),
+                actorName: item.actor.name,
+              }))}
+            />
             <CommercialPlaybookSection view={playbook} />
             {intelligence ? (
               <section aria-labelledby="intelligence-heading">
