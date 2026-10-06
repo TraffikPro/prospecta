@@ -1,0 +1,20 @@
+{
+  "name": "fast-glob",
+  "version": "3.3.1-prospecta-node-fs.0",
+  "private": true,
+  "description": "Local MIT shim: Node.js fs.globSync subset for @next/eslint-plugin-next get-root-dirs. Avoids micromatch/braces (GHSA-vfj7-8cjw-p6xm).",
+  "license": "MIT",
+  "main": "index.cjs",
+  "type": "commonjs",
+  "exports": {
+    ".": "./index.cjs"
+  },
+  "files": [
+    "index.cjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  }
+}
