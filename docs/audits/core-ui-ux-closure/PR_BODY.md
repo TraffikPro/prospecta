@@ -27,9 +27,17 @@ Comando CI: `pnpm audit --audit-level high` (pnpm 9.15.9).
 | **high** `brace-expansion` GHSA-qhr7 / GHSA-6j4f | overrides `1.1.18` / `5.0.9` | overrides **`1.1.20`** / **`5.0.11`** |
 | **high** `sharp` GHSA-wq5f (librsvg) | `0.35.4` via next | override **`0.35.5`** |
 | **high** `source-map-js` GHSA-68fv | `1.2.1` via postcss | override **`1.2.2`** |
-| **high** `braces` GHSA-vfj7-8cjw-p6xm | `3.0.3` via eslint-config-next → fast-glob → micromatch | **Sem versão corrigida publicada** (`first_patched_version: null`; latest npm ainda `3.0.3`). Cadeia só de lint/dev. PRs upstream abertos; sem patch seguro a aplicar sem inventar exceção. |
+| **high** `braces` GHSA-vfj7-8cjw-p6xm | `3.0.3` via eslint-config-next → fast-glob → micromatch | **Sem versão oficial corrigida** (reconfirmado 2026-10-06). Ver diagnóstico completo abaixo. |
 
-O gate remoto deve continuar falhando enquanto `braces` não tiver release corrigido. Este PR permanece **draft** por esse bloqueio externo.
+### Residual `braces` (reinvestigado 2026-10-06)
+
+- Fontes: [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm), npm `braces@latest` = `3.0.3`, `first_patched_version: null`.
+- Cadeia única: `eslint-config-next@16.3.8` → `@next/eslint-plugin-next` → `fast-glob@3.3.1` → `micromatch@4.0.8` → `braces@3.0.3` (**devDependency**; ausente em `pnpm install --prod`).
+- Exposição: lint/CI via `get-root-dirs` → `fast-glob`; entrada = config/estrutura do repo, não HTTP de usuário. DoS de processo de lint plausível; exploração não demonstrada.
+- Alternativas testadas/descartadas: bump Next 16.4 (mesma pin de `fast-glob`); upgrade `fast-glob`/`micromatch` (ainda trazem `braces`); remoção/substituição de `eslint-config-next` (perda de cobertura — PR separado); override `@dieub/braces-depth-guard` **limpa o audit em sandbox** mas **não aplicado** (fork de terceiro sem due diligence — não aceitar risco pelo responsável).
+- Detalhe: [`BRACES_AUDIT_RESIDUAL.md`](./BRACES_AUDIT_RESIDUAL.md).
+
+Este PR permanece **draft** até release oficial de `braces` patched, mudança de cadeia pelo Next, ou decisão humana explícita.
 
 ## Validation
 
@@ -45,8 +53,8 @@ O gate remoto deve continuar falhando enquanto `braces` não tiver release corri
 | E2E CORE 16/16 | PASS (reexecutado após upgrade Next) |
 
 ### Remoto
-- SHA CORE `4addc2e`: Quality/Tests/CodeQL/Gitleaks PASS; Dependency audit FAIL (antes da correção).
-- SHA deps `9d9e941`: acompanhar checks neste push.
+- SHA CORE `4addc2e`: Quality/Tests/CodeQL/Gitleaks PASS; Dependency audit FAIL (antes da correção de deps).
+- SHA deps `9d9e941` / docs `5de4f7b`: Quality/Tests/CodeQL/Gitleaks/Vercel Preview PASS; Dependency audit FAIL residual (`braces` only).
 
 ## Vercel
 
