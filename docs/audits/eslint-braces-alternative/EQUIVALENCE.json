@@ -1,0 +1,48 @@
+{
+  "comparedAt": "2026-10-06T20:29:34.249Z",
+  "files": {
+    "app-router-page.json": {
+      "ruleCountBefore": 113,
+      "ruleCountAfter": 113,
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "client-form.json": {
+      "ruleCountBefore": 113,
+      "ruleCountAfter": 113,
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "script.json": {
+      "ruleCountBefore": 113,
+      "ruleCountAfter": 113,
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "server-page.json": {
+      "ruleCountBefore": 113,
+      "ruleCountAfter": 113,
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "server-service.json": {
+      "ruleCountBefore": 113,
+      "ruleCountAfter": 113,
+      "added": [],
+      "removed": [],
+      "changed": []
+    },
+    "unit-test.json": {
+      "ruleCountBefore": 113,
+      "ruleCountAfter": 113,
+      "added": [],
+      "removed": [],
+      "changed": []
+    }
+  },
+  "diffs": []
+}
