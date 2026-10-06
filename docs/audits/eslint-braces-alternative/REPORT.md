@@ -108,7 +108,10 @@ eslint-config-next@16.3.8
 
 ## 8. Publication
 
-Filled after commit/push/PR open.
+- **SHA:** `8818003b34185a1797c9e32d2436f81a4ac17361`
+- **PR (draft):** https://github.com/TraffikPro/prospecta/pull/85
+- **Branch:** `fix/eslint-remove-vulnerable-braces`
+- PR #83 left untouched (still draft).
 
 ## 9. Next action to unblock #83
 
