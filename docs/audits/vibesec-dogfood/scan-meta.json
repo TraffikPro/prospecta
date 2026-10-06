@@ -1,0 +1,8 @@
+﻿{
+    "exitCode":  1,
+    "vibesecVersion":  "1.1.1",
+    "vibesecCommit":  "68f088c0694b193425b7258eaab053eec55cc43e",
+    "command":  "node dist/cli/main.js scan \u003ctarget\u003e --format json",
+    "durationMs":  2040,
+    "target":  "C:\\Users\\Xakep\\Desktop\\prospecta-vibesec-ci"
+}

@@ -4,11 +4,78 @@ The repository defines two GitHub Actions workflows:
 
 - `CI`: serial tests against disposable PostgreSQL 16, plus lint, typecheck, and build.
 - `Security`: full-history Gitleaks scanning, `pnpm audit` for high/critical
-  vulnerabilities, and CodeQL for JavaScript/TypeScript.
+  vulnerabilities, CodeQL for JavaScript/TypeScript, and VibeSec repository
+  scanning in OBSERVE mode.
 
 Dependabot checks pnpm/npm dependencies and GitHub Actions weekly. Minor and
 patch updates are grouped; major updates remain separate for human review.
 Automerge is not enabled.
+
+## Existing controls
+
+| Control | Job | What it covers |
+| --- | --- | --- |
+| Gitleaks | `Secret scan (Gitleaks)` | Secret detection across complete Git history |
+| Dependency Audit | `Dependency audit (high and critical)` | Known npm/pnpm advisories at high/critical via `pnpm audit` |
+| CodeQL | `CodeQL (JavaScript and TypeScript)` | Static analysis with `security-extended` queries |
+| VibeSec | `VibeSec scan (observe)` | Repository/application/configuration heuristics from the pinned VibeSec Code rule set (`vibesec scan`) |
+
+VibeSec is additive. It does **not** replace Gitleaks, Dependency Audit, CodeQL,
+or Dependabot. It is **not** a CVE / dependency advisory scanner.
+
+## VibeSec (dogfooding / OBSERVE)
+
+### Pin
+
+- Package version: `1.1.1`
+- Annotated tag: `v1.1.1`
+- Immutable commit: `68f088c0694b193425b7258eaab053eec55cc43e`
+- Source: `gustavomarques00/vibesec` (checkout + `npm ci` + `npm run build`)
+
+npm registry packages at audit time only published older `0.x` builds, so CI
+does **not** install `@latest` or a mutable branch. The workflow verifies both
+the commit SHA and `package.json` version before scanning.
+
+### Mode
+
+OBSERVE:
+
+- Exit `0` → clean scan → job succeeds
+- Exit `1` → findings observed → job succeeds; summary + `vibesec-report` artifact
+- Exit `2` / crash / unexpected → scanner failure → job **fails**
+- Job timeout → scanner failure (visible red check)
+
+Findings from this phase do **not** block merge. Scanner infrastructure failures
+remain visible and must not be silenced with blanket `continue-on-error`.
+
+### Local equivalent
+
+Requires Node.js `>=20` (Prospecta CI uses `22.21.1`):
+
+```sh
+git clone https://github.com/gustavomarques00/vibesec.git
+cd vibesec
+git checkout 68f088c0694b193425b7258eaab053eec55cc43e
+npm ci
+npm run build
+node dist/cli/main.js scan /path/to/prospecta --format json > vibesec-report.json
+echo $?
+# 0 = no findings; 1 = findings; 2 = usage/failure
+```
+
+Interpret findings as **observed evidence**, not confirmed production exploits.
+See dogfooding triage notes under `docs/audits/vibesec-dogfood/` when present.
+
+### Future ENFORCE criteria
+
+Do not enable ENFORCE until Prospecta documents:
+
+1. an accepted false-positive / baseline policy for test fixtures and `.env.example`;
+2. stack-aware rule expectations (Prospecta uses Prisma/PostgreSQL, not Supabase RLS);
+3. which rule IDs or severity classes may block;
+4. a local reproduce path that matches CI pins.
+
+Until then, keep OBSERVE.
 
 ## Safety model
 
@@ -21,6 +88,10 @@ CI never uses production secrets, seeds, resets, external acquisition services,
 or Upstash. The build receives empty Upstash variables and a deliberately
 unreachable localhost database URL, so an unexpected network dependency fails
 instead of reaching a remote service.
+
+The VibeSec job does not receive production credentials, does not require a
+database, and runs offline Code-mode scanning only (`vibesec external` is not a
+PR gate in this phase).
 
 ## Equivalent local commands
 
@@ -60,8 +131,9 @@ fully by these local commands.
 - **Lint/typecheck/build:** reproduce the exact pnpm command with Node
   `22.21.1` and pnpm `9.15.9`.
 - **Dependency audit:** inspect the advisory and dependency path. Fix it in a
-  separate dependency PR; do not use `--fix`, lower the severity, or ignore an
-  advisory without a documented risk decision.
+  separate dependency PR; do not use `--force`, lower the severity, or ignore an
+  advisory without a documented risk decision. Do not conflate this gate with
+  VibeSec.
 - **CodeQL:** inspect the alert path and query. CodeQL is supported here because
   Prospecta is a public JavaScript/TypeScript repository with Actions enabled.
 - **Gitleaks:** rotate and remove a real credential before rewriting history.
@@ -69,6 +141,10 @@ fully by these local commands.
   `.github/gitleaks.toml`, extending the default rules and targeting only the
   exact rule plus path/regex/commit. Never disable Gitleaks globally or add a
   real detected secret to an allowlist.
+- **VibeSec (observe):** download the `vibesec-report` artifact. Exit `1` with
+  findings is expected during dogfooding and does not fail the job. Exit `2`,
+  build/install failure, or timeout is a scanner failure and must be fixed in
+  the integration (or upstream VibeSec), not by suppressing the check.
 
 ## Initial dependency-audit baseline
 
@@ -88,5 +164,8 @@ configure branch protection to require these exact job checks:
 - `Secret scan (Gitleaks)`
 - `Dependency audit (high and critical)`
 - `CodeQL (JavaScript and TypeScript)`
+
+`VibeSec scan (observe)` may be required for visibility once stable, but must
+not be treated as an ENFORCE findings gate until the criteria above are met.
 
 Branch protection is deliberately not configured by this change.
