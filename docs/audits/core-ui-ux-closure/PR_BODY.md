@@ -11,7 +11,7 @@ CTA de canal ambíguo, retorno incompleto à fila, motivos do playbook pouco ace
 - Retorno: preserva origem allowlisted, filtro e `page` (quando válido); sem redirect externo
 - Pós-save: submit some; **Voltar** destacado; campos desabilitados; **Registrar outro contato** limpa o formulário
 - Correção: `router.refresh()` a cada save bem-sucedido (incluindo o 2º registro após “Registrar outro contato”)
-- Playbook: chips + disclosure **Ver motivos** (toque/teclado)
+- Playbook: chips + disclosure **Ver motivos** (toque/teclado); etapas em botões acessíveis (tablist) estáveis no mobile
 - Follow-up: relativo + data; atalhos só preenchem o campo; **Hoje 18:00** desabilita após o horário com explicação
 - Mobile: bottom nav com ícone + texto
 
@@ -21,18 +21,22 @@ Não reordena Histórico/Activity (permanece VALIDATE com operadores).
 
 Ambiente: Docker Postgres `127.0.0.1:5433` · Next local · dados sintéticos. Produção não usada.
 
-| Check | Resultado | Estado |
+| Check | Resultado | Estado do código |
 | --- | --- | --- |
-| Unitários afetados (presets, breadcrumb, follow-up, nav) | PASS | branch final |
+| Unitários afetados (presets, breadcrumb, follow-up, nav) | PASS | commit `c1a7899` + follow-up de estabilidade |
 | TypeScript (`tsc --noEmit`) | PASS | branch final |
 | Lint arquivos tocados | PASS | branch final |
-| E2E CORE completo 16/16 | PASS (rodada anterior no working tree CORE) | pré-port |
-| E2E `my-leads` (2º contato + refresh) | PASS após correção do refresh | pré-port; revalidado na branch final se executado |
+| E2E CORE completo 16/16 | PASS | reexecutado na branch final após estabilidade playbook/breadcrumbs/fila |
+| E2E `my-leads` (2º contato + refresh) | PASS | incluído na suíte 16/16 da branch final |
 
 Detalhe: `docs/audits/core-ui-ux-closure/REPORT.md`
 
+### Separação explícita
+- E2E CORE 16/16 da rodada anterior (working tree pré-port): histórico de validação
+- E2E CORE 16/16 reexecutado na branch `feat/prospecta-core-ui-ux` após correções de estabilidade (este SHA)
+- CI remoto: acompanhar neste PR (Quality/Tests/CodeQL/Gitleaks verdes no SHA anterior; Dependency audit falha também em `main` — bloqueio externo pré-existente)
+
 ### Não executado
-- CI remoto (acompanhar neste PR)
 - Produção / smoke prod
 - Observação com operadores
 - Zoom real de navegador 200% (CDP page scale validado; não é zoom de browser)
@@ -60,3 +64,4 @@ Não há medição de conversão, produtividade ou tempo de ciclo.
 - Ampliação via CDP `pageScaleFactor=2` validada; zoom real 200% pendente
 - E2E Playwright fora do GitHub Actions
 - Reorder Histórico/Activity aguarda evidência de operadores
+- Dependency audit (high/critical) falha também em `main` (deps transitivas: brace-expansion, braces, sharp, etc.) — fora do escopo desta PR

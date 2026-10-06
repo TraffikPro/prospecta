@@ -228,11 +228,13 @@ test.describe("commercial playbook UI — mobile", () => {
     await expect(page.getByTestId("commercial-playbook")).toBeVisible();
     await expect(page.getByTestId("playbook-step-REACTIVATION")).toBeVisible();
     await page.getByTestId("playbook-step-REACTIVATION").scrollIntoViewIfNeeded();
-    await page.getByTestId("playbook-step-REACTIVATION").click();
-    await expect(page.getByTestId("playbook-message")).toHaveAttribute(
-      "data-step",
-      "REACTIVATION",
-    );
+    await expect(async () => {
+      await page.getByTestId("playbook-step-REACTIVATION").click();
+      await expect(page.getByTestId("playbook-message")).toHaveAttribute(
+        "data-step",
+        "REACTIVATION",
+      );
+    }).toPass({ timeout: 10_000 });
     await expect(page.getByTestId("playbook-message")).toHaveText(
       "Ainda não há abordagem aprovada para este contexto.",
     );

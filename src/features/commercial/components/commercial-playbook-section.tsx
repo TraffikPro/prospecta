@@ -8,9 +8,9 @@ import {
   Clipboard,
   Flex,
   Heading,
+  HStack,
   NativeSelect,
   Stack,
-  Tabs,
   Text,
 } from "@chakra-ui/react";
 
@@ -144,38 +144,38 @@ export function CommercialPlaybookSection({
             <Text fontSize="sm" fontWeight="semibold" id="playbook-step-label">
               Etapa
             </Text>
-            <Tabs.Root
-              value={step}
-              onValueChange={(details) => {
-                if (details.value) {
-                  setStep(details.value as CadenceStep);
-                }
-              }}
-              variant="enclosed"
-              size="sm"
-            >
-              <Box overflowX="auto" maxW="full">
-                <Tabs.List
-                  flexWrap="nowrap"
-                  w="max-content"
-                  minW="full"
-                  aria-labelledby="playbook-step-label"
-                >
-                  {view.steps.map((item) => (
-                    <Tabs.Trigger
+            <Box overflowX="auto" maxW="full">
+              <HStack
+                as="div"
+                role="tablist"
+                aria-labelledby="playbook-step-label"
+                gap="2"
+                flexWrap="nowrap"
+                w="max-content"
+                minW="full"
+              >
+                {view.steps.map((item) => {
+                  const selectedStep = item.step === step;
+                  return (
+                    <Button
                       key={item.step}
-                      value={item.step}
+                      type="button"
+                      role="tab"
+                      aria-selected={selectedStep}
+                      size="sm"
                       flexShrink={0}
                       whiteSpace="nowrap"
+                      variant={selectedStep ? "solid" : "outline"}
+                      colorPalette={selectedStep ? "brand" : "gray"}
                       data-testid={`playbook-step-${item.step}`}
                       onClick={() => setStep(item.step)}
                     >
                       {item.label}
-                    </Tabs.Trigger>
-                  ))}
-                </Tabs.List>
-              </Box>
-            </Tabs.Root>
+                    </Button>
+                  );
+                })}
+              </HStack>
+            </Box>
           </Stack>
 
           <Stack gap="3" minW={0}>

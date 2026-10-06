@@ -1,8 +1,8 @@
 # CORE UI/UX closure — resultados locais
 
 - **Data:** 2026-10-06
-- **Branch:** `docs/prospecta-ecosystem-engineering-case`
-- **HEAD revisado:** `3913b012a61f9bbba1ad678c0d7d631135bde0de` (+ working tree local)
+- **Branch:** `feat/prospecta-core-ui-ux` (worktree a partir de `origin/main` @ `b9194c4`)
+- **HEAD publicado:** `c1a7899` + commit de estabilidade E2E/playbook mobile
 - **Ambiente:** Docker Postgres `127.0.0.1:5433` / db `prospecta` · Next `127.0.0.1:3000` com `PROSPECTA_E2E_RATE_LIMIT_SCOPING=1`
 - **Produção:** não usada (override de `DATABASE_URL` no processo; guard de mutação nos scripts)
 - **Veredito:** **VALIDADO LOCALMENTE** (com limitações honestas abaixo)
@@ -33,12 +33,15 @@ Nenhuma proteção de ACL/rate-limit de produção foi enfraquecida.
 
 | Check | Resultado | Estado do código |
 | --- | --- | --- |
-| Unitários presets/breadcrumb/format-follow-up | PASS (10) | working tree |
-| `tsc --noEmit` | PASS | working tree |
-| ESLint arquivos tocados | PASS | working tree |
-| E2E `my-leads` (refresh 2º save) | PASS | após fix refresh |
-| E2E CORE completo 16/16 | **reutilizado** (etapa anterior; sem regressão no arquivo além de my-leads) | HEAD+diffs anteriores |
+| Unitários presets/breadcrumb/format-follow-up | PASS (10) | commit `c1a7899` |
+| `tsc --noEmit` | PASS | commit `c1a7899` |
+| ESLint arquivos tocados | PASS | commit `c1a7899` |
+| E2E `my-leads` (refresh 2º save) | PASS | após fix refresh; reincluído na suíte final |
+| E2E CORE completo 16/16 (pré-port) | PASS | working tree original |
+| E2E CORE completo 16/16 (branch final) | PASS | após estabilidade playbook Button-tabs + e2e breadcrumbs/fila |
 | QA visual local | PASS (capturas reinspecionadas) | após fix script |
+| CI remoto Quality/Tests/CodeQL/Gitleaks | PASS | SHA `c1a7899` |
+| CI Dependency audit | FAIL (pré-existente em `main`) | bloqueio externo; fora do escopo CORE |
 
 ## Matriz de QA visual (atualizada)
 
