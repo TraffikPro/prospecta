@@ -96,6 +96,14 @@ export function NavIcon({ id, size }: { id: NavIconId } & IconProps) {
           <path d="M21 19a4.5 4.5 0 0 0-6-4.2" />
         </SvgIcon>
       );
+    case "more":
+      return (
+        <SvgIcon size={size}>
+          <circle cx="6" cy="12" r="1.4" fill="currentColor" />
+          <circle cx="12" cy="12" r="1.4" fill="currentColor" />
+          <circle cx="18" cy="12" r="1.4" fill="currentColor" />
+        </SvgIcon>
+      );
   }
 }
 

@@ -35,6 +35,7 @@ type PageProps = {
   searchParams: Promise<{
     from?: string;
     filter?: string;
+    page?: string;
   }>;
 };
 
@@ -74,6 +75,7 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
     lead.companyName,
     query.from,
     query.filter,
+    query.page,
   );
 
   const activities = await getActivitiesForLead(lead.id, {

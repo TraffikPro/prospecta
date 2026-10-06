@@ -17,11 +17,75 @@ import {
 import { Button } from "@/components/ui/button";
 
 import type { CadenceStep } from "../playbook-v1";
-import type { CommercialPlaybookView } from "../playbook-view";
+import type { CommercialPlaybookView, PlaybookReason } from "../playbook-view";
 
 type CommercialPlaybookSectionProps = {
   view: CommercialPlaybookView;
 };
+
+function PlaybookReasons({ reasons }: { reasons: PlaybookReason[] }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Stack gap="3" data-testid="playbook-reasons">
+      <Text fontSize="sm" fontWeight="semibold">
+        Por que este lead?
+      </Text>
+      <Flex gap="2" flexWrap="wrap">
+        {reasons.map((reason) => (
+          <Text
+            as="span"
+            key={reason.code}
+            fontSize="sm"
+            px="2.5"
+            py="1.5"
+            borderRadius="md"
+            borderWidth="1px"
+            borderColor="border"
+            bg="bg.muted"
+            lineHeight="short"
+            data-testid="playbook-signal"
+            data-signal={reason.code}
+          >
+            {reason.label}
+          </Text>
+        ))}
+      </Flex>
+      <Button
+        type="button"
+        variant="outline"
+        colorPalette="gray"
+        size="sm"
+        minH="touch"
+        width={{ base: "full", sm: "fit-content" }}
+        aria-expanded={open}
+        aria-controls="playbook-reasons-detail"
+        data-testid="playbook-reasons-toggle"
+        onClick={() => setOpen((current) => !current)}
+      >
+        {open ? "Ocultar motivos" : "Ver motivos"}
+      </Button>
+      {open ? (
+        <Stack
+          as="ul"
+          gap="1"
+          ps="4"
+          id="playbook-reasons-detail"
+          data-testid="playbook-reasons-detail"
+        >
+          {reasons.map((reason) => (
+            <Text as="li" key={`${reason.code}-text`} fontSize="sm">
+              <Text as="span" fontWeight="medium">
+                {reason.label}:
+              </Text>{" "}
+              {reason.text}
+            </Text>
+          ))}
+        </Stack>
+      ) : null}
+    </Stack>
+  );
+}
 
 export function CommercialPlaybookSection({
   view,
@@ -73,38 +137,7 @@ export function CommercialPlaybookSection({
       <Card.Body>
         <Stack gap="6">
           {view.reasons.length > 0 ? (
-            <Stack gap="3" data-testid="playbook-reasons">
-              <Text fontSize="sm" fontWeight="semibold">
-                Por que este lead?
-              </Text>
-              <Flex gap="2" flexWrap="wrap">
-                {view.reasons.map((reason) => (
-                  <Text
-                    as="span"
-                    key={reason.code}
-                    fontSize="sm"
-                    px="2.5"
-                    py="1.5"
-                    borderRadius="md"
-                    borderWidth="1px"
-                    borderColor="border"
-                    bg="bg.muted"
-                    lineHeight="short"
-                    data-testid="playbook-signal"
-                    data-signal={reason.code}
-                  >
-                    {reason.label}
-                  </Text>
-                ))}
-              </Flex>
-              <Stack gap="1" as="ul" ps="4">
-                {view.reasons.map((reason) => (
-                  <Text as="li" key={`${reason.code}-text`} fontSize="sm">
-                    {reason.text}
-                  </Text>
-                ))}
-              </Stack>
-            </Stack>
+            <PlaybookReasons reasons={view.reasons} />
           ) : null}
 
           <Stack gap="3" minW={0}>
@@ -135,6 +168,7 @@ export function CommercialPlaybookSection({
                       flexShrink={0}
                       whiteSpace="nowrap"
                       data-testid={`playbook-step-${item.step}`}
+                      onClick={() => setStep(item.step)}
                     >
                       {item.label}
                     </Tabs.Trigger>

@@ -90,6 +90,7 @@ CSV deixou de ser o hub (ADR 0009). Só reabre com sintoma real do piloto.
 - **Badges de ação na navegação = DONE** — [product-decision-navigation-badges.md](product-decision-navigation-badges.md).
 - **Playbook WhatsApp no lead = VALIDATE UI** — [product-decision-commercial-playbook-ui.md](product-decision-commercial-playbook-ui.md).
 - **Mapa de telas = FREEZE** — [product-decision-pilot-screen-map.md](product-decision-pilot-screen-map.md).
+- **CORE UI/UX (fila → detalhe → Activity) = VALIDADO LOCALMENTE** — [../audits/core-ui-ux-closure/REPORT.md](../audits/core-ui-ux-closure/REPORT.md) · observação de reorder Histórico/Activity permanece VALIDATE — [operator-core-flow-observation.md](operator-core-flow-observation.md).
 - **Dashboard de conversão / campanha = DEFER** — [product-decision-dashboard-defer.md](product-decision-dashboard-defer.md).
 - Observação operacional: Minha fila + detalhe do lead; `/app`, Inbox, pipeline e follow-ups apoiam.
 

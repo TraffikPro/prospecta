@@ -26,6 +26,19 @@ describe("lead navigation origin", () => {
       buildLeadReturnHref("my-leads", "new"),
       "/app/my-leads?filter=new",
     );
+    assert.equal(
+      buildLeadReturnHref("my-leads", "new", 2),
+      "/app/my-leads?filter=new&page=2",
+    );
+    assert.equal(buildLeadReturnHref("my-leads", "all", 2), "/app/my-leads");
+    assert.equal(
+      buildLeadReturnHref("my-leads", "https://evil.example", "2"),
+      "/app/my-leads",
+    );
+    assert.equal(
+      buildLeadReturnHref("my-leads", "new", "nope"),
+      "/app/my-leads?filter=new",
+    );
     assert.equal(buildLeadReturnHref("intelligence"), "/app/intelligence");
     assert.equal(buildLeadReturnHref("pipeline"), "/app/pipeline");
     assert.equal(buildLeadReturnHref("leads"), "/app/leads");
@@ -35,6 +48,10 @@ describe("lead navigation origin", () => {
     assert.equal(
       buildLeadDetailHref("abc", "my-leads", "new"),
       "/app/leads/abc?from=my-leads&filter=new",
+    );
+    assert.equal(
+      buildLeadDetailHref("abc", "my-leads", "new", 3),
+      "/app/leads/abc?from=my-leads&filter=new&page=3",
     );
     assert.equal(
       buildLeadDetailHref("abc", "intelligence"),
@@ -50,5 +67,8 @@ describe("lead navigation origin", () => {
       { label: "Minha fila", href: "/app/my-leads?filter=new" },
       { label: "Comsorriso" },
     ]);
+
+    const paged = leadBreadcrumbItems("Comsorriso", "my-leads", "new", "2");
+    assert.equal(paged.returnHref, "/app/my-leads?filter=new&page=2");
   });
 });

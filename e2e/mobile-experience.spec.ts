@@ -23,7 +23,7 @@ test.describe("mobile experience v1", () => {
       ownerEmail: memberEmail,
       externalId: `e2e-mobile-${stamp}`,
       intelligence: {
-        score: 88,
+        score: 100,
         qualification: "HIGH",
         signals: ["NO_WEBSITE", "HIGH_RATING"],
         diagnostic: "Boa reputação sem site — priorizar contato.",
@@ -50,7 +50,7 @@ test.describe("mobile experience v1", () => {
     await page
       .getByTestId("my-queue-card")
       .filter({ hasText: company })
-      .getByRole("link", { name: "Abrir lead" })
+      .getByRole("link", { name: "Abrir" })
       .click();
     await page.waitForURL(LEAD_DETAIL_URL);
 
