@@ -1,6 +1,8 @@
 # VibeSec dogfooding triage - Prospecta
 
-Generated against `origin/main` worktree `chore/vibesec-ci-dogfooding`.
+Historical triage from the pre-merge integration branch
+`chore/vibesec-ci-dogfooding` (base `origin/main` at the time). Merged via
+[PR #84](https://github.com/TraffikPro/prospecta/pull/84).
 
 - VibeSec: `1.1.1` @ `68f088c0694b193425b7258eaab053eec55cc43e`
 - Command: `node dist/cli/main.js scan <prospecta> --format json`

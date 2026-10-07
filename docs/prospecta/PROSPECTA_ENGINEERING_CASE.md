@@ -125,7 +125,7 @@ flowchart TB
 | Data | PostgreSQL 16 + Prisma | Artifacts under `output/` (no CRM DB) |
 | Auth (human) | HttpOnly session + ACL | — |
 | Auth (M2M) | Import + acquisition Bearer | Same shared secrets |
-| CI | Postgres tests, lint, typecheck, build, Gitleaks, audit, CodeQL | `pnpm typecheck` + `pnpm test` |
+| CI | Postgres tests, lint, typecheck, build, Gitleaks, audit, CodeQL, VibeSec observe | `pnpm typecheck` + `pnpm test` |
 
 ---
 
@@ -249,7 +249,9 @@ both numbers separately. Do **not** market a blended “430 tests” without
 context — it implies one suite.
 
 CRM CI also: lint, typecheck, build, Gitleaks, `pnpm audit --audit-level high`,
-CodeQL. Generator CI: typecheck + test.
+CodeQL, and VibeSec `scan` in OBSERVE mode (pinned `v1.1.1`; findings do not
+block merge). Generator CI: typecheck + test. See
+[`docs/development/ci-security-gates.md`](../development/ci-security-gates.md).
 
 ---
 
@@ -265,7 +267,7 @@ CodeQL. Generator CI: typecheck + test.
 | Sequential 1000 replay | evidence note | — | PUBLIC_DOCUMENTED |
 | Crash/replay N=8 | evidence note | evidence note | PUBLIC_DOCUMENTED (lab JSON LOCAL_LAB_ONLY) |
 | Pipeline perf | local synthetic | — | PUBLIC_DOCUMENTED |
-| Security gates | Gitleaks/audit/CodeQL | CI verify | PUBLIC_REPRODUCIBLE |
+| Security gates | Gitleaks/audit/CodeQL/VibeSec observe | CI verify | PUBLIC_REPRODUCIBLE |
 
 ---
 
