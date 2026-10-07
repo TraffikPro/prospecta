@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Intentional rule-violation fixtures for braces/lint equivalence proofs:
+    "docs/audits/eslint-braces-alternative/fixtures/**",
+    // Local CJS shim (Node require API); not app TypeScript:
+    "tooling/fast-glob-shim/**",
   ]),
 ]);
 

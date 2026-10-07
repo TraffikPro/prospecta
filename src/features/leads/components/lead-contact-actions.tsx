@@ -39,7 +39,7 @@ export function LeadContactActions({ phone, email }: LeadContactActionsProps) {
           {whatsappUrl ? (
             <Button asChild size="md" minH="11" flex="1" minW="0" px="2">
               <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                Contatar
+                Abrir WhatsApp
               </a>
             </Button>
           ) : null}

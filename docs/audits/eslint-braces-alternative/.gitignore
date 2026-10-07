@@ -1,0 +1,5 @@
+﻿# Local eslint --print-config dumps (regenerable; see SUMMARY.json + EQUIVALENCE.json)
+baseline/*.json
+!baseline/SUMMARY.json
+after/
+fixtures/eslint-results.json

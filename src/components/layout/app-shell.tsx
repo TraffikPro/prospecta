@@ -17,6 +17,7 @@ import { usePathname } from "next/navigation";
 
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { NavBadge } from "@/components/navigation/nav-badge";
+import { NavIcon } from "@/components/navigation/nav-icons";
 import {
   isNavPathActive,
   MOBILE_PRIMARY_NAV,
@@ -166,6 +167,7 @@ export function AppShell({
                     gap: "0.15rem",
                   }}
                 >
+                  <NavIcon id={item.icon} size={18} />
                   <Text as="span">{item.label}</Text>
                   {itemId ? (
                     <NavBadge count={count} itemId={itemId} compact />

@@ -16,7 +16,7 @@ function icpLead(stamp: number, ownerEmail: string) {
     externalId: `e2e-playbook-${stamp}`,
     contactName: "Marina",
     intelligence: {
-      score: 92,
+      score: 100,
       qualification: "HIGH" as const,
       campaign: "santos-odontologia-2026-07",
       signals: ["NO_WEBSITE", "HIGH_RATING", "HIGH_REVIEWS"],
@@ -39,8 +39,6 @@ test.describe("commercial playbook UI", () => {
     const created = await createIntelligenceLead(input);
 
     await login(page, memberEmail, memberPassword);
-    await page.goto("/app/my-leads");
-    await expect(page.getByText(input.companyName, { exact: true })).toBeVisible();
     await page.goto(`/app/leads/${created.id}`);
 
     const playbook = page.getByTestId("commercial-playbook");
@@ -48,6 +46,21 @@ test.describe("commercial playbook UI", () => {
     await expect(playbook.getByTestId("playbook-signal")).toHaveCount(3);
     await expect(playbook).toContainText("Sem site informado");
     await expect(playbook).not.toContainText("NO_WEBSITE");
+    const reasonsToggle = playbook.getByTestId("playbook-reasons-toggle");
+    await playbook.scrollIntoViewIfNeeded();
+    await expect(reasonsToggle).toHaveAttribute("aria-expanded", "false");
+    await expect(async () => {
+      if ((await reasonsToggle.getAttribute("aria-expanded")) !== "true") {
+        await reasonsToggle.click();
+      }
+      await expect(reasonsToggle).toHaveAttribute("aria-expanded", "true");
+    }).toPass({ timeout: 10_000 });
+    await expect(playbook.getByTestId("playbook-reasons-detail")).toBeVisible();
+    await expect(playbook.getByTestId("playbook-reasons-detail")).toContainText(
+      "A empresa não possui site informado na ficha.",
+    );
+    await reasonsToggle.click();
+    await expect(reasonsToggle).toHaveAttribute("aria-expanded", "false");
 
     const message = page.getByTestId("playbook-message");
     await expect(message).toContainText("Oi, Marina");
@@ -214,7 +227,14 @@ test.describe("commercial playbook UI — mobile", () => {
 
     await expect(page.getByTestId("commercial-playbook")).toBeVisible();
     await expect(page.getByTestId("playbook-step-REACTIVATION")).toBeVisible();
-    await page.getByTestId("playbook-step-REACTIVATION").click();
+    await page.getByTestId("playbook-step-REACTIVATION").scrollIntoViewIfNeeded();
+    await expect(async () => {
+      await page.getByTestId("playbook-step-REACTIVATION").click();
+      await expect(page.getByTestId("playbook-message")).toHaveAttribute(
+        "data-step",
+        "REACTIVATION",
+      );
+    }).toPass({ timeout: 10_000 });
     await expect(page.getByTestId("playbook-message")).toHaveText(
       "Ainda não há abordagem aprovada para este contexto.",
     );

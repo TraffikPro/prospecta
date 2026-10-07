@@ -1,10 +1,11 @@
 import NextLink from "next/link";
-import { Card, Heading, Stack, Text } from "@chakra-ui/react";
+import { Box, Card, Heading, Stack, Text } from "@chakra-ui/react";
 
 import { buildLeadDetailHref } from "@/components/navigation";
 import { AppEmptyState } from "@/components/ui/app-empty-state";
 import { Button } from "@/components/ui/button";
 import { LeadPriorityBadge } from "@/features/leads/components/lead-priority-badge";
+import { formatQueueFollowUp } from "@/features/leads/format-follow-up";
 import {
   MY_QUEUE_EMPTY_BY_FILTER,
   type MyQueueView,
@@ -13,16 +14,6 @@ import {
 type MyQueueListProps = {
   view: MyQueueView;
 };
-
-function formatFollowUp(value: Date | null): string {
-  if (!value) {
-    return "Sem follow-up";
-  }
-  return new Intl.DateTimeFormat("pt-BR", {
-    dateStyle: "short",
-    timeStyle: "short",
-  }).format(value);
-}
 
 function leadHref(leadId: string, filter: MyQueueView["filter"], hash?: string) {
   const base = buildLeadDetailHref(leadId, "my-leads", filter);
@@ -139,7 +130,8 @@ export function MyQueueList({ view }: MyQueueListProps) {
                             {item.nextAction.statusLabel}
                           </Text>
                           <Text fontSize="sm" color="fg.muted">
-                            Follow-up: {formatFollowUp(item.nextAction.followUpAt)}
+                            Follow-up:{" "}
+                            {formatQueueFollowUp(item.nextAction.followUpAt)}
                           </Text>
                         </Stack>
                       </NextLink>
@@ -149,16 +141,21 @@ export function MyQueueList({ view }: MyQueueListProps) {
                         gap="2"
                         alignSelf="stretch"
                       >
-                        <Button
-                          asChild
-                          size="md"
-                          minH="11"
+                        <Box
+                          display={{ base: "block", md: "none" }}
                           width={{ base: "full", sm: "auto" }}
                         >
-                          <NextLink href={leadHref(item.id, view.filter)}>
-                            Abrir lead
-                          </NextLink>
-                        </Button>
+                          <Button
+                            asChild
+                            size="md"
+                            minH="11"
+                            width="full"
+                          >
+                            <NextLink href={leadHref(item.id, view.filter)}>
+                              Abrir
+                            </NextLink>
+                          </Button>
+                        </Box>
                         <Button
                           asChild
                           size="md"
@@ -174,7 +171,7 @@ export function MyQueueList({ view }: MyQueueListProps) {
                               "register-activity",
                             )}
                           >
-                            Registrar contato
+                            Registrar
                           </NextLink>
                         </Button>
                       </Stack>

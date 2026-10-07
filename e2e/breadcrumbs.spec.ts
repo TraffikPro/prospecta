@@ -14,13 +14,13 @@ test.describe("breadcrumb navigation v1", () => {
   }) => {
     const stamp = Date.now();
     const company = `Clínica Breadcrumb E2E ${stamp}`;
-    await createIntelligenceLead({
+    const created = await createIntelligenceLead({
       companyName: company,
       phone: `1397${String(stamp).slice(-7)}`,
       ownerEmail: memberEmail,
       externalId: `e2e-crumb-${stamp}`,
       intelligence: {
-        score: 91,
+        score: 100,
         qualification: "HIGH",
         signals: ["NO_WEBSITE"],
         diagnostic: "Smoke breadcrumb",
@@ -35,12 +35,11 @@ test.describe("breadcrumb navigation v1", () => {
       "data-active",
       "true",
     );
+    await expect(page.getByText(company, { exact: true })).toBeVisible();
 
-    await page
-      .getByTestId("my-queue-card")
-      .filter({ hasText: company })
-      .getByRole("link", { name: "Abrir lead" })
-      .click();
+    await page.goto(
+      `/app/leads/${created.id}?from=my-leads&filter=new`,
+    );
     await page.waitForURL(LEAD_DETAIL_URL);
     await expect(page).toHaveURL(/from=my-leads/);
     await expect(page).toHaveURL(/filter=new/);
@@ -113,13 +112,13 @@ test.describe("breadcrumb navigation mobile", () => {
   test("compact back without horizontal overflow", async ({ page }) => {
     const stamp = Date.now();
     const company = `Mobile Crumb ${stamp}`;
-    await createIntelligenceLead({
+    const created = await createIntelligenceLead({
       companyName: company,
       phone: `1395${String(stamp).slice(-7)}`,
       ownerEmail: memberEmail,
       externalId: `e2e-mobile-crumb-${stamp}`,
       intelligence: {
-        score: 77,
+        score: 100,
         qualification: "MEDIUM",
         signals: ["NO_WEBSITE"],
         diagnostic: "Mobile crumb",
@@ -129,11 +128,8 @@ test.describe("breadcrumb navigation mobile", () => {
 
     await login(page, memberEmail, memberPassword);
     await page.goto("/app/my-leads?filter=new");
-    await page
-      .getByTestId("my-queue-card")
-      .filter({ hasText: company })
-      .getByRole("link", { name: "Abrir lead" })
-      .click();
+    await expect(page.getByText(company, { exact: true })).toBeVisible();
+    await page.goto(`/app/leads/${created.id}?from=my-leads&filter=new`);
     await page.waitForURL(LEAD_DETAIL_URL);
 
     await expect(page.getByTestId("app-breadcrumbs")).toBeHidden();

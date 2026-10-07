@@ -2,6 +2,16 @@ import { parseMyQueueFilter, type MyQueueFilter } from "@/features/leads/my-queu
 
 import type { BreadcrumbItemModel, LeadNavOrigin } from "./breadcrumb.types";
 
+/** 1-based page from query; invalid / missing → 1. Kept local (no pagination module on this branch). */
+function parsePageParam(value: string | number | undefined): number {
+  const n =
+    typeof value === "number" ? value : Number.parseInt(String(value ?? ""), 10);
+  if (!Number.isFinite(n) || n < 1) {
+    return 1;
+  }
+  return Math.floor(n);
+}
+
 const LEAD_NAV_ORIGINS: ReadonlySet<string> = new Set([
   "my-leads",
   "intelligence",
@@ -36,16 +46,28 @@ export function originLabel(origin: LeadNavOrigin): string {
   }
 }
 
+function queuePageParam(page?: string | number): number | undefined {
+  const parsed = parsePageParam(page);
+  return parsed > 1 ? parsed : undefined;
+}
+
 export function buildLeadReturnHref(
   origin: LeadNavOrigin,
   filter?: string,
+  page?: string | number,
 ): string {
   switch (origin) {
     case "my-leads": {
       const parsed = parseMyQueueFilter(filter);
-      return parsed === "all"
-        ? "/app/my-leads"
-        : `/app/my-leads?filter=${parsed}`;
+      const safePage = queuePageParam(page);
+      if (parsed === "all") {
+        return "/app/my-leads";
+      }
+      const params = new URLSearchParams({ filter: parsed });
+      if (safePage) {
+        params.set("page", String(safePage));
+      }
+      return `/app/my-leads?${params.toString()}`;
     }
     case "intelligence":
       return "/app/intelligence";
@@ -60,6 +82,7 @@ export function buildLeadDetailHref(
   leadId: string,
   origin: LeadNavOrigin,
   filter?: MyQueueFilter | string,
+  page?: string | number,
 ): string {
   const params = new URLSearchParams({ from: origin });
   if (origin === "my-leads" && filter) {
@@ -68,6 +91,10 @@ export function buildLeadDetailHref(
     );
     if (parsed !== "all") {
       params.set("filter", parsed);
+      const safePage = queuePageParam(page);
+      if (safePage) {
+        params.set("page", String(safePage));
+      }
     }
   }
   return `/app/leads/${leadId}?${params.toString()}`;
@@ -77,13 +104,14 @@ export function leadBreadcrumbItems(
   companyName: string,
   from: string | undefined,
   filter?: string,
+  page?: string | number,
 ): {
   items: BreadcrumbItemModel[];
   returnHref: string;
   origin: LeadNavOrigin;
 } {
   const origin = parseLeadNavOrigin(from);
-  const returnHref = buildLeadReturnHref(origin, filter);
+  const returnHref = buildLeadReturnHref(origin, filter, page);
   return {
     origin,
     returnHref,

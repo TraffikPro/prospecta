@@ -1,0 +1,22 @@
+{
+  "methodAttempted": "Playwright Control++ (browser zoom shortcut)",
+  "cdpPageScaleFactorShot": "desktop-1440x900-cdp-page-scale-2.png",
+  "cdpMethod": "Emulation.setPageScaleFactor pageScaleFactor=2",
+  "cdpMeaning": "CDP page scale / visual magnification (pinch-like). Not browser Ctrl+/- zoom with layout reflow. Not deviceScaleFactor. Not CSS zoom. Not viewport shrink.",
+  "browserZoomApplied": false,
+  "beforeZoom": {
+    "innerWidth": 1440,
+    "outerWidth": 1440,
+    "devicePixelRatio": 1,
+    "visualViewportScale": 1,
+    "rootFontSize": "16px"
+  },
+  "afterKeyboardZoom": {
+    "innerWidth": 1440,
+    "outerWidth": 1440,
+    "devicePixelRatio": 1,
+    "visualViewportScale": 1,
+    "rootFontSize": "16px"
+  },
+  "note": "Keyboard zoom did not change layout metrics in this Chromium session; real browser 200% zoom remains pending. Ampliação via CDP validada; zoom real de navegador 200% pendente."
+}

@@ -13,7 +13,8 @@ export type NavIconId =
   | "portfolio"
   | "acquisition"
   | "high-pool"
-  | "team";
+  | "team"
+  | "more";
 
 export type AppNavItem = {
   id: string;
@@ -137,21 +138,25 @@ export const MOBILE_PRIMARY_NAV = [
   {
     href: "/app/my-leads",
     label: "Fila",
+    icon: "queue" as const,
     testId: "mobile-nav-my-leads",
   },
   {
     href: "/app/intelligence",
     label: "Inteligência",
+    icon: "intelligence" as const,
     testId: "mobile-nav-intelligence",
   },
   {
     href: "/app/pipeline",
     label: "Pipeline",
+    icon: "pipeline" as const,
     testId: "mobile-nav-pipeline",
   },
   {
     href: "/app/more",
     label: "Mais",
+    icon: "more" as const,
     testId: "mobile-nav-more",
   },
 ] as const;

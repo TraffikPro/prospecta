@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  MOBILE_PRIMARY_NAV,
   isNavPathActive,
   morePageSections,
   profileRoleLabel,
@@ -120,5 +121,14 @@ describe("profileRoleLabel", () => {
   it("uses product language for software roles", () => {
     assert.equal(profileRoleLabel("ADMIN"), "Administrador");
     assert.equal(profileRoleLabel("MEMBER"), "Membro");
+  });
+});
+
+describe("mobile primary nav icons", () => {
+  it("exposes icon ids for bottom nav items", () => {
+    assert.equal(MOBILE_PRIMARY_NAV[0]?.icon, "queue");
+    assert.equal(MOBILE_PRIMARY_NAV[1]?.icon, "intelligence");
+    assert.equal(MOBILE_PRIMARY_NAV[2]?.icon, "pipeline");
+    assert.equal(MOBILE_PRIMARY_NAV[3]?.icon, "more");
   });
 });
