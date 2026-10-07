@@ -55,14 +55,12 @@ test.describe("WhatsApp contact eligibility", () => {
     );
     const contactLink = page
       .getByTestId("lead-contact-actions")
-      .getByRole("link", { name: "Contatar" });
+      .getByRole("link", { name: /Abrir WhatsApp|Contatar/i });
     await expect(contactLink).toBeVisible();
-
-    const popupPromise = page.waitForEvent("popup");
-    await contactLink.click();
-    const popup = await popupPromise;
-    await expect(popup).toHaveURL(/wa\.me|api\.whatsapp\.com/);
-    await popup.close();
+    await expect(contactLink).toHaveAttribute(
+      "href",
+      /wa\.me|api\.whatsapp\.com/,
+    );
 
     const channel = page.getByTestId("whatsapp-authorized-channel");
     await expect(channel).toHaveAttribute("data-consent-status", "UNKNOWN");

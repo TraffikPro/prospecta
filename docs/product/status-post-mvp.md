@@ -1,18 +1,18 @@
 # Status canônico — Prospecta (pós-MVP)
 
-- **Data:** 2026-08-18
+- **Data:** 2026-10-07
 - **Repo canônico:** [`TraffikPro/prospecta`](https://github.com/TraffikPro/prospecta)
 - **Produção:** `https://prospecta-ten-tau.vercel.app`
-- **PRs:** merged até [#66](https://github.com/TraffikPro/prospecta/pull/66) (mapa de telas FREEZE)
-- **Decisão de estágio:** MVP técnico **DONE** · sistema semanal **DONE** · playbook **VALIDATE** · mapa de telas **FREEZE** · **Sprint 0 = evidência comercial** (`wa.me`) · **WhatsApp API envio = NOT YET** · **Readiness v1 = BUILD docs / flags off**
+- **PRs recentes:** [#83](https://github.com/TraffikPro/prospecta/pull/83) CORE UI/UX · [#69](https://github.com/TraffikPro/prospecta/pull/69) WhatsApp eligibility · [#84](https://github.com/TraffikPro/prospecta/pull/84) VibeSec observe
+- **Decisão de estágio:** MVP técnico **DONE** · sistema semanal **DONE** · playbook **VALIDATE** · mapa de telas **FREEZE** · CORE UI/UX **DONE (prod)** · WhatsApp eligibility Fatia A **DONE (prod)** · **Sprint 0 = evidência comercial** (`wa.me`) · **WhatsApp API envio = NOT YET** · **Readiness v1 = Fatia A DONE; DevFlow/APIs PENDING; flags off**
 
 Este documento substitui narrativas de “scaffold técnico”. Não autoriza feature code por si só.
 
 ---
 
-## Veredito (17 ago 2026)
+## Veredito (7 out 2026)
 
-Prospecta é um **MVP operacional em produção** com carteira semanal e playbook no detalhe do lead. O gargalo **não** é reabrir o motor nem ampliar a superfície de telas — é a **execução comercial** no caminho:
+Prospecta é um **MVP operacional em produção** com carteira semanal, playbook no detalhe do lead, fluxo CORE polido (#83) e **consentimento WhatsApp modelado** (#69 + migrate). O gargalo **não** é reabrir o motor nem ampliar a superfície de telas — é a **execução comercial** no caminho:
 
 ```text
 login → Minha fila → detalhe do lead → playbook WhatsApp → contato manual → Activity
@@ -21,6 +21,8 @@ login → Minha fila → detalhe do lead → playbook WhatsApp → contato manua
 Mapa: [product-decision-pilot-screen-map.md](product-decision-pilot-screen-map.md).
 
 `/app` (Visão geral) é suporte de KPI, **não** o centro da operação.
+
+Smoke técnico elegibilidade (2026-10-07): [whatsapp-eligibility-prod-smoke/REPORT.md](../audits/whatsapp-eligibility-prod-smoke/REPORT.md) — **OVERALL PASS**. Não substitui Activities do Sprint 0.
 
 ---
 
@@ -38,10 +40,13 @@ Mapa: [product-decision-pilot-screen-map.md](product-decision-pilot-screen-map.m
 | Portfolio comercial (demos) | DONE | PRs #20–#21 |
 | Lead Detail Redesign Fatias A+B+C | DONE | PRs #37–#46 · smoke **OVERALL PASS** |
 | Lead Detail Commercial Clarity Fatia 1 | DONE | PRs [#49](https://github.com/TraffikPro/prospecta/pull/49), [#50](https://github.com/TraffikPro/prospecta/pull/50), [#51](https://github.com/TraffikPro/prospecta/pull/51) · gate **ACCEPTED — 5/5** |
+| CORE UI/UX (fila → detalhe → Activity) | DONE | PR [#83](https://github.com/TraffikPro/prospecta/pull/83) · [core-ui-ux-closure](../audits/core-ui-ux-closure/REPORT.md) |
+| WhatsApp Contact Eligibility (Fatia A) | DONE | PR [#69](https://github.com/TraffikPro/prospecta/pull/69) · migrate prod · smoke **OVERALL PASS** |
 | Acquisition Self-Serve Fase 1 (`/admin/acquisition`) | BUILD | [product-decision](product-decision-acquisition-self-serve-v1.md) · [ADR 0014](../adr/0014-acquisition-runner-contract.md) |
 | Hygiene / anti-mutação em produção | DONE | `production-mutation-guard` · scripts |
+| CI security gates (+ VibeSec observe) | DONE | PRs [#75](https://github.com/TraffikPro/prospecta/pull/75), [#84](https://github.com/TraffikPro/prospecta/pull/84) |
 
-Última entrega formal: **Lead Detail Commercial Clarity Fatia 1** ([prospecta-lead-detail-commercial-clarity.md](prospecta-lead-detail-commercial-clarity.md)) — gate técnico ACCEPTED; demo comercial PENDING.
+Última entrega formal: **WhatsApp Contact Eligibility Fatia A** em produção — smoke técnico PASS; **Sprint 0 comercial ainda VALIDATE**.
 
 ---
 
@@ -69,7 +74,7 @@ Places / generator → POST /api/internal/leads → Intelligence Inbox
 
 - Sessão server-side, reset token, `mustChangePassword`, Bearer de import, hygiene/reset com travas.
 - Issue aberta: [#18](https://github.com/TraffikPro/prospecta/issues/18) — hydration `ColorModeProvider` (não bloqueia o piloto).
-- CI GitHub Actions **ausente** na `main` (risco de regressão fora do processo manual PR + smoke).
+- CI GitHub Actions **presente** (Quality, Tests, audit, CodeQL, Gitleaks; VibeSec observe #84).
 - `/admin/users` = **somente leitura** (sem invite / role / deactivate na UI).
 
 ### 4. Importação CSV e administração
@@ -90,7 +95,8 @@ CSV deixou de ser o hub (ADR 0009). Só reabre com sintoma real do piloto.
 - **Badges de ação na navegação = DONE** — [product-decision-navigation-badges.md](product-decision-navigation-badges.md).
 - **Playbook WhatsApp no lead = VALIDATE UI** — [product-decision-commercial-playbook-ui.md](product-decision-commercial-playbook-ui.md).
 - **Mapa de telas = FREEZE** — [product-decision-pilot-screen-map.md](product-decision-pilot-screen-map.md).
-- **CORE UI/UX (fila → detalhe → Activity) = VALIDADO LOCALMENTE** — [../audits/core-ui-ux-closure/REPORT.md](../audits/core-ui-ux-closure/REPORT.md) · observação de reorder Histórico/Activity permanece VALIDATE — [operator-core-flow-observation.md](operator-core-flow-observation.md).
+- **CORE UI/UX (fila → detalhe → Activity) = DONE em produção** — PR [#83](https://github.com/TraffikPro/prospecta/pull/83) · [../audits/core-ui-ux-closure/REPORT.md](../audits/core-ui-ux-closure/REPORT.md).
+- **WhatsApp elegibilidade Fatia A = DONE em produção** — consentimento `UNKNOWN`/`OPTED_IN`/`OPTED_OUT`, `wa.me` manual, sem botão Enviar API · smoke [../audits/whatsapp-eligibility-prod-smoke/REPORT.md](../audits/whatsapp-eligibility-prod-smoke/REPORT.md).
 - **Dashboard de conversão / campanha = DEFER** — [product-decision-dashboard-defer.md](product-decision-dashboard-defer.md).
 - Observação operacional: Minha fila + detalhe do lead; `/app`, Inbox, pipeline e follow-ups apoiam.
 
@@ -117,15 +123,15 @@ CSV deixou de ser o hub (ADR 0009). Só reabre com sintoma real do piloto.
 
 | Prioridade | Ação | Tipo |
 | --- | --- | --- |
-| P0 | **Sprint 0** — evidência comercial: fechar 5 Santos + onda 2; ≥20 Activities (`wa.me`) | **VALIDATE** |
-| P0 | **WhatsApp Readiness v1** — contrato (este corte) → elegibilidade → APIs assinadas; flags `false` | **BUILD** reduzido |
+| P0 | **Sprint 0** — evidência comercial: fechar 5 Santos + onda 2; ≥20 Activities (`wa.me`) | **VALIDATE** (humano/comercial) |
+| P0 | **WhatsApp Readiness** — Fatia A DONE; próxima: link lead↔thread (DevFlow) + APIs assinadas; flags `false` | **BUILD** reduzido |
 | P1 | Product Grill — Qualification Score Review v1 (**só ao encerrar o Sprint 0**) | Product |
 | P1 | Product Grill — WhatsApp API Go-Live v1 (**só após staging verde**) | Product |
 | P1 | Comparar leads Santos → clínica-modelo (com dados do sprint) | Ops / Product |
 | P1 | Validar oferta: portfólio **Presença, Conversão e Operação** | Product |
 | P2 | Fechar/assinar Pilot Day 1 com evidência de Activity | Ops |
 | P2 | Débito: MEMBER `canRunAcquisition` vê Aquisição na nav, página 403 | Tech / Product |
-| P2 | Issue #18 + CI Actions | Tech debt |
+| P2 | Issue [#18](https://github.com/TraffikPro/prospecta/issues/18) ColorMode hydration | Tech debt |
 
 **Hipótese ativa (piloto):** se o comercial operar os HIGH no Prospecta, gera conversa (Activity → resposta → reunião) sem planilha paralela.
 
