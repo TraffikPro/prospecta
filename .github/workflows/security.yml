@@ -19,6 +19,10 @@ concurrency:
 env:
   NODE_VERSION: 22.21.1
   PNPM_VERSION: 9.15.9
+  # Immutable VibeSec pin (annotated tag v1.1.1). Do not use @latest or a branch.
+  VIBESEC_VERSION: "1.1.1"
+  VIBESEC_REF: v1.1.1
+  VIBESEC_COMMIT: 68f088c0694b193425b7258eaab053eec55cc43e
 
 jobs:
   secret-scan:
@@ -103,3 +107,161 @@ jobs:
 
       - name: Analyze JavaScript and TypeScript
         uses: github/codeql-action/analyze@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4.37.7
+
+  # OBSERVE mode: findings do not fail the job; scanner infrastructure failures do.
+  vibesec-scan:
+    name: VibeSec scan (observe)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out Prospecta
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: target
+          persist-credentials: false
+
+      - name: Check out VibeSec (pinned commit)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: gustavomarques00/vibesec
+          ref: ${{ env.VIBESEC_COMMIT }}
+          path: vibesec
+          persist-credentials: false
+
+      - name: Verify VibeSec pin
+        working-directory: vibesec
+        run: |
+          actual="$(git rev-parse HEAD)"
+          if [ "$actual" != "$VIBESEC_COMMIT" ]; then
+            echo "::error::VibeSec commit mismatch: expected $VIBESEC_COMMIT, got $actual"
+            exit 1
+          fi
+          version="$(node -p "require('./package.json').version")"
+          if [ "$version" != "$VIBESEC_VERSION" ]; then
+            echo "::error::VibeSec version mismatch: expected $VIBESEC_VERSION, got $version"
+            exit 1
+          fi
+          echo "Pinned VibeSec $version @ $actual (ref $VIBESEC_REF)"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          package-manager-cache: false
+
+      - name: Install and build VibeSec
+        working-directory: vibesec
+        run: |
+          npm ci
+          npm run build
+          test -f dist/cli/main.js
+
+      - name: Run VibeSec scan (observe)
+        id: scan
+        env:
+          TARGET_ROOT: ${{ github.workspace }}/target
+          VIBESEC_BIN: ${{ github.workspace }}/vibesec/dist/cli/main.js
+        run: |
+          mkdir -p vibesec-out
+          set +e
+          node "$VIBESEC_BIN" scan "$TARGET_ROOT" --format json \
+            > vibesec-out/vibesec-report.json \
+            2> vibesec-out/vibesec-stderr.txt
+          code=$?
+          set -e
+
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "## VibeSec scan (observe)"
+            echo ""
+            echo "- Tool: vibesec@$VIBESEC_VERSION (\`$VIBESEC_COMMIT\`)"
+            echo "- Mode: OBSERVE — findings do not fail this job"
+            echo "- Command: \`vibesec scan <target> --format json\`"
+            echo "- Exit code: \`$code\`"
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$code" -eq 0 ]; then
+            echo "outcome=clean" >> "$GITHUB_OUTPUT"
+            echo "Result: **clean** (no findings from this scan)." >> "$GITHUB_STEP_SUMMARY"
+            echo "VibeSec completed with no findings."
+            exit 0
+          fi
+
+          if [ "$code" -eq 1 ]; then
+            echo "outcome=findings" >> "$GITHUB_OUTPUT"
+            if ! node -e '
+              const fs = require("node:fs");
+              const report = JSON.parse(fs.readFileSync("vibesec-out/vibesec-report.json", "utf8"));
+              const findings = Array.isArray(report.findings) ? report.findings : [];
+              const byRule = {};
+              const bySeverity = {};
+              for (const finding of findings) {
+                byRule[finding.ruleId] = (byRule[finding.ruleId] || 0) + 1;
+                bySeverity[finding.severity] = (bySeverity[finding.severity] || 0) + 1;
+              }
+              const summary = [
+                `Result: **findings observed** (\`${findings.length}\` finding(s)).`,
+                "",
+                "### By severity",
+                ...Object.keys(bySeverity).sort().map((k) => `- ${k}: ${bySeverity[k]}`),
+                "",
+                "### By rule",
+                ...Object.keys(byRule).sort().map((k) => `- ${k}: ${byRule[k]}`),
+                "",
+                "Findings are observed only. They do not block merge in this phase.",
+                "Download the \`vibesec-report\` artifact for the full JSON report.",
+                "",
+              ].join("\n");
+              fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
+              fs.writeFileSync(
+                "vibesec-out/vibesec-summary.json",
+                JSON.stringify(
+                  {
+                    schemaVersion: report.schemaVersion,
+                    target: report.target,
+                    filesScanned: report.filesScanned,
+                    filesSkipped: report.filesSkipped,
+                    findingCount: findings.length,
+                    byRule,
+                    bySeverity,
+                    exitCode: 1,
+                    mode: "observe",
+                  },
+                  null,
+                  2,
+                ),
+              );
+              console.log(`VibeSec findings observed: ${findings.length}`);
+            '; then
+              echo "::error::VibeSec returned findings (exit 1) but the JSON report could not be parsed."
+              echo "outcome=scanner_failure" >> "$GITHUB_OUTPUT"
+              exit 1
+            fi
+            # OBSERVE: findings are visible via summary + artifact; do not fail the job.
+            exit 0
+          fi
+
+          echo "outcome=scanner_failure" >> "$GITHUB_OUTPUT"
+          echo "Result: **scanner failure** (exit \`$code\`)." >> "$GITHUB_STEP_SUMMARY"
+          echo "::error::VibeSec scanner failed with exit code $code (not a findings-only result)."
+          if [ -s vibesec-out/vibesec-stderr.txt ]; then
+            echo "### stderr" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            head -n 100 vibesec-out/vibesec-stderr.txt >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit 1
+
+      - name: Upload VibeSec report
+        if: always() && hashFiles('vibesec-out/vibesec-report.json') != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: vibesec-report
+          path: |
+            vibesec-out/vibesec-report.json
+            vibesec-out/vibesec-summary.json
+            vibesec-out/vibesec-stderr.txt
+          if-no-files-found: ignore
+          retention-days: 30

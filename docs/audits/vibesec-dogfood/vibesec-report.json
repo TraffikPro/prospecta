@@ -1,0 +1,2980 @@
+{
+  "schemaVersion": "1",
+  "target": "prospecta-vibesec-ci",
+  "filesScanned": 485,
+  "filesSkipped": 35,
+  "findings": [
+    {
+      "schemaVersion": "1",
+      "id": "VS-ENV-001-46cf5fde426cff8c",
+      "ruleId": "VS-ENV-001",
+      "ruleVersion": "1.0.0",
+      "title": "Privileged value exposed through public env prefix",
+      "description": "A sensitive value bound to public env name NEXT_PUBLIC_APP_URL may be exposed to client bundles.",
+      "category": "environment",
+      "severity": "critical",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": ".env.example",
+        "startLine": 8,
+        "startColumn": 22,
+        "endLine": 8,
+        "endColumn": 43
+      },
+      "relatedLocations": [
+        {
+          "file": ".env.example",
+          "startLine": 8,
+          "startColumn": 1,
+          "endLine": 8,
+          "endColumn": 20
+        }
+      ],
+      "evidence": [
+        {
+          "kind": "config",
+          "summary": "Public prefix binding NEXT_PUBLIC_APP_URL correlates with sensitive material.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": ".env.example",
+              "startLine": 8,
+              "startColumn": 1,
+              "endLine": 8,
+              "endColumn": 20
+            },
+            {
+              "file": ".env.example",
+              "startLine": 8,
+              "startColumn": 22,
+              "endLine": 8,
+              "endColumn": 43
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:4cbaeeb5fb0924db52163563"
+        }
+      ],
+      "impact": "Client-exposed privileged values can be recovered from built assets or browser contexts.",
+      "remediation": "Remove privileged values from public env prefixes. Keep secrets on the server and rotate exposed credentials.",
+      "limitations": [
+        "This finding confirms repository evidence of a public-prefix binding with sensitive material, not a deployed bundle contents dump."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/200.html"
+      ],
+      "tags": [
+        "NEXT_PUBLIC_APP_URL",
+        "client-exposure",
+        "environment"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-ENV-002-479eb029a6adcfac",
+      "ruleId": "VS-ENV-002",
+      "ruleVersion": "1.0.0",
+      "title": "Sensitive value in a Git-tracked env file",
+      "description": "Sensitive material was observed in a Git-tracked environment file.",
+      "category": "environment",
+      "severity": "high",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": ".env.example",
+        "startLine": 5,
+        "startColumn": 15,
+        "endLine": 5,
+        "endColumn": 72
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "config",
+          "summary": "A sensitive value was present in a tracked .env file.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": ".env.example",
+              "startLine": 5,
+              "startColumn": 15,
+              "endLine": 5,
+              "endColumn": 72
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:ee5ae26eb70111e7d0aa9478"
+        }
+      ],
+      "impact": "Tracked env files can expose secrets to anyone with repository access and to CI clones.",
+      "remediation": "Remove secrets from tracked env files, rotate them, and keep only non-secret templates such as placeholders in examples.",
+      "limitations": [
+        "This finding confirms repository evidence only and does not validate remote credential acceptance."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "dotenv",
+        "environment",
+        "tracked"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-ENV-002-6a93512b69b883ea",
+      "ruleId": "VS-ENV-002",
+      "ruleVersion": "1.0.0",
+      "title": "Sensitive value in a Git-tracked env file",
+      "description": "Sensitive material was observed in a Git-tracked environment file.",
+      "category": "environment",
+      "severity": "high",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": ".env.example",
+        "startLine": 26,
+        "startColumn": 22,
+        "endLine": 26,
+        "endColumn": 49
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "config",
+          "summary": "A sensitive value was present in a tracked .env file.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": ".env.example",
+              "startLine": 26,
+              "startColumn": 22,
+              "endLine": 26,
+              "endColumn": 49
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:75378a68e82bc210a12fa616"
+        }
+      ],
+      "impact": "Tracked env files can expose secrets to anyone with repository access and to CI clones.",
+      "remediation": "Remove secrets from tracked env files, rotate them, and keep only non-secret templates such as placeholders in examples.",
+      "limitations": [
+        "This finding confirms repository evidence only and does not validate remote credential acceptance."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "dotenv",
+        "environment",
+        "tracked"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-ENV-002-6e90ac70591dd163",
+      "ruleId": "VS-ENV-002",
+      "ruleVersion": "1.0.0",
+      "title": "Sensitive value in a Git-tracked env file",
+      "description": "Sensitive material was observed in a Git-tracked environment file.",
+      "category": "environment",
+      "severity": "high",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": ".env.example",
+        "startLine": 8,
+        "startColumn": 22,
+        "endLine": 8,
+        "endColumn": 43
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "config",
+          "summary": "A sensitive value was present in a tracked .env file.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": ".env.example",
+              "startLine": 8,
+              "startColumn": 22,
+              "endLine": 8,
+              "endColumn": 43
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:4cbaeeb5fb0924db52163563"
+        }
+      ],
+      "impact": "Tracked env files can expose secrets to anyone with repository access and to CI clones.",
+      "remediation": "Remove secrets from tracked env files, rotate them, and keep only non-secret templates such as placeholders in examples.",
+      "limitations": [
+        "This finding confirms repository evidence only and does not validate remote credential acceptance."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "dotenv",
+        "environment",
+        "tracked"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-ENV-002-70a483febc8aac87",
+      "ruleId": "VS-ENV-002",
+      "ruleVersion": "1.0.0",
+      "title": "Sensitive value in a Git-tracked env file",
+      "description": "Sensitive material was observed in a Git-tracked environment file.",
+      "category": "environment",
+      "severity": "high",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": ".env.example",
+        "startLine": 27,
+        "startColumn": 23,
+        "endLine": 27,
+        "endColumn": 51
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "config",
+          "summary": "A sensitive value was present in a tracked .env file.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": ".env.example",
+              "startLine": 27,
+              "startColumn": 23,
+              "endLine": 27,
+              "endColumn": 51
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:313d6511384d4eff20927a52"
+        }
+      ],
+      "impact": "Tracked env files can expose secrets to anyone with repository access and to CI clones.",
+      "remediation": "Remove secrets from tracked env files, rotate them, and keep only non-secret templates such as placeholders in examples.",
+      "limitations": [
+        "This finding confirms repository evidence only and does not validate remote credential acceptance."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "dotenv",
+        "environment",
+        "tracked"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-ENV-002-7f1d36d2764bac65",
+      "ruleId": "VS-ENV-002",
+      "ruleVersion": "1.0.0",
+      "title": "Sensitive value in a Git-tracked env file",
+      "description": "Sensitive material was observed in a Git-tracked environment file.",
+      "category": "environment",
+      "severity": "high",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": ".env.example",
+        "startLine": 32,
+        "startColumn": 34,
+        "endLine": 32,
+        "endColumn": 58
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "config",
+          "summary": "A sensitive value was present in a tracked .env file.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": ".env.example",
+              "startLine": 32,
+              "startColumn": 34,
+              "endLine": 32,
+              "endColumn": 58
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:acf8f1c5fff1709dc933d1b7"
+        }
+      ],
+      "impact": "Tracked env files can expose secrets to anyone with repository access and to CI clones.",
+      "remediation": "Remove secrets from tracked env files, rotate them, and keep only non-secret templates such as placeholders in examples.",
+      "limitations": [
+        "This finding confirms repository evidence only and does not validate remote credential acceptance."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "dotenv",
+        "environment",
+        "tracked"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-ENV-002-946c0df65ea9d24a",
+      "ruleId": "VS-ENV-002",
+      "ruleVersion": "1.0.0",
+      "title": "Sensitive value in a Git-tracked env file",
+      "description": "Sensitive material was observed in a Git-tracked environment file.",
+      "category": "environment",
+      "severity": "high",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": ".env.example",
+        "startLine": 30,
+        "startColumn": 25,
+        "endLine": 30,
+        "endColumn": 62
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "config",
+          "summary": "A sensitive value was present in a tracked .env file.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": ".env.example",
+              "startLine": 30,
+              "startColumn": 25,
+              "endLine": 30,
+              "endColumn": 62
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:525cd7cbbb0832459c99e3c2"
+        }
+      ],
+      "impact": "Tracked env files can expose secrets to anyone with repository access and to CI clones.",
+      "remediation": "Remove secrets from tracked env files, rotate them, and keep only non-secret templates such as placeholders in examples.",
+      "limitations": [
+        "This finding confirms repository evidence only and does not validate remote credential acceptance."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "dotenv",
+        "environment",
+        "tracked"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-ENV-002-b71657f4d9caff83",
+      "ruleId": "VS-ENV-002",
+      "ruleVersion": "1.0.0",
+      "title": "Sensitive value in a Git-tracked env file",
+      "description": "Sensitive material was observed in a Git-tracked environment file.",
+      "category": "environment",
+      "severity": "high",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": ".env.example",
+        "startLine": 11,
+        "startColumn": 14,
+        "endLine": 11,
+        "endColumn": 63
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "config",
+          "summary": "A sensitive value was present in a tracked .env file.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": ".env.example",
+              "startLine": 11,
+              "startColumn": 14,
+              "endLine": 11,
+              "endColumn": 63
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:641f6d19421cb08392b51620"
+        }
+      ],
+      "impact": "Tracked env files can expose secrets to anyone with repository access and to CI clones.",
+      "remediation": "Remove secrets from tracked env files, rotate them, and keep only non-secret templates such as placeholders in examples.",
+      "limitations": [
+        "This finding confirms repository evidence only and does not validate remote credential acceptance."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "dotenv",
+        "environment",
+        "tracked"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-002-050896245c0d9e70",
+      "ruleId": "VS-SEC-002",
+      "ruleVersion": "1.0.0",
+      "title": "High-specificity credential material",
+      "description": "High-specificity database_url material was observed in a Git-tracked file.",
+      "category": "secrets",
+      "severity": "critical",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": "src/lib/safety/production-mutation-guard.test.ts",
+        "startLine": 43,
+        "startColumn": 21,
+        "endLine": 43,
+        "endColumn": 62
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A high-specificity database_url candidate was observed.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/lib/safety/production-mutation-guard.test.ts",
+              "startLine": 43,
+              "startColumn": 21,
+              "endLine": 43,
+              "endColumn": 62
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:3d08fca43fadeb710452df82"
+        }
+      ],
+      "impact": "If this credential is active, unintended possession could enable unauthorized access to protected systems.",
+      "remediation": "Remove the credential from source, rotate it, and load it from an approved secret manager at runtime.",
+      "limitations": [
+        "This scan does not validate that the credential is accepted by any remote service."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "database_url"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-002-2527c8f0473934b8",
+      "ruleId": "VS-SEC-002",
+      "ruleVersion": "1.0.0",
+      "title": "High-specificity credential material",
+      "description": "High-specificity database_url material was observed in a Git-tracked file.",
+      "category": "secrets",
+      "severity": "critical",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": "src/lib/safety/production-mutation-guard.test.ts",
+        "startLine": 11,
+        "startColumn": 24,
+        "endLine": 11,
+        "endColumn": 61
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A high-specificity database_url candidate was observed.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/lib/safety/production-mutation-guard.test.ts",
+              "startLine": 11,
+              "startColumn": 24,
+              "endLine": 11,
+              "endColumn": 61
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:6d4d4d4aa0cf0c4d47eeaf0c"
+        }
+      ],
+      "impact": "If this credential is active, unintended possession could enable unauthorized access to protected systems.",
+      "remediation": "Remove the credential from source, rotate it, and load it from an approved secret manager at runtime.",
+      "limitations": [
+        "This scan does not validate that the credential is accepted by any remote service."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "database_url"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-002-2c342dcbdc31bb5e",
+      "ruleId": "VS-SEC-002",
+      "ruleVersion": "1.0.0",
+      "title": "High-specificity credential material",
+      "description": "High-specificity password material was observed in a Git-tracked file.",
+      "category": "secrets",
+      "severity": "critical",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": ".env.example",
+        "startLine": 27,
+        "startColumn": 23,
+        "endLine": 27,
+        "endColumn": 51
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A high-specificity password candidate was observed.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": ".env.example",
+              "startLine": 27,
+              "startColumn": 23,
+              "endLine": 27,
+              "endColumn": 51
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:313d6511384d4eff20927a52"
+        }
+      ],
+      "impact": "If this credential is active, unintended possession could enable unauthorized access to protected systems.",
+      "remediation": "Remove the credential from source, rotate it, and load it from an approved secret manager at runtime.",
+      "limitations": [
+        "This scan does not validate that the credential is accepted by any remote service."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "password"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-002-31ae2647ca24de9d",
+      "ruleId": "VS-SEC-002",
+      "ruleVersion": "1.0.0",
+      "title": "High-specificity credential material",
+      "description": "High-specificity password material was observed in a Git-tracked file.",
+      "category": "secrets",
+      "severity": "critical",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": ".env.example",
+        "startLine": 26,
+        "startColumn": 22,
+        "endLine": 26,
+        "endColumn": 49
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A high-specificity password candidate was observed.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": ".env.example",
+              "startLine": 26,
+              "startColumn": 22,
+              "endLine": 26,
+              "endColumn": 49
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:75378a68e82bc210a12fa616"
+        }
+      ],
+      "impact": "If this credential is active, unintended possession could enable unauthorized access to protected systems.",
+      "remediation": "Remove the credential from source, rotate it, and load it from an approved secret manager at runtime.",
+      "limitations": [
+        "This scan does not validate that the credential is accepted by any remote service."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "password"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-002-44763766cd0c89d1",
+      "ruleId": "VS-SEC-002",
+      "ruleVersion": "1.0.0",
+      "title": "High-specificity credential material",
+      "description": "High-specificity bearer_token material was observed in a Git-tracked file.",
+      "category": "secrets",
+      "severity": "critical",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": "src/server/auth/import-token.test.ts",
+        "startLine": 19,
+        "startColumn": 41,
+        "endLine": 19,
+        "endColumn": 62
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A high-specificity bearer_token candidate was observed.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/server/auth/import-token.test.ts",
+              "startLine": 19,
+              "startColumn": 41,
+              "endLine": 19,
+              "endColumn": 62
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:a67f162349f0f997948987ac"
+        }
+      ],
+      "impact": "If this credential is active, unintended possession could enable unauthorized access to protected systems.",
+      "remediation": "Remove the credential from source, rotate it, and load it from an approved secret manager at runtime.",
+      "limitations": [
+        "This scan does not validate that the credential is accepted by any remote service."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "bearer_token",
+        "credential"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-002-54e5b9e82e41fa78",
+      "ruleId": "VS-SEC-002",
+      "ruleVersion": "1.0.0",
+      "title": "High-specificity credential material",
+      "description": "High-specificity database_url material was observed in a Git-tracked file.",
+      "category": "secrets",
+      "severity": "critical",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": ".github/workflows/ci.yml",
+        "startLine": 27,
+        "startColumn": 21,
+        "endLine": 27,
+        "endColumn": 67
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A high-specificity database_url candidate was observed.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": ".github/workflows/ci.yml",
+              "startLine": 27,
+              "startColumn": 21,
+              "endLine": 27,
+              "endColumn": 67
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:0c4851c77fb7b71f7bbc6904"
+        }
+      ],
+      "impact": "If this credential is active, unintended possession could enable unauthorized access to protected systems.",
+      "remediation": "Remove the credential from source, rotate it, and load it from an approved secret manager at runtime.",
+      "limitations": [
+        "This scan does not validate that the credential is accepted by any remote service."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "database_url"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-002-94a5738ab0082ffa",
+      "ruleId": "VS-SEC-002",
+      "ruleVersion": "1.0.0",
+      "title": "High-specificity credential material",
+      "description": "High-specificity database_url material was observed in a Git-tracked file.",
+      "category": "secrets",
+      "severity": "critical",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": "src/lib/safety/production-mutation-guard.test.ts",
+        "startLine": 18,
+        "startColumn": 8,
+        "endLine": 18,
+        "endColumn": 65
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A high-specificity database_url candidate was observed.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/lib/safety/production-mutation-guard.test.ts",
+              "startLine": 18,
+              "startColumn": 8,
+              "endLine": 18,
+              "endColumn": 65
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:96f35ec3007d5ade7275d2a6"
+        }
+      ],
+      "impact": "If this credential is active, unintended possession could enable unauthorized access to protected systems.",
+      "remediation": "Remove the credential from source, rotate it, and load it from an approved secret manager at runtime.",
+      "limitations": [
+        "This scan does not validate that the credential is accepted by any remote service."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "database_url"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-002-977587f7ff46802e",
+      "ruleId": "VS-SEC-002",
+      "ruleVersion": "1.0.0",
+      "title": "High-specificity credential material",
+      "description": "High-specificity database_url material was observed in a Git-tracked file.",
+      "category": "secrets",
+      "severity": "critical",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": ".github/workflows/ci.yml",
+        "startLine": 105,
+        "startColumn": 21,
+        "endLine": 105,
+        "endColumn": 70
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A high-specificity database_url candidate was observed.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": ".github/workflows/ci.yml",
+              "startLine": 105,
+              "startColumn": 21,
+              "endLine": 105,
+              "endColumn": 70
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:afd2c15d20eccb387a192252"
+        }
+      ],
+      "impact": "If this credential is active, unintended possession could enable unauthorized access to protected systems.",
+      "remediation": "Remove the credential from source, rotate it, and load it from an approved secret manager at runtime.",
+      "limitations": [
+        "This scan does not validate that the credential is accepted by any remote service."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "database_url"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-002-b02fab3f43f9bfda",
+      "ruleId": "VS-SEC-002",
+      "ruleVersion": "1.0.0",
+      "title": "High-specificity credential material",
+      "description": "High-specificity bearer_token material was observed in a Git-tracked file.",
+      "category": "secrets",
+      "severity": "critical",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": ".env.example",
+        "startLine": 30,
+        "startColumn": 25,
+        "endLine": 30,
+        "endColumn": 62
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A high-specificity bearer_token candidate was observed.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": ".env.example",
+              "startLine": 30,
+              "startColumn": 25,
+              "endLine": 30,
+              "endColumn": 62
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:525cd7cbbb0832459c99e3c2"
+        }
+      ],
+      "impact": "If this credential is active, unintended possession could enable unauthorized access to protected systems.",
+      "remediation": "Remove the credential from source, rotate it, and load it from an approved secret manager at runtime.",
+      "limitations": [
+        "This scan does not validate that the credential is accepted by any remote service."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "bearer_token",
+        "credential"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-002-d59b3ea4d8970dd4",
+      "ruleId": "VS-SEC-002",
+      "ruleVersion": "1.0.0",
+      "title": "High-specificity credential material",
+      "description": "High-specificity bearer_token material was observed in a Git-tracked file.",
+      "category": "secrets",
+      "severity": "critical",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": "src/server/auth/cron-secret.test.ts",
+        "startLine": 21,
+        "startColumn": 43,
+        "endLine": 21,
+        "endColumn": 66
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A high-specificity bearer_token candidate was observed.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/server/auth/cron-secret.test.ts",
+              "startLine": 21,
+              "startColumn": 43,
+              "endLine": 21,
+              "endColumn": 66
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:0f0e31fba0bf8f894bc9dd24"
+        }
+      ],
+      "impact": "If this credential is active, unintended possession could enable unauthorized access to protected systems.",
+      "remediation": "Remove the credential from source, rotate it, and load it from an approved secret manager at runtime.",
+      "limitations": [
+        "This scan does not validate that the credential is accepted by any remote service."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "bearer_token",
+        "credential"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-002-dd4305eb945d41bb",
+      "ruleId": "VS-SEC-002",
+      "ruleVersion": "1.0.0",
+      "title": "High-specificity credential material",
+      "description": "High-specificity bearer_token material was observed in a Git-tracked file.",
+      "category": "secrets",
+      "severity": "critical",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": "src/server/auth/acquisition-job-token.test.ts",
+        "startLine": 21,
+        "startColumn": 43,
+        "endLine": 21,
+        "endColumn": 64
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A high-specificity bearer_token candidate was observed.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/server/auth/acquisition-job-token.test.ts",
+              "startLine": 21,
+              "startColumn": 43,
+              "endLine": 21,
+              "endColumn": 64
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:77f367e898fe1e908207861e"
+        }
+      ],
+      "impact": "If this credential is active, unintended possession could enable unauthorized access to protected systems.",
+      "remediation": "Remove the credential from source, rotate it, and load it from an approved secret manager at runtime.",
+      "limitations": [
+        "This scan does not validate that the credential is accepted by any remote service."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "bearer_token",
+        "credential"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-002-fff7d0e5193b6d8e",
+      "ruleId": "VS-SEC-002",
+      "ruleVersion": "1.0.0",
+      "title": "High-specificity credential material",
+      "description": "High-specificity database_url material was observed in a Git-tracked file.",
+      "category": "secrets",
+      "severity": "critical",
+      "confidence": "high",
+      "status": "confirmed",
+      "primaryLocation": {
+        "file": ".env.example",
+        "startLine": 5,
+        "startColumn": 15,
+        "endLine": 5,
+        "endColumn": 72
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A high-specificity database_url candidate was observed.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": ".env.example",
+              "startLine": 5,
+              "startColumn": 15,
+              "endLine": 5,
+              "endColumn": 72
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:ee5ae26eb70111e7d0aa9478"
+        }
+      ],
+      "impact": "If this credential is active, unintended possession could enable unauthorized access to protected systems.",
+      "remediation": "Remove the credential from source, rotate it, and load it from an approved secret manager at runtime.",
+      "limitations": [
+        "This scan does not validate that the credential is accepted by any remote service."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "database_url"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-05eb47a88c8c6107",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "scripts/smoke-mobile-prod.mjs",
+        "startLine": 19,
+        "startColumn": 3,
+        "endLine": 19,
+        "endColumn": 36
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "scripts/smoke-mobile-prod.mjs",
+              "startLine": 19,
+              "startColumn": 3,
+              "endLine": 19,
+              "endColumn": 36
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:c0c7148ef836c9d7601cba8b"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-060ca2d475054365",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "src/server/services/password-reset.service.test.ts",
+        "startLine": 145,
+        "startColumn": 22,
+        "endLine": 145,
+        "endColumn": 35
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/server/services/password-reset.service.test.ts",
+              "startLine": 145,
+              "startColumn": 22,
+              "endLine": 145,
+              "endColumn": 35
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:d6787d0b317efdfcd7446182"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-0ab55af8c8a6675f",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "src/server/rate-limit/config.ts",
+        "startLine": 14,
+        "startColumn": 18,
+        "endLine": 14,
+        "endColumn": 31
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/server/rate-limit/config.ts",
+              "startLine": 14,
+              "startColumn": 18,
+              "endLine": 14,
+              "endColumn": 31
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:16e674375eaa158cb7a063cc"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-0eb960b39ab712bd",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "scripts/smoke-commercial-clarity-preview.mjs",
+        "startLine": 14,
+        "startColumn": 18,
+        "endLine": 14,
+        "endColumn": 52
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "scripts/smoke-commercial-clarity-preview.mjs",
+              "startLine": 14,
+              "startColumn": 18,
+              "endLine": 14,
+              "endColumn": 52
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:3d27eb44a5fcc126da78de0d"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-13589e9d6ca6b305",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "high",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": ".env.example",
+        "startLine": 32,
+        "startColumn": 34,
+        "endLine": 32,
+        "endColumn": 58
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": ".env.example",
+              "startLine": 32,
+              "startColumn": 34,
+              "endLine": 32,
+              "endColumn": 58
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:acf8f1c5fff1709dc933d1b7"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-13a007c40738c2d3",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "high",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": ".env.example",
+        "startLine": 8,
+        "startColumn": 22,
+        "endLine": 8,
+        "endColumn": 43
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": ".env.example",
+              "startLine": 8,
+              "startColumn": 22,
+              "endLine": 8,
+              "endColumn": 43
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:4cbaeeb5fb0924db52163563"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-247dd5b8acc345b3",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "scripts/validate-lead-detail-states.mjs",
+        "startLine": 15,
+        "startColumn": 3,
+        "endLine": 15,
+        "endColumn": 34
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "scripts/validate-lead-detail-states.mjs",
+              "startLine": 15,
+              "startColumn": 3,
+              "endLine": 15,
+              "endColumn": 34
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:b71d91b529d50c6a175038a4"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-256615d6b8506d19",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "src/server/actions/change-password.ts",
+        "startLine": 17,
+        "startColumn": 13,
+        "endLine": 17,
+        "endColumn": 31
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/server/actions/change-password.ts",
+              "startLine": 17,
+              "startColumn": 13,
+              "endLine": 17,
+              "endColumn": 31
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:b2bff32d3152d23362bcd6a4"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-2aff2184c308fa73",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "src/server/email/index.ts",
+        "startLine": 17,
+        "startColumn": 20,
+        "endLine": 17,
+        "endColumn": 55
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/server/email/index.ts",
+              "startLine": 17,
+              "startColumn": 20,
+              "endLine": 17,
+              "endColumn": 55
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:77028451fb7f49f6a4aaff77"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-3b89eb5b70b60dd2",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "scripts/validate-lead-detail-density.mjs",
+        "startLine": 22,
+        "startColumn": 3,
+        "endLine": 22,
+        "endColumn": 34
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "scripts/validate-lead-detail-density.mjs",
+              "startLine": 22,
+              "startColumn": 3,
+              "endLine": 22,
+              "endColumn": 34
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:b71d91b529d50c6a175038a4"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-40e2c80d7eea2944",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "src/server/services/password-reset.service.test.ts",
+        "startLine": 101,
+        "startColumn": 22,
+        "endLine": 101,
+        "endColumn": 37
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/server/services/password-reset.service.test.ts",
+              "startLine": 101,
+              "startColumn": 22,
+              "endLine": 101,
+              "endColumn": 37
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:97840fa3001d37d5f2c6bebc"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-4131afdee2984dd0",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "scripts/smoke-skipnav-prod.mjs",
+        "startLine": 20,
+        "startColumn": 3,
+        "endLine": 20,
+        "endColumn": 36
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "scripts/smoke-skipnav-prod.mjs",
+              "startLine": 20,
+              "startColumn": 3,
+              "endLine": 20,
+              "endColumn": 36
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:c0c7148ef836c9d7601cba8b"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-48c3e772a9e86a13",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "src/server/actions/auth.ts",
+        "startLine": 17,
+        "startColumn": 13,
+        "endLine": 17,
+        "endColumn": 31
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/server/actions/auth.ts",
+              "startLine": 17,
+              "startColumn": 13,
+              "endLine": 17,
+              "endColumn": 31
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:0091b8e2fc77e253d7682d54"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-4ea96b5b2a23e82c",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "prisma/seed.ts",
+        "startLine": 42,
+        "startColumn": 17,
+        "endLine": 42,
+        "endColumn": 32
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "prisma/seed.ts",
+              "startLine": 42,
+              "startColumn": 17,
+              "endLine": 42,
+              "endColumn": 32
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:c716b52c29ed2f0762333b06"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-4fe3cbd3a60ab874",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "src/server/actions/password-reset.ts",
+        "startLine": 23,
+        "startColumn": 13,
+        "endLine": 23,
+        "endColumn": 31
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/server/actions/password-reset.ts",
+              "startLine": 23,
+              "startColumn": 13,
+              "endLine": 23,
+              "endColumn": 31
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:0091b8e2fc77e253d7682d54"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-561986928ce14a5b",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "src/server/services/password-reset.service.test.ts",
+        "startLine": 80,
+        "startColumn": 18,
+        "endLine": 80,
+        "endColumn": 33
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/server/services/password-reset.service.test.ts",
+              "startLine": 80,
+              "startColumn": 18,
+              "endLine": 80,
+              "endColumn": 33
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:003b81ef5799c89da3e1493d"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-5bb8ab4ba1c3b369",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "scripts/measure-lead-detail-density-prod.mjs",
+        "startLine": 18,
+        "startColumn": 3,
+        "endLine": 18,
+        "endColumn": 36
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "scripts/measure-lead-detail-density-prod.mjs",
+              "startLine": 18,
+              "startColumn": 3,
+              "endLine": 18,
+              "endColumn": 36
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:c0c7148ef836c9d7601cba8b"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-8153d54df68342ba",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "src/server/actions/change-password.ts",
+        "startLine": 40,
+        "startColumn": 19,
+        "endLine": 40,
+        "endColumn": 32
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/server/actions/change-password.ts",
+              "startLine": 40,
+              "startColumn": 19,
+              "endLine": 40,
+              "endColumn": 32
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:b70bebbd34268abdb2441aa8"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-8860ee539dc73c25",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "src/server/actions/auth.ts",
+        "startLine": 42,
+        "startColumn": 19,
+        "endLine": 42,
+        "endColumn": 32
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/server/actions/auth.ts",
+              "startLine": 42,
+              "startColumn": 19,
+              "endLine": 42,
+              "endColumn": 32
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:b70bebbd34268abdb2441aa8"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-9e9959aa5e5befca",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "scripts/smoke-login-visual-prod.mjs",
+        "startLine": 20,
+        "startColumn": 3,
+        "endLine": 20,
+        "endColumn": 36
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "scripts/smoke-login-visual-prod.mjs",
+              "startLine": 20,
+              "startColumn": 3,
+              "endLine": 20,
+              "endColumn": 36
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:c0c7148ef836c9d7601cba8b"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-acf9b208af475c29",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "scripts/smoke-lead-detail-fatia-a-prod.mjs",
+        "startLine": 19,
+        "startColumn": 3,
+        "endLine": 19,
+        "endColumn": 36
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "scripts/smoke-lead-detail-fatia-a-prod.mjs",
+              "startLine": 19,
+              "startColumn": 3,
+              "endLine": 19,
+              "endColumn": 36
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:c0c7148ef836c9d7601cba8b"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-b5e49b914bf488d2",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "prisma/seed.ts",
+        "startLine": 36,
+        "startColumn": 17,
+        "endLine": 36,
+        "endColumn": 32
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "prisma/seed.ts",
+              "startLine": 36,
+              "startColumn": 17,
+              "endLine": 36,
+              "endColumn": 32
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:c716b52c29ed2f0762333b06"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-be3006432dc0f6c8",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "src/server/actions/password-reset.ts",
+        "startLine": 64,
+        "startColumn": 19,
+        "endLine": 64,
+        "endColumn": 32
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/server/actions/password-reset.ts",
+              "startLine": 64,
+              "startColumn": 19,
+              "endLine": 64,
+              "endColumn": 32
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:b70bebbd34268abdb2441aa8"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-e0aa9f5a5bc9678a",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "scripts/smoke-lead-detail-states-prod.mjs",
+        "startLine": 21,
+        "startColumn": 3,
+        "endLine": 21,
+        "endColumn": 36
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "scripts/smoke-lead-detail-states-prod.mjs",
+              "startLine": 21,
+              "startColumn": 3,
+              "endLine": 21,
+              "endColumn": 36
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:c0c7148ef836c9d7601cba8b"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-e4ac4e1daa797703",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "prisma/seed.ts",
+        "startLine": 30,
+        "startColumn": 17,
+        "endLine": 30,
+        "endColumn": 31
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "prisma/seed.ts",
+              "startLine": 30,
+              "startColumn": 17,
+              "endLine": 30,
+              "endColumn": 31
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:de8619e79bc1fdbad0ceeb9e"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-effae95092a13f6f",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "high",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": ".env.example",
+        "startLine": 11,
+        "startColumn": 14,
+        "endLine": 11,
+        "endColumn": 63
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": ".env.example",
+              "startLine": 11,
+              "startColumn": 14,
+              "endLine": 11,
+              "endColumn": 63
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:641f6d19421cb08392b51620"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-f6ec34bcc54f19a8",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "e2e/forms-data-display.spec.ts",
+        "startLine": 14,
+        "startColumn": 22,
+        "endLine": 14,
+        "endColumn": 38
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "e2e/forms-data-display.spec.ts",
+              "startLine": 14,
+              "startColumn": 22,
+              "endLine": 14,
+              "endColumn": 38
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:5cef87e0e4143c87e51b78b2"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-f9834f7f6143bfa0",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "src/server/services/password-reset.service.test.ts",
+        "startLine": 123,
+        "startColumn": 22,
+        "endLine": 123,
+        "endColumn": 35
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "src/server/services/password-reset.service.test.ts",
+              "startLine": 123,
+              "startColumn": 22,
+              "endLine": 123,
+              "endColumn": 35
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:d6787d0b317efdfcd7446182"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SEC-003-fc8abe5eeb88139c",
+      "ruleId": "VS-SEC-003",
+      "ruleVersion": "1.0.0",
+      "title": "Generic credential candidate",
+      "description": "A generic credential-like assignment with elevated entropy was observed.",
+      "category": "secrets",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "suspicious",
+      "primaryLocation": {
+        "file": "scripts/smoke-lead-detail-density-prod.mjs",
+        "startLine": 19,
+        "startColumn": 3,
+        "endLine": 19,
+        "endColumn": 36
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "code",
+          "summary": "A name/value pattern resembles a credential, but format-specific validation was not available.",
+          "redactedSnippet": "[REDACTED]",
+          "locations": [
+            {
+              "file": "scripts/smoke-lead-detail-density-prod.mjs",
+              "startLine": 19,
+              "startColumn": 3,
+              "endLine": 19,
+              "endColumn": 36
+            }
+          ],
+          "secretFingerprint": "hmac-sha256:c0c7148ef836c9d7601cba8b"
+        }
+      ],
+      "impact": "If this value is a real credential, exposure could enable unauthorized access.",
+      "remediation": "Confirm whether the value is sensitive. Prefer secret managers and remove live credentials from source.",
+      "limitations": [
+        "Placeholders and low-entropy samples are suppressed by the extractor.",
+        "This finding is suspicious only; the value was not validated as a known credential format."
+      ],
+      "references": [
+        "https://cwe.mitre.org/data/definitions/798.html"
+      ],
+      "tags": [
+        "credential",
+        "generic",
+        "suspicious"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SUP-004-1b73e2790bfd1ff8",
+      "ruleId": "VS-SUP-004",
+      "ruleVersion": "1.0.0",
+      "title": "Table created without observable RLS enablement or policy",
+      "description": "Table public.passwordresettoken is created in migrations without an observed ENABLE RLS or policy.",
+      "category": "supabase",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "requires_authorization",
+      "primaryLocation": {
+        "file": "prisma/migrations/20260724010000_password_reset_token/migration.sql",
+        "startLine": 2,
+        "startColumn": 1,
+        "endLine": 2,
+        "endColumn": 34
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "migration",
+          "summary": "CREATE TABLE was observed without a correlating ENABLE ROW LEVEL SECURITY or CREATE POLICY in the scanned migrations.",
+          "locations": [
+            {
+              "file": "prisma/migrations/20260724010000_password_reset_token/migration.sql",
+              "startLine": 2,
+              "startColumn": 1,
+              "endLine": 2,
+              "endColumn": 34
+            }
+          ]
+        }
+      ],
+      "impact": "If the deployed database also lacks RLS/policies, privileged API roles may read or write broader row sets than intended.",
+      "remediation": "Confirm production RLS and policies for this table. Prefer enabling RLS and adding explicit policies in migrations.",
+      "limitations": [
+        "Absence of local RLS/policy evidence must not be interpreted as proof that production RLS is disabled.",
+        "Only scanned migration-like SQL files were considered."
+      ],
+      "references": [
+        "https://supabase.com/docs/guides/database/postgres/row-level-security"
+      ],
+      "tags": [
+        "requires-authorization",
+        "rls",
+        "supabase"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SUP-004-28c128a3d8640370",
+      "ruleId": "VS-SUP-004",
+      "ruleVersion": "1.0.0",
+      "title": "Table created without observable RLS enablement or policy",
+      "description": "Table public.leadassignment is created in migrations without an observed ENABLE RLS or policy.",
+      "category": "supabase",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "requires_authorization",
+      "primaryLocation": {
+        "file": "prisma/migrations/20260813190000_weekly_lead_portfolio_phase_1/migration.sql",
+        "startLine": 33,
+        "startColumn": 1,
+        "endLine": 33,
+        "endColumn": 30
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "migration",
+          "summary": "CREATE TABLE was observed without a correlating ENABLE ROW LEVEL SECURITY or CREATE POLICY in the scanned migrations.",
+          "locations": [
+            {
+              "file": "prisma/migrations/20260813190000_weekly_lead_portfolio_phase_1/migration.sql",
+              "startLine": 33,
+              "startColumn": 1,
+              "endLine": 33,
+              "endColumn": 30
+            }
+          ]
+        }
+      ],
+      "impact": "If the deployed database also lacks RLS/policies, privileged API roles may read or write broader row sets than intended.",
+      "remediation": "Confirm production RLS and policies for this table. Prefer enabling RLS and adding explicit policies in migrations.",
+      "limitations": [
+        "Absence of local RLS/policy evidence must not be interpreted as proof that production RLS is disabled.",
+        "Only scanned migration-like SQL files were considered."
+      ],
+      "references": [
+        "https://supabase.com/docs/guides/database/postgres/row-level-security"
+      ],
+      "tags": [
+        "requires-authorization",
+        "rls",
+        "supabase"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SUP-004-48d7ee7bc3eab93b",
+      "ruleId": "VS-SUP-004",
+      "ruleVersion": "1.0.0",
+      "title": "Table created without observable RLS enablement or policy",
+      "description": "Table public.acquisitionjob is created in migrations without an observed ENABLE RLS or policy.",
+      "category": "supabase",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "requires_authorization",
+      "primaryLocation": {
+        "file": "prisma/migrations/20260812120000_acquisition_job/migration.sql",
+        "startLine": 5,
+        "startColumn": 1,
+        "endLine": 5,
+        "endColumn": 30
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "migration",
+          "summary": "CREATE TABLE was observed without a correlating ENABLE ROW LEVEL SECURITY or CREATE POLICY in the scanned migrations.",
+          "locations": [
+            {
+              "file": "prisma/migrations/20260812120000_acquisition_job/migration.sql",
+              "startLine": 5,
+              "startColumn": 1,
+              "endLine": 5,
+              "endColumn": 30
+            }
+          ]
+        }
+      ],
+      "impact": "If the deployed database also lacks RLS/policies, privileged API roles may read or write broader row sets than intended.",
+      "remediation": "Confirm production RLS and policies for this table. Prefer enabling RLS and adding explicit policies in migrations.",
+      "limitations": [
+        "Absence of local RLS/policy evidence must not be interpreted as proof that production RLS is disabled.",
+        "Only scanned migration-like SQL files were considered."
+      ],
+      "references": [
+        "https://supabase.com/docs/guides/database/postgres/row-level-security"
+      ],
+      "tags": [
+        "requires-authorization",
+        "rls",
+        "supabase"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SUP-004-6e394c31e6a5b851",
+      "ruleId": "VS-SUP-004",
+      "ruleVersion": "1.0.0",
+      "title": "Table created without observable RLS enablement or policy",
+      "description": "Table public.weeklyportfolio is created in migrations without an observed ENABLE RLS or policy.",
+      "category": "supabase",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "requires_authorization",
+      "primaryLocation": {
+        "file": "prisma/migrations/20260813190000_weekly_lead_portfolio_phase_1/migration.sql",
+        "startLine": 20,
+        "startColumn": 1,
+        "endLine": 20,
+        "endColumn": 31
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "migration",
+          "summary": "CREATE TABLE was observed without a correlating ENABLE ROW LEVEL SECURITY or CREATE POLICY in the scanned migrations.",
+          "locations": [
+            {
+              "file": "prisma/migrations/20260813190000_weekly_lead_portfolio_phase_1/migration.sql",
+              "startLine": 20,
+              "startColumn": 1,
+              "endLine": 20,
+              "endColumn": 31
+            }
+          ]
+        }
+      ],
+      "impact": "If the deployed database also lacks RLS/policies, privileged API roles may read or write broader row sets than intended.",
+      "remediation": "Confirm production RLS and policies for this table. Prefer enabling RLS and adding explicit policies in migrations.",
+      "limitations": [
+        "Absence of local RLS/policy evidence must not be interpreted as proof that production RLS is disabled.",
+        "Only scanned migration-like SQL files were considered."
+      ],
+      "references": [
+        "https://supabase.com/docs/guides/database/postgres/row-level-security"
+      ],
+      "tags": [
+        "requires-authorization",
+        "rls",
+        "supabase"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SUP-004-80648d2c38d2f120",
+      "ruleId": "VS-SUP-004",
+      "ruleVersion": "1.0.0",
+      "title": "Table created without observable RLS enablement or policy",
+      "description": "Table public.activity is created in migrations without an observed ENABLE RLS or policy.",
+      "category": "supabase",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "requires_authorization",
+      "primaryLocation": {
+        "file": "prisma/migrations/20260723170000_init/migration.sql",
+        "startLine": 52,
+        "startColumn": 1,
+        "endLine": 52,
+        "endColumn": 24
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "migration",
+          "summary": "CREATE TABLE was observed without a correlating ENABLE ROW LEVEL SECURITY or CREATE POLICY in the scanned migrations.",
+          "locations": [
+            {
+              "file": "prisma/migrations/20260723170000_init/migration.sql",
+              "startLine": 52,
+              "startColumn": 1,
+              "endLine": 52,
+              "endColumn": 24
+            }
+          ]
+        }
+      ],
+      "impact": "If the deployed database also lacks RLS/policies, privileged API roles may read or write broader row sets than intended.",
+      "remediation": "Confirm production RLS and policies for this table. Prefer enabling RLS and adding explicit policies in migrations.",
+      "limitations": [
+        "Absence of local RLS/policy evidence must not be interpreted as proof that production RLS is disabled.",
+        "Only scanned migration-like SQL files were considered."
+      ],
+      "references": [
+        "https://supabase.com/docs/guides/database/postgres/row-level-security"
+      ],
+      "tags": [
+        "requires-authorization",
+        "rls",
+        "supabase"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SUP-004-b575242c01970849",
+      "ruleId": "VS-SUP-004",
+      "ruleVersion": "1.0.0",
+      "title": "Table created without observable RLS enablement or policy",
+      "description": "Table public.adminauditevent is created in migrations without an observed ENABLE RLS or policy.",
+      "category": "supabase",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "requires_authorization",
+      "primaryLocation": {
+        "file": "prisma/migrations/20260813180000_user_can_run_acquisition/migration.sql",
+        "startLine": 5,
+        "startColumn": 1,
+        "endLine": 5,
+        "endColumn": 31
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "migration",
+          "summary": "CREATE TABLE was observed without a correlating ENABLE ROW LEVEL SECURITY or CREATE POLICY in the scanned migrations.",
+          "locations": [
+            {
+              "file": "prisma/migrations/20260813180000_user_can_run_acquisition/migration.sql",
+              "startLine": 5,
+              "startColumn": 1,
+              "endLine": 5,
+              "endColumn": 31
+            }
+          ]
+        }
+      ],
+      "impact": "If the deployed database also lacks RLS/policies, privileged API roles may read or write broader row sets than intended.",
+      "remediation": "Confirm production RLS and policies for this table. Prefer enabling RLS and adding explicit policies in migrations.",
+      "limitations": [
+        "Absence of local RLS/policy evidence must not be interpreted as proof that production RLS is disabled.",
+        "Only scanned migration-like SQL files were considered."
+      ],
+      "references": [
+        "https://supabase.com/docs/guides/database/postgres/row-level-security"
+      ],
+      "tags": [
+        "requires-authorization",
+        "rls",
+        "supabase"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SUP-004-ba8167136ba3fb7f",
+      "ruleId": "VS-SUP-004",
+      "ruleVersion": "1.0.0",
+      "title": "Table created without observable RLS enablement or policy",
+      "description": "Table public.user is created in migrations without an observed ENABLE RLS or policy.",
+      "category": "supabase",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "requires_authorization",
+      "primaryLocation": {
+        "file": "prisma/migrations/20260723170000_init/migration.sql",
+        "startLine": 17,
+        "startColumn": 1,
+        "endLine": 17,
+        "endColumn": 20
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "migration",
+          "summary": "CREATE TABLE was observed without a correlating ENABLE ROW LEVEL SECURITY or CREATE POLICY in the scanned migrations.",
+          "locations": [
+            {
+              "file": "prisma/migrations/20260723170000_init/migration.sql",
+              "startLine": 17,
+              "startColumn": 1,
+              "endLine": 17,
+              "endColumn": 20
+            }
+          ]
+        }
+      ],
+      "impact": "If the deployed database also lacks RLS/policies, privileged API roles may read or write broader row sets than intended.",
+      "remediation": "Confirm production RLS and policies for this table. Prefer enabling RLS and adding explicit policies in migrations.",
+      "limitations": [
+        "Absence of local RLS/policy evidence must not be interpreted as proof that production RLS is disabled.",
+        "Only scanned migration-like SQL files were considered."
+      ],
+      "references": [
+        "https://supabase.com/docs/guides/database/postgres/row-level-security"
+      ],
+      "tags": [
+        "requires-authorization",
+        "rls",
+        "supabase"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SUP-004-c65ef713ffb294da",
+      "ruleId": "VS-SUP-004",
+      "ruleVersion": "1.0.0",
+      "title": "Table created without observable RLS enablement or policy",
+      "description": "Table public.session is created in migrations without an observed ENABLE RLS or policy.",
+      "category": "supabase",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "requires_authorization",
+      "primaryLocation": {
+        "file": "prisma/migrations/20260723213000_add_session/migration.sql",
+        "startLine": 2,
+        "startColumn": 1,
+        "endLine": 2,
+        "endColumn": 23
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "migration",
+          "summary": "CREATE TABLE was observed without a correlating ENABLE ROW LEVEL SECURITY or CREATE POLICY in the scanned migrations.",
+          "locations": [
+            {
+              "file": "prisma/migrations/20260723213000_add_session/migration.sql",
+              "startLine": 2,
+              "startColumn": 1,
+              "endLine": 2,
+              "endColumn": 23
+            }
+          ]
+        }
+      ],
+      "impact": "If the deployed database also lacks RLS/policies, privileged API roles may read or write broader row sets than intended.",
+      "remediation": "Confirm production RLS and policies for this table. Prefer enabling RLS and adding explicit policies in migrations.",
+      "limitations": [
+        "Absence of local RLS/policy evidence must not be interpreted as proof that production RLS is disabled.",
+        "Only scanned migration-like SQL files were considered."
+      ],
+      "references": [
+        "https://supabase.com/docs/guides/database/postgres/row-level-security"
+      ],
+      "tags": [
+        "requires-authorization",
+        "rls",
+        "supabase"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SUP-004-c78dd5b6a117c92e",
+      "ruleId": "VS-SUP-004",
+      "ruleVersion": "1.0.0",
+      "title": "Table created without observable RLS enablement or policy",
+      "description": "Table public.operatorweeklyquota is created in migrations without an observed ENABLE RLS or policy.",
+      "category": "supabase",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "requires_authorization",
+      "primaryLocation": {
+        "file": "prisma/migrations/20260813190000_weekly_lead_portfolio_phase_1/migration.sql",
+        "startLine": 8,
+        "startColumn": 1,
+        "endLine": 8,
+        "endColumn": 35
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "migration",
+          "summary": "CREATE TABLE was observed without a correlating ENABLE ROW LEVEL SECURITY or CREATE POLICY in the scanned migrations.",
+          "locations": [
+            {
+              "file": "prisma/migrations/20260813190000_weekly_lead_portfolio_phase_1/migration.sql",
+              "startLine": 8,
+              "startColumn": 1,
+              "endLine": 8,
+              "endColumn": 35
+            }
+          ]
+        }
+      ],
+      "impact": "If the deployed database also lacks RLS/policies, privileged API roles may read or write broader row sets than intended.",
+      "remediation": "Confirm production RLS and policies for this table. Prefer enabling RLS and adding explicit policies in migrations.",
+      "limitations": [
+        "Absence of local RLS/policy evidence must not be interpreted as proof that production RLS is disabled.",
+        "Only scanned migration-like SQL files were considered."
+      ],
+      "references": [
+        "https://supabase.com/docs/guides/database/postgres/row-level-security"
+      ],
+      "tags": [
+        "requires-authorization",
+        "rls",
+        "supabase"
+      ]
+    },
+    {
+      "schemaVersion": "1",
+      "id": "VS-SUP-004-f07ddda0ea7266b4",
+      "ruleId": "VS-SUP-004",
+      "ruleVersion": "1.0.0",
+      "title": "Table created without observable RLS enablement or policy",
+      "description": "Table public.lead is created in migrations without an observed ENABLE RLS or policy.",
+      "category": "supabase",
+      "severity": "medium",
+      "confidence": "medium",
+      "status": "requires_authorization",
+      "primaryLocation": {
+        "file": "prisma/migrations/20260723170000_init/migration.sql",
+        "startLine": 31,
+        "startColumn": 1,
+        "endLine": 31,
+        "endColumn": 20
+      },
+      "relatedLocations": [],
+      "evidence": [
+        {
+          "kind": "migration",
+          "summary": "CREATE TABLE was observed without a correlating ENABLE ROW LEVEL SECURITY or CREATE POLICY in the scanned migrations.",
+          "locations": [
+            {
+              "file": "prisma/migrations/20260723170000_init/migration.sql",
+              "startLine": 31,
+              "startColumn": 1,
+              "endLine": 31,
+              "endColumn": 20
+            }
+          ]
+        }
+      ],
+      "impact": "If the deployed database also lacks RLS/policies, privileged API roles may read or write broader row sets than intended.",
+      "remediation": "Confirm production RLS and policies for this table. Prefer enabling RLS and adding explicit policies in migrations.",
+      "limitations": [
+        "Absence of local RLS/policy evidence must not be interpreted as proof that production RLS is disabled.",
+        "Only scanned migration-like SQL files were considered."
+      ],
+      "references": [
+        "https://supabase.com/docs/guides/database/postgres/row-level-security"
+      ],
+      "tags": [
+        "requires-authorization",
+        "rls",
+        "supabase"
+      ]
+    }
+  ]
+}
