@@ -49,7 +49,7 @@ Google Places → lead-generator (external) → Prospecta CRM (this repo) → pi
 - **Database:** PostgreSQL + Prisma
 - **Auth:** session table + HttpOnly cookie; machine tokens for ingest/jobs
 - **CI:** GitHub Actions — Postgres tests, lint, typecheck, build
-- **Security gates:** Gitleaks, dependency audit, CodeQL
+- **Security gates:** Gitleaks, dependency audit, CodeQL, VibeSec (`scan`, OBSERVE)
 
 ## Stack
 

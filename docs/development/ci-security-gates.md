@@ -146,13 +146,18 @@ fully by these local commands.
   build/install failure, or timeout is a scanner failure and must be fixed in
   the integration (or upstream VibeSec), not by suppressing the check.
 
-## Initial dependency-audit baseline
+## Dependency-audit baseline
 
 On 2026-08-20, `pnpm audit --audit-level high` found nine pre-existing high
 advisories (and two moderate findings) through transitive dependencies of
-Next.js, ESLint, and Prisma. The dependency-audit gate is intentionally not
-weakened and is expected to block until a separate remediation PR updates the
-affected dependency paths.
+Next.js, ESLint, and Prisma. The gate was intentionally left blocking (no
+`--force`, no lowered severity) until separate dependency remediation.
+
+After later dependency remediation on `main` (including follow-ups around the
+CORE UI/UX and related PRs), the Security workflow on `main` has been observed
+to pass Dependency Audit again. The gate remains required and still fails the
+job when high/critical advisories reappear. Do not weaken it to accommodate
+unrelated work, and do not conflate it with VibeSec.
 
 ## Branch protection rollout
 
