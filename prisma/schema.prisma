@@ -75,6 +75,33 @@ enum LeadAssignmentStatus {
   RELEASED
 }
 
+enum WhatsAppConsentStatus {
+  UNKNOWN
+  OPTED_IN
+  OPTED_OUT
+}
+
+enum WhatsAppConsentEventStatus {
+  OPTED_IN
+  OPTED_OUT
+}
+
+enum WhatsAppConsentSource {
+  PHONE_CALL
+  EMAIL
+  FORM
+  INBOUND_WHATSAPP
+  OTHER
+}
+
+enum WhatsAppConsentPurpose {
+  PRESENTATION
+  DEMO
+  MEETING
+  FOLLOW_UP
+  OTHER
+}
+
 model User {
   id                  String               @id @default(cuid())
   email               String               @unique
@@ -100,6 +127,7 @@ model User {
   leadAssignments     LeadAssignment[]     @relation("LeadAssignee")
   previousAssignments LeadAssignment[]     @relation("PreviousAssignee")
   assignmentsCreated  LeadAssignment[]     @relation("AssignmentAssignedBy")
+  whatsappConsentEvents WhatsAppConsentEvent[]
 }
 
 /// Minimal durable trail for sensitive ADMIN mutations (not a full RBAC system).
@@ -160,10 +188,15 @@ model Lead {
   wonNote        String?
   ownerId        String
   owner           User             @relation("LeadOwner", fields: [ownerId], references: [id])
+  /// Default UNKNOWN. Never inferred from phone or Activity.
+  whatsappConsentStatus WhatsAppConsentStatus @default(UNKNOWN)
+  /// Null while status is UNKNOWN. Set only on successful OPTED_IN.
+  phoneE164             String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   activities      Activity[]
   assignments     LeadAssignment[]
+  whatsappConsentEvents WhatsAppConsentEvent[]
 
   @@unique([source, externalId])
   @@index([stage])
@@ -189,6 +222,25 @@ model Activity {
 
   @@index([leadId, createdAt])
   @@index([authorId])
+}
+
+/// Append-only consent trail. No update/delete in application repositories.
+model WhatsAppConsentEvent {
+  id          String                     @id @default(cuid())
+  leadId      String
+  lead        Lead                       @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  status      WhatsAppConsentEventStatus
+  source      WhatsAppConsentSource
+  purpose     WhatsAppConsentPurpose?
+  purposeNote String?
+  /// Operator-provided evidence time — distinct from createdAt.
+  evidenceAt  DateTime
+  actorId     String
+  actor       User                       @relation(fields: [actorId], references: [id])
+  createdAt   DateTime                   @default(now())
+
+  @@index([leadId, createdAt])
+  @@index([actorId])
 }
 
 /// Per-operator weekly HIGH assignment meta (ADMIN-configurable).
