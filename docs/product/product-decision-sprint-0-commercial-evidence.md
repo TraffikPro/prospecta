@@ -129,6 +129,17 @@ Não criar planilha paralela como verdade. Prospecta permanece a fonte.
 
 Engenharia neste ciclo: onda 2 no generator **depois** do lote 1 com Activities. Sem mudar score/pitch. Trilha paralela: contrato WhatsApp / flags off — **sem disparo real**.
 
+### Checkpoint engenharia (2026-10-07)
+
+| Item | Estado |
+| --- | --- |
+| CORE UI/UX (#83) em produção | DONE |
+| WhatsApp eligibility Fatia A (#69) + migrate | DONE |
+| Smoke prod elegibilidade | **OVERALL PASS** — [REPORT](../audits/whatsapp-eligibility-prod-smoke/REPORT.md) |
+| Activities Santos / métrica ≥20 | **ainda VALIDATE** — depende do comercial |
+
+Smoke técnico **não** conta como Activity do Sprint 0.
+
 ## Grill
 
 | Campo | Valor |
