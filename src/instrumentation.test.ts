@@ -25,7 +25,7 @@ afterEach(() => {
 });
 
 function setBaseEnvironment(): void {
-  process.env.DATABASE_URL = "postgresql://local-test-only";
+  process.env.DATABASE_URL ??= "postgresql://schema:unused@127.0.0.1:9/prospecta_ci";
   process.env.AUTH_SECRET = "auth-test-secret-at-least-32-characters";
   Reflect.set(process.env, "NODE_ENV", "production");
 }
