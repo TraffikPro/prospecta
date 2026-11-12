@@ -1,3 +1,9 @@
+import { LeadAnalysisCard } from "@/features/leads/ai-analysis/analysis-card";
+import { isLeadAiAnalysisEnabled } from "@/server/ai-analysis/feature-flag";
+import { getLeadAIAnalysisAction } from "@/server/actions/lead-ai-analysis";
+import { isAnalysisUserAllowed } from "@/server/lead-ai-analysis/access-policy";
+import { isLocalAnalysisSimulation } from "@/server/lead-ai-analysis/simulation-policy";
+export const maxDuration = 60;
 import { Heading, Stack } from "@chakra-ui/react";
 import { forbidden, notFound, redirect } from "next/navigation";
 
@@ -112,6 +118,9 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
     intelligence,
   });
 
+  const aiAnalysis = isLeadAiAnalysisEnabled() && isAnalysisUserAllowed(sessionUser)
+    ? await getLeadAIAnalysisAction(lead.id) : null;
+
   return (
     <PageFrame width="detailWide" gap={{ base: "6", md: "8" }}>
       <ContextualNav items={crumbItems} />
@@ -137,6 +146,7 @@ export default async function LeadDetailPage({ params, searchParams }: PageProps
         contact={<LeadContactActions phone={lead.phone} email={lead.email} />}
         intelligence={
           <Stack gap={{ base: "6", lg: "8" }}>
+            {aiAnalysis ? <LeadAnalysisCard key={lead.id} leadId={lead.id} initial={aiAnalysis} simulated={isLocalAnalysisSimulation()} /> : null}
             <WhatsAppAuthorizedChannel
               leadId={lead.id}
               status={lead.whatsappConsentStatus}

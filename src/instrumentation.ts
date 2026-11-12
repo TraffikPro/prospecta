@@ -8,4 +8,8 @@ export async function register(): Promise<void> {
 
   const { validateRuntimeEnv } = await import("./lib/env");
   validateRuntimeEnv();
+  if (process.env.LEAD_AI_ANALYSIS_ENABLED === "true") {
+    const { liveAnalysisConfigured } = await import("./server/lead-ai-analysis/live-policy");
+    console.info("[LeadAIAnalysis] production pilot configured:", liveAnalysisConfigured());
+  }
 }

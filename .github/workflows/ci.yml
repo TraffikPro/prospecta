@@ -95,7 +95,7 @@ jobs:
         run: pnpm prisma:deploy
 
       - name: Run complete test suite serially
-        run: pnpm exec tsx --test --test-concurrency=1 src/**/*.test.ts
+        run: pnpm test
 
   quality:
     name: Quality (lint, typecheck, build)

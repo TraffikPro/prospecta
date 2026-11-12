@@ -103,6 +103,7 @@ enum WhatsAppConsentPurpose {
 }
 
 model User {
+  aiAnalyses LeadAIAnalysis[]
   id                  String               @id @default(cuid())
   email               String               @unique
   name                String
@@ -171,6 +172,7 @@ model PasswordResetToken {
 }
 
 model Lead {
+  aiAnalyses LeadAIAnalysis[]
   id             String     @id @default(cuid())
   companyName    String
   contactName    String?
@@ -347,4 +349,40 @@ model AcquisitionJob {
   @@index([requestedById, purpose, status])
   // Partial unique index (QUEUED|RUNNING only) lives in migration SQL —
   // AcquisitionJob_active_fingerprint_key — Prisma schema cannot express WHERE.
+}
+
+enum LeadAIAnalysisStatus {
+  RUNNING
+  COMPLETE
+  INCONCLUSIVE
+  FAILED
+}
+
+model LeadAIAnalysis {
+  id                  String               @id @default(cuid())
+  leadId              String
+  lead                Lead                 @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  requestedById       String
+  requestedBy         User                 @relation(fields: [requestedById], references: [id], onDelete: Restrict)
+  requestKey          String
+  status              LeadAIAnalysisStatus @default(RUNNING)
+  expiresAt           DateTime
+  finishedAt          DateTime?
+  report              Json?
+  errorCode           String?
+  analysisRunId       String?              @unique
+  agentVersion        String?
+  model               String?
+  steps               Int?
+  toolCalls           Int?
+  tokens              Int?
+  estimatedCostMicros Int?
+  durationMs          Int?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  @@unique([requestedById, requestKey])
+  @@index([leadId, createdAt])
+  @@index([status, expiresAt])
+  // Partial unique RUNNING-per-lead index is defined in the migration SQL.
 }
